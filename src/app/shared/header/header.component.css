@@ -5,3 +5,7 @@
 .nav-link {
     color: midnightblue !important;
 }
+
+#navbarCollapse {
+    width: 100%
+}
