@@ -1,0 +1,26 @@
+.text-center {
+    text-align: center!important;
+}
+
+.page-header {
+    color: midnightblue;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-header-cell {
+    text-align: center;
+    justify-content: center;
+}
+
+.mat-cell {
+    text-align: center;
+    justify-content: center;
+}
+
+#dynamic {
+    background-image: linear-gradient(white, lightblue, lightskyblue);
+}

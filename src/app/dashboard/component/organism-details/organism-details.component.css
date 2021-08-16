@@ -1,0 +1,89 @@
+.text-center {
+    text-align: center!important;
+}
+
+.card-header,
+.btn-success,
+.badge-success {
+    background-color: lightblue;
+}
+
+.btn-primary {
+    background-color: midnightblue;
+}
+
+.active {
+    background-color: skyblue;
+}
+
+.page-header {
+    color: midnightblue;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.disp {
+    display: block !important;
+}
+
+.non-disp {
+    display: none !important;
+}
+
+.txt-center {
+    text-align: center;
+    /* justify-content: center; */
+}
+
+
+/* .mat-header-cell {
+    text-align: center;
+} */
+
+.inactiveFilter {
+    pointer-events: none;
+    cursor: default;
+}
+
+.assemblies-font {
+    font-size: 13.5px;
+}
+
+.mat-header-row,
+.mat-row {
+    min-height: 30px;
+}
+
+.goat-color {
+    color: #fff;
+    background-color: midnightblue;
+}
+
+.blue-text {
+    font-size: 1em;
+    color: #007c82!important;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-row {
+    height: auto;
+}
+
+.mat-cell {
+    padding: 8px 8px 8px 0;
+    word-break: break-word;
+}
+
+.table-container {
+    overflow: auto;
+}
+
+#dynamic {
+    background-image: linear-gradient(white, lightblue, lightskyblue);
+}

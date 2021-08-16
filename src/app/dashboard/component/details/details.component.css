@@ -1,0 +1,53 @@
+.text-center {
+    text-align: center!important;
+}
+
+.card-header,
+z .btn-success,
+.badge-success {
+    background-color: lightblue;
+}
+
+.btn-primary {
+    background-color: midnightblue;
+}
+
+.active {
+    background-color: skyblue;
+}
+
+.page-header {
+    color: midnightblue;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.disp {
+    display: block !important;
+}
+
+.non-disp {
+    display: none !important;
+}
+
+.txt-center {
+    text-align: center;
+    justify-content: center;
+}
+
+.mat-header-cell {
+    text-align: center;
+    justify-content: center;
+}
+
+.inactiveFilter {
+    pointer-events: none;
+    cursor: default;
+}
+
+#dynamic {
+    background-image: linear-gradient(white, lightblue, lightskyblue);
+}

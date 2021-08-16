@@ -6,7 +6,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'angular-skeleton';
+  title = 'asg-portal';
   @ViewChild('cookieLaw')
   cookieLawEl: any;
 

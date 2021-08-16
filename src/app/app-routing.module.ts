@@ -1,18 +1,39 @@
 import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DashboardComponent } from './dashboard/component/dashboard.component';
+import { AboutComponent } from './about/about.component';
+import { HelpComponent } from './help/help.component';
+import { HomeComponent } from './home/home.component';
+import { ApiComponent } from './api/api.component';
 
 const routes: Routes = [
-  // Main redirect
+  {
+    path: 'documentation',
+    component: ApiComponent
+  },
   {
     path: '',
-    redirectTo: 'dashboard',
+    component: HomeComponent,
     pathMatch: 'full'
+  },
+  {
+    path: 'about', component: AboutComponent
+  },
+  {
+    path: 'help', component: HelpComponent
   },
   {
     path: '',
     children: [
-      { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) }
+      { path: 'data', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) }
+    ]
+  },
+  {
+    path: '',
+    children: [
+      {
+        path: 'tracking_system', loadChildren: () => import('./tracking-system/tracking-system.module').then(
+          m => m.TrackingSystemModule)
+      }
     ]
   },
   {

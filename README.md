@@ -1,4 +1,5 @@
-# VdcAngular10Skeleton
+# portal-frontend
+Tree of Life portal frontend
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.1.
 
@@ -26,24 +27,3 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
-
-## App content
-
-### App has one main components:
-1. [dashboard](https://github.com/EMBL-EBI-GCA/vdc_angular_skeleton/angular_10_skeleton/src/app/dashboard/component/dashboard.component.ts) - basic component, can be used as skeleton for other components
-2. [non-found](https://github.com/EMBL-EBI-GCA/vdc_angular_skeleton/angular_10_skeleton/src/app/not-found/component/not-found.component.ts) - end-point for 404 page
-
-### And two main folders:
-1. [shared](https://github.com/EMBL-EBI-GCA/vdc_angular_skeleton/tree/angular_10_skeleton/src/app/shared) - contains [header](https://github.com/EMBL-EBI-GCA/vdc_angular_skeleton/tree/angular_10_skeleton/src/app/shared/header/header.component.ts) component (provides navbar for all components)
-
-### Pre-installed packages:
-1. [angular-material](https://www.npmjs.com/package/@angular/material). Provides angular material table
-2. [bootstrap 4.5](https://www.npmjs.com/package/bootstrap) Provides bootstrap integration
-
-### Basic dashboard component has:
-1. Angular Material Design
-2. Support for Bootstrap v4.5
-3. Angular Material Table with pagination, sorting and filtering
-4. Header
-5. Grid-layout example
-

@@ -1,0 +1,30 @@
+.filter-top {
+    margin-top: 1rem !important;
+}
+
+#gradient {
+    background-image: linear-gradient(white, lightblue, midnightblue);
+    position: absolute;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.col-md-10 {
+    margin-top: 250px;
+}
+
+h1 {
+    color: slategrey;
+    font-size: 50px;
+}
+
+#data,
+#status {
+    background: steelblue !important;
+}
+
+#dynamic {
+    background-image: linear-gradient(white, lightblue, lightskyblue);
+}
