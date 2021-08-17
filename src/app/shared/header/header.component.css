@@ -9,3 +9,7 @@
 #navbarCollapse {
     width: 100%
 }
+
+.navbar {
+    padding: 0rem 1rem !important
+}
