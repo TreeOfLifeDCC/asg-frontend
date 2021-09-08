@@ -15,5 +15,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: portal-frontend
+          serviceName: asg-frontend
           servicePort: 80
