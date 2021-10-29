@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class TaxanomyService {
 
   private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
-  // private API_BASE_URL = 'http://45.86.170.227:30985';
+  // private API_BASE_URL = 'http://45.88.81.97/backend';
   // private API_BASE_URL = 'http://localhost:8080';
 
   constructor(private http: HttpClient) { }
