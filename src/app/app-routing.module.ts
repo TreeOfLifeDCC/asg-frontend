@@ -39,10 +39,20 @@ const routes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'tree', loadChildren: () => import('./phylogenetics/phylogenetics.module').then(
+            m => m.PhylogeneticsModule)
+      }
+    ]
+  },
+  {
+    path: '',
+    children: [
       { path: '404', loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundModule) },
       { path: '**', loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundModule) }
     ]
   }
+
 ];
 
 @NgModule({

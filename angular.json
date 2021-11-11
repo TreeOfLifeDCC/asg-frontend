@@ -28,14 +28,18 @@
                             "src/styles.css",
                             "./node_modules/bootstrap/dist/css/bootstrap.css",
                             "./node_modules/swagger-ui-dist/swagger-ui.css",
-                            "./node_modules/@fortawesome/fontawesome-free/css/all.css"
+                            "./node_modules/@fortawesome/fontawesome-free/css/all.css",
+                            "src/assets/css/d3.css",
+                            "src/assets/css/jquery.dataTables.css"
                         ],
                         "scripts": [
                             "./node_modules/jquery/dist/jquery.min.js",
                             "./node_modules/popper.js/dist/umd/popper.min.js",
                             "./node_modules/bootstrap/dist/js/bootstrap.js",
                             "./node_modules/swagger-ui-dist/swagger-ui-bundle.js",
-                            "./node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js"
+                            "./node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js",
+                            "src/assets/js/d3.v3.min.js",
+                            "src/assets/js/jquery.dataTables.min.js"
                         ]
                     },
                     "configurations": {
