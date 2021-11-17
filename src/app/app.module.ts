@@ -18,6 +18,7 @@ import { AboutComponent } from './about/about.component';
 import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
+import {PhylogeneticsModule} from './phylogenetics/phylogenetics.module';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { ApiComponent } from './api/api.component';
     MatTreeModule,
     MatIconModule,
     MatButtonModule,
-    MatTableExporterModule
+    MatTableExporterModule,
+    PhylogeneticsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
