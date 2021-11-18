@@ -278,7 +278,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         var encodedJsonArray = encodeURIComponent(JSON.stringify(jsonArray))
         if (d.name != 'Eukaryota') {
             $.ajax({
-                url: 'https://portal.darwintreeoflife.org/api/root_organisms/root/filter/results?from=0&size=2000&taxonomyFilter=' + encodedJsonArray,
+                url: 'https://portal.aquaticsymbiosisgenomics.org/api/root_organisms/root/filter/results?from=0&size=2000&taxonomyFilter=' + encodedJsonArray,
                 type: 'post',
                 data: {},
                 success: function(response) {
@@ -297,7 +297,7 @@ treeJSON = d3.json(url, function(error, treeData) {
                         var externalReference = '';
                         var goatLink = 'https://goat.genomehubs.org/records?record_id=' + tax_id + '&result=taxon&taxonomy=ncbi#' + organism
                         var goatElement = '<a class="no-underline badge badge-pill goat-color" target="_blank" style="background-color: #4bbefd; color: #fff;" href="' + goatLink + '">GoaT info</a>'
-                        var organismElement = '<a class="no-underline" target="_blank" href="https://portal.darwintreeoflife.org/data/root/details/' + organism + '">' + organism + '</a>'
+                        var organismElement = '<a class="no-underline" target="_blank" href="https://portal.aquaticsymbiosisgenomics.org/data/root/details/' + organism + '">' + organism + '</a>'
 
                         if (record.tolid != null) {
                             const organismName = organism.split(' ').join('_');
