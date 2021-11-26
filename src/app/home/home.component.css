@@ -20,6 +20,11 @@ h1 {
     font-size: 50px;
 }
 
+#tree{
+    margin-top: 5px;
+    background: steelblue !important;
+}
+
 #data,
 #status {
     background: steelblue !important;
