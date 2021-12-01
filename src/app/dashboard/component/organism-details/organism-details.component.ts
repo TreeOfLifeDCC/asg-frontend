@@ -111,7 +111,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getBiosampleByOrganism() {
-    this.dashboardService.getRootOrganismByOrganism(this.bioSampleId)
+    this.dashboardService.getRootOrganismById(this.bioSampleId)
       .subscribe(
         data => {
           const unpackedData = [];
