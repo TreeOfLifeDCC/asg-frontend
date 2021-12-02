@@ -245,8 +245,15 @@ treeJSON = d3.json(url, function(error, treeData) {
 
     function click(d) {
         clickCount++;
+        if ((d.children && d.children.length == 1) || (d._children && d._children.length == 1)) {
+            singleClickTimer = setTimeout(function () {
+                clickCount = 0;
+                expand(d);
+                singleClick(d);
+            }, 400);
+        }
         if (clickCount === 1) {
-            singleClickTimer = setTimeout(function() {
+            singleClickTimer = setTimeout(function () {
                 clickCount = 0;
                 singleClick(d);
             }, 400);
@@ -255,6 +262,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             clickCount = 0;
             doubleClick(d);
         }
+
     }
 
     function singleClick(d) {
@@ -298,7 +306,6 @@ treeJSON = d3.json(url, function(error, treeData) {
                         var goatLink = 'https://goat.genomehubs.org/records?record_id=' + tax_id + '&result=taxon&taxonomy=ncbi#' + organism
                         var goatElement = '<a class="no-underline badge badge-pill goat-color" target="_blank" style="background-color: #4bbefd; color: #fff;" href="' + goatLink + '">GoaT info</a>'
                         var organismElement = '<a class="no-underline" target="_blank" href="https://portal.aquaticsymbiosisgenomics.org/data/root/details/' + organism + '">' + organism + '</a>'
-
                         if (record.tolid != null) {
                             const organismName = organism.split(' ').join('_');
                             const clade = codes[record.tolid.charAt(0)];
