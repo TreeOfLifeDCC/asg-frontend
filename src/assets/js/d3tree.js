@@ -584,7 +584,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             if (typeof (paths) !== "undefined") {
                 openPaths(paths);
             } else {
-                alert(input + " not found!");
+               // alert(input + " not found!");
             }
         }else{
             resetGraph();
