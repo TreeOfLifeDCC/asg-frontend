@@ -584,7 +584,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             if (typeof (paths) !== "undefined") {
                 openPaths(paths);
             } else {
-                alert(e.object.text + " not found!");
+               // alert(input + " not found!");
             }
         }else{
             resetGraph();
@@ -592,7 +592,10 @@ treeJSON = d3.json(url, function(error, treeData) {
 
     }
     function searchTree(obj,search,path){
-        if(obj.name === search){ //if search is found return, add the object to the path and return it
+        if((obj.name.toLowerCase() === search.toLowerCase()) ){ //if search is found return, add the object to the path and return it
+            path.push(obj);
+            return path;
+        }else if(obj.commonName.toLowerCase() === search.toLowerCase() ){ //if search is found return, add the object to the path and return it
             path.push(obj);
             return path;
         }
@@ -622,9 +625,11 @@ treeJSON = d3.json(url, function(error, treeData) {
                     paths[i].children = paths[i]._children;
                     paths[i]._children = null;
                 }
+
                 update(paths[i]);
             }
         }
+
     }
     function clearAll(d) {
         d.class = "";
