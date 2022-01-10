@@ -7,7 +7,9 @@ interface Scripts {
 
 export const ScriptStore: Scripts[] = [
   { name: 'd3min', src: '../../../assets/js/d3.v3.min.js' },
-  { name: 'd3tree', src: '../../../assets/js/d3tree.js' }
+  { name: 'd3tree', src: '../../../assets/js/d3tree.js' },
+  { name: 'select2min', src: '../../../assets/js/select2.min.js' },
+  {name:  'autocomplete', src: '../../../assets/js/autocomplete.js'}
 ];
 
 declare var document: any;
