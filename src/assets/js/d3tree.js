@@ -594,7 +594,6 @@ treeJSON = d3.json(url, function(error, treeData) {
 
             });
         });
-    console.log('data'+select2DataObject.length);
 
     $( "#search" ).autocomplete({
         minLength: 2,
@@ -744,7 +743,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         }
         clearAll(root);
         update(d);
-        $("#search").select2().select2("val", "");
+
     }
     function openPaths(paths){
         for(var i =0;i<paths.length;i++){
