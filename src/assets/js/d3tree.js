@@ -604,7 +604,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         //     return false;
         // },
         response: function (event, ui) {
-            $("#count").text('Founded ' + ui.content.length + ' results');
+            $("#count").text(  ui.content.length + ' records found');
         },
         select: function( event, ui ) {
             $( "#search" ).val( ui.item.label );
