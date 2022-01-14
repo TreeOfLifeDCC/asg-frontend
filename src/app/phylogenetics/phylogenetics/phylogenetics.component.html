@@ -1,3 +1,5 @@
+<link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+      rel = "stylesheet">
 <div id="overlay"></div>
 
 <div id="tree-container" style="text-align: center;" class="svg-container">
@@ -5,16 +7,34 @@
         <span id='zoom_in' type="button" class="material-icons zoom">zoom_in</span>
         <span id='zoom_out' type="button" class="material-icons zoom">zoom_out</span>
         <span id='reset' type="button" class="material-icons">restart_alt</span>
-        <div class="custom-control custom-switch zoom switch">
+    </div>
+    <div class="col-md-12 " id="messages" style=" font-weight: lighter; background: none; font-size: initial;">
+        <div id='doc' class='row '>
+            <div class="col-md-2"></div>
+            <div class="col-md-3">Single click to expand or collapse a node</div>
+            <div  class="col-md-3">Double click to show Organisms table</div>
+            <div class="col-xl-3">Graph can be zoomed in & out and is draggable</div>
+        </div>
+    </div>
+        <div class="custom-control custom-switch zoom switch  col-md-2 ">
             <input type="checkbox" class="custom-control-input" id="commonName">
             <label class="custom-control-label" for="commonName">Common name </label>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+             &nbsp; &nbsp;
+</div>
+    <div class="col-md-12 zoom" style=" font-weight: lighter; background: none; font-size: initial;">
+
+            <div class="col-md-3 zoom">
             <mat-form-field appearance="fill">
                 <mat-label>Search</mat-label>
-                <input #searchInput matInput id="searchBox" placeholder="Eukaryota" #input>
+                <input #searchInput matInput id="search" >
             </mat-form-field>
+
+        </div>
+        <div id="count"  class="col-md-10 zoom" style=" top: 00px; font-weight: bold; background: none; font-size: initial;">
+
         </div>
     </div>
     <div class="modal fade" id="organismsModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -45,4 +65,5 @@
             </div>
         </div>
     </div>
+
 </div>

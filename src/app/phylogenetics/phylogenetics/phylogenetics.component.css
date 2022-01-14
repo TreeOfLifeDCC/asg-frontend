@@ -78,3 +78,9 @@
     min-width: 0;
     width: 900px;
 }
+#messages {
+    display: block !important;
+    position: absolute;
+
+}
+

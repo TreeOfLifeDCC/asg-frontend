@@ -49,6 +49,8 @@ treeJSON = d3.json(url, function(error, treeData) {
         z: 'archea'
     };
 
+
+
     var tree = d3.layout.tree()
         .size([viewerHeight, viewerWidth]);
 
@@ -238,6 +240,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             d.children = d._children;
             d._children = null;
         }
+        // $("#search").select2().select2("val", "");
         return d;
     }
 
@@ -456,7 +459,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         div.transition()
             .duration(200)
             .style("opacity", .9);
-        div.html("<div id='doc' class='row' style='padding-top: 25px;'><div class='col-md-2'></div><div class='col-md-3'>Single click to expand or collapse a node</div><div class='col-md-3'>Double click to show Organisms table</div><div class='col-md-3'>Graph can be zoomed in & out and is draggable</div></div>")
+        // div.html("<div id='doc' class='row' style='padding-top: 25px;'><div class='col-md-2'></div><div class='col-md-3'>Single click to expand or collapse a node</div><div class='col-md-3'>Double click to show Organisms table</div><div class='col-md-3'>Graph can be zoomed in & out and is draggable</div></div>")
             // Transition nodes to their new position.
         var nodeUpdate = node.transition()
             .duration(duration)
@@ -573,26 +576,79 @@ treeJSON = d3.json(url, function(error, treeData) {
 
     $('#reset').on('click', resetGraph)
     $('#commonName').on('click', toggleCommonName)
-    $('#searchBox').on('keyup', searchText)
+    let select2Data = [];
+    select2DataCollectName(root);
+    let select2DataObject = [];
+    select2Data.sort(function(a, b) {
+        if (a > b) return 1; // sort
+        if (a < b) return -1;
+        return 0;
+    })
+        .filter(function(item, i, ar) {
+            return ar.indexOf(item) === i;
+        }) // remove duplicate items
+        .filter(function(item, i, ar) {
+            select2DataObject.push({
+                "label": item,
+                "value": i+1
 
-    function searchText() {
-        // var svgGroup = baseSvg.append("g");
-        root = treeData;
-        let input= d3.select("#searchBox").node().value;
-        if(input) {
-            var paths = searchTree(root, input, []);
-            if (typeof (paths) !== "undefined") {
-                openPaths(paths);
-            } else {
-               // alert(input + " not found!");
+            });
+        });
+
+    $( "#search" ).autocomplete({
+        minLength: 2,
+        autoFocus:true,
+        source: select2DataObject,
+
+        response: function (event, ui) {
+            if(ui.content.length===1 ){
+                $("#count").text(  ui.content.length + ' record found');
+            }else if(ui.content.length==0){
+                $("#count").text(  ui.content.length + ' record found');
+            }else{
+                $("#count").text(  ui.content.length + ' records found');
             }
-        }else{
-            resetGraph();
-        }
 
+        },
+        select: function( event, ui ) {
+            $( "#search" ).val( ui.item.label );
+                resetGraph();
+                toggle(root);
+
+                var paths = searchTree(root,ui.item.label,[]);
+                if(typeof(paths) !== "undefined"){
+                    openPaths(paths);
+                    $("#count").text('');
+                }
+                else{
+                    alert(ui.item.label+" not found!");
+                }
+                root.children.forEach(collapseAllNotFound);
+                update(root);
+            return false;
+        }
+    });
+
+    function collapseAllNotFound(d) {
+        if (d.children) {
+            if (d.class !== "found") {
+                d._children = d.children;
+                d._children.forEach(collapseAllNotFound);
+                d.children = null;
+            } else
+                d.children.forEach(collapseAllNotFound);
+        }
     }
+    function select2DataCollectName(d) {
+        if (d.children)
+            d.children.forEach(select2DataCollectName);
+        else if (d._children)
+            d._children.forEach(select2DataCollectName);
+        select2Data.push(d.name);
+    }
+
     function searchTree(obj,search,path){
-        if((obj.name.toLowerCase() === search.toLowerCase()) ){ //if search is found return, add the object to the path and return it
+        if((obj.name.toLowerCase() === search.toLowerCase()) ||  obj.name.toLowerCase().includes(search.toLowerCase()) ){ //if search is found return, add the object to the path and return it
             path.push(obj);
             return path;
         }else if(obj.commonName.toLowerCase() === search.toLowerCase() ){ //if search is found return, add the object to the path and return it
@@ -613,10 +669,23 @@ treeJSON = d3.json(url, function(error, treeData) {
             }
         }
         else{//not the right object, return false so it will continue to iterate in the loop
+
             return false;
         }
     }
 
+    function toggle(d) {
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        clearAll(root);
+        update(d);
+
+    }
     function openPaths(paths){
         for(var i =0;i<paths.length;i++){
             if(paths[i].id !== "1"){//i.e. not root
@@ -722,4 +791,5 @@ treeJSON = d3.json(url, function(error, treeData) {
 
     d3.select('#zoom_in').on('click', zoomClick);
     d3.select('#zoom_out').on('click', zoomClick);
+
 });
