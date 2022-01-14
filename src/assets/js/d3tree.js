@@ -599,10 +599,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         minLength: 2,
         autoFocus:true,
         source: select2DataObject,
-        // focus: function( event, ui ) {
-        //     $( "#project" ).val( ui.item.label );
-        //     return false;
-        // },
+
         response: function (event, ui) {
             if(ui.content.length===1 ){
                 $("#count").text(  ui.content.length + ' record found');
@@ -617,8 +614,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             $( "#search" ).val( ui.item.label );
                 resetGraph();
                 toggle(root);
-                // $('#searchName').append(e.params.args.data.text).trigger('change');
-                // $('#unit').trigger('change');
+
                 var paths = searchTree(root,ui.item.label,[]);
                 if(typeof(paths) !== "undefined"){
                     openPaths(paths);
@@ -632,34 +628,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             return false;
         }
     });
-    // function extract_select2_data(node,leaves,index){
-    //     if (node.children){
-    //         for(var i = 0;i<node.children.length;i++){
-    //             index = extract_select2_data(node.children[i],leaves,index)[0];
-    //         }
-    //     }
-    //     else {
-    //         leaves.push({id:++index,text:node.name});
-    //     }
-    //     return [index,leaves];
-    // }
 
-    // function searchText() {
-    //     // var svgGroup = baseSvg.append("g");
-    //     root = treeData;
-    //     let input= d3.select("#searchBox").node().value;
-    //     if(input) {
-    //         var paths = searchTree(root, input, []);
-    //         if (typeof (paths) !== "undefined") {
-    //             openPaths(paths);
-    //         } else {
-    //             resetGraph();
-    //         }
-    //     }else{
-    //         resetGraph();
-    //     }
-    //
-    // }
     function collapseAllNotFound(d) {
         if (d.children) {
             if (d.class !== "found") {
@@ -677,26 +646,6 @@ treeJSON = d3.json(url, function(error, treeData) {
             d._children.forEach(select2DataCollectName);
         select2Data.push(d.name);
     }
-    // function searchTree(d) {
-    //     if (d.children)
-    //         d.children.forEach(searchTree);
-    //     else if (d._children)
-    //         d._children.forEach(searchTree);
-    //     var searchFieldValue = eval(searchField);
-    //     if (searchFieldValue && (searchFieldValue.toLowerCase() === searchText.toLowerCase())) {
-    //         // Walk parent chain
-    //         var ancestors = [];
-    //         var parent = d;
-    //         while (typeof(parent) !== "undefined") {
-    //             ancestors.push(parent);
-    //             //console.log(parent);
-    //             parent.class = "found";
-    //             parent = parent.parent;
-    //         }
-    //         //console.log(ancestors);
-    //     }
-    // }
-
 
     function searchTree(obj,search,path){
         if((obj.name.toLowerCase() === search.toLowerCase()) ||  obj.name.toLowerCase().includes(search.toLowerCase()) ){ //if search is found return, add the object to the path and return it
@@ -724,22 +673,7 @@ treeJSON = d3.json(url, function(error, treeData) {
             return false;
         }
     }
-    // $("#search").on("select2:selecting", function(e) {
-    //     resetGraph();
-    //     toggle(root);
-    //     // $('#searchName').append(e.params.args.data.text).trigger('change');
-    //     // $('#unit').trigger('change');
-    //     var paths = searchTree(root,e.params.args.data.text,[]);
-    //     if(typeof(paths) !== "undefined"){
-    //         openPaths(paths);
-    //
-    //     }
-    //     else{
-    //         alert(e.params.data.text+" not found!");
-    //     }
-    //     root.children.forEach(collapseAllNotFound);
-    //     update(root);
-    // })
+
     function toggle(d) {
         if (d.children) {
             d._children = d.children;
