@@ -792,20 +792,4 @@ treeJSON = d3.json(url, function(error, treeData) {
     d3.select('#zoom_in').on('click', zoomClick);
     d3.select('#zoom_out').on('click', zoomClick);
 
-    //Call back for when user selects an option
-    function onSelect(d) {
-        alert(d.State);
-    }
-
-//Setup and render the autocomplete
-    function start() {
-        var mc = autocomplete(document.getElementById('test'))
-            .keys(select2DataObject)
-            .dataField("State")
-            .placeHolder("Search States - Start typing here")
-            .width(960)
-            .height(500)
-            .onSelected(onSelect)
-            .render();
-    }
 });
