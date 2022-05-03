@@ -21,6 +21,6 @@ steps:
       - '--platform'
       - $_PLATFORM
     entrypoint: gcloud
-timeout: 1200s
+timeout: 5000s
 images:
   - '$_GCR_HOSTNAME/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA'
