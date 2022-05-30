@@ -990,7 +990,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   generateTolidLink(data) {
     const organismName = data.organism.split(' ').join('_');
     const clade = this.codes[data.tolid.charAt(0)];
-    return `https://tolqc.cog.sanger.ac.uk/darwin/${clade}/${organismName}`;
+    return `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
   }
 
   parseFilterAggregation(data: any) {

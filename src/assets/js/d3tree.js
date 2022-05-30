@@ -319,7 +319,7 @@ treeJSON = d3.json(url, function(error, treeData) {
                         if (record.tolid != null) {
                             const organismName = organism.split(' ').join('_');
                             const clade = codes[record.tolid.charAt(0)];
-                            const link = `https://tolqc.cog.sanger.ac.uk/darwin/${clade}/${organismName}`;
+                            const link = `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
                             tolid = '<a class="no-underline badge badge-pill" target="_blank" style="margin-left: 3px;background-color: #5cc45e; color: #fff;" href="' + link + '">ToL QC</a>'
                             externalReference = '<span>' + goatElement + tolid + '</span>'
                         } else {
