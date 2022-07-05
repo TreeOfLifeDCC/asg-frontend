@@ -18,7 +18,7 @@ export class ApiComponent implements OnInit {
         SwaggerUIBundle.presets.apis,
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
-      url: 'https://portal.aquaticsymbiosisgenomics.org/api/v2/api-docs',
+      url: 'https://asg-portal-backend-awhjvr22zq-ew.a.run.app/v2/api-docs',
       operationsSorter: 'alpha'
     });
   }

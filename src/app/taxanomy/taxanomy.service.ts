@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class TaxanomyService {
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  private API_BASE_URL = 'https://asg-portal-backend-awhjvr22zq-ew.a.run.app';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
   // private API_BASE_URL = 'http://localhost:8080';
 

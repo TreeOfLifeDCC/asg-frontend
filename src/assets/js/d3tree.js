@@ -1,4 +1,4 @@
-var url = "https://portal.aquaticsymbiosisgenomics.org/api/taxonomy/tree";
+var url = "https://asg-portal-backend-awhjvr22zq-ew.a.run.app/taxonomy/tree";
 treeJSON = d3.json(url, function(error, treeData) {
 
     // Calculate total nodes, max label length
@@ -296,7 +296,7 @@ treeJSON = d3.json(url, function(error, treeData) {
         var encodedJsonArray = encodeURIComponent(JSON.stringify(jsonArray))
         if (d.name != 'Eukaryota') {
             $.ajax({
-                url: 'https://portal.aquaticsymbiosisgenomics.org/api/root_organisms/root/filter/results?from=0&size=2000&taxonomyFilter=' + encodedJsonArray,
+                url: 'https://asg-portal-backend-awhjvr22zq-ew.a.run.app/root_organisms/root/filter/results?from=0&size=2000&taxonomyFilter=' + encodedJsonArray,
                 type: 'post',
                 data: {},
                 success: function(response) {
