@@ -22,7 +22,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   specBioSampleTotalCount;
   specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart', 'trackingSystem'];
 
-
+  INSDC_ID = null;
   isSexFilterCollapsed = true;
   isTrackCollapsed = true;
   isOrganismPartCollapsed = true;
@@ -131,6 +131,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             if (data.experiment != null) {
               this.dataSourceFiles = new MatTableDataSource<Sample>(data.experiment);
               this.dataSourceFilesCount = data.experiment?.length;
+            }
+            if (data.experiment?.length > 0) {
+              this.INSDC_ID = data.experiment[0].study_accession;
             }
             else {
               this.dataSourceFiles = new MatTableDataSource<Sample>();
@@ -428,5 +431,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
       this.router.navigate(["/data/root/details/" + accession]));
   }
+
+  downloadRawFiles(): void {
+    this.dashboardService.downloadFastaq(this.INSDC_ID);
+  }
+
 
 }

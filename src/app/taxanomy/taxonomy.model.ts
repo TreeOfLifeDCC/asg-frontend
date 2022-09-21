@@ -10,11 +10,13 @@ export interface TaxonomyChildDTO {
     key: string;
     doc_count: string;
     commonName: CommonNameDTO;
+    taxId: CommonNameDTO;
 }
 
 export interface CommonNameDTO {
     buckets: TaxonomyChildDTO[];
 }
+
 export interface Taxonomy {
     cellularorganism: TaxonomyDTO[];
     superkingdom: TaxonomyDTO[]; 

@@ -1,0 +1,19 @@
+
+button {
+  margin-left: 5px;
+}
+
+.card-header,
+.btn-success,
+.badge-success {
+  background-color: lightblue;
+}
+
+.btn-primary {
+  background-color: midnightblue;
+}
+
+
+i {
+  margin-left: 5px;
+}

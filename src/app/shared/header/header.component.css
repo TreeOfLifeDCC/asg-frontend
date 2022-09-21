@@ -1,9 +1,11 @@
 .page-header {
     color: midnightblue !important;
+
 }
 
 .nav-link {
     color: midnightblue !important;
+    padding-left: 0.1rem;
 }
 
 #navbarCollapse {
@@ -11,5 +13,10 @@
 }
 
 .navbar {
-    padding: 0rem 1rem !important
+    padding: 0rem 1rem !important;
+    padding-left: 0.1rem;
+}
+.navbar-brand {
+    margin-right: 0rem;
+
 }

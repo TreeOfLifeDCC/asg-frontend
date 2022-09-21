@@ -19,7 +19,22 @@ import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
 import {PhylogeneticsModule} from './phylogenetics/phylogenetics.module';
-
+import {ConfirmationDialogComponent} from './confirmation-dialog-component/confirmation-dialog.component';
+import {BytesPipe} from './shared/bytes-pipe';
+import {MatDialogModule} from '@angular/material/dialog';
+import {GisComponent} from './gis/gis.component';
+import {GisService} from './gis/gis.service';
+import {FilterService} from "./services/filter-service";
+import {FilterComponent} from './shared/filter/filter.component';
+import {ActiveFilterComponent} from './shared/active-filter/active-filter.component';
+import {PhylogenyFilterComponent} from './shared/phylogeny-filter/phylogeny-filter.component';
+import {NgxSpinnerModule} from 'ngx-spinner';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatInputModule} from '@angular/material/input';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -28,7 +43,13 @@ import {PhylogeneticsModule} from './phylogenetics/phylogenetics.module';
     AboutComponent,
     HelpComponent,
     HomeComponent,
-    ApiComponent
+    ApiComponent,
+    ConfirmationDialogComponent,
+    BytesPipe,
+    GisComponent,
+    FilterComponent,
+    ActiveFilterComponent,
+    PhylogenyFilterComponent
   ],
   imports: [
     BrowserModule,
@@ -42,9 +63,17 @@ import {PhylogeneticsModule} from './phylogenetics/phylogenetics.module';
     MatIconModule,
     MatButtonModule,
     MatTableExporterModule,
-    PhylogeneticsModule
+    PhylogeneticsModule,
+    MatDialogModule,
+    NgxSpinnerModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatSlideToggleModule,
+    MatInputModule,
+    MatRadioModule,
+    MatTooltipModule
   ],
-  providers: [],
+  providers: [BytesPipe, GisService, FilterService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
