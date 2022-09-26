@@ -35,6 +35,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {BulkDownloadsComponent} from './bulk-downloads/bulk-downloads.component';
+import {DownloadConfirmationDialogComponent} from './download-confirmation-dialog-component/download-confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     GisComponent,
     FilterComponent,
     ActiveFilterComponent,
-    PhylogenyFilterComponent
+    PhylogenyFilterComponent,
+    DownloadConfirmationDialogComponent,
+    BulkDownloadsComponent
   ],
   imports: [
     BrowserModule,

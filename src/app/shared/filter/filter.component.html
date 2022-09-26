@@ -1,9 +1,10 @@
 <div class="card bg-lite mb-3 filter-top">
     <h3 class="card-header filter-heading">
         {{title}}
+        <span  *ngIf="(filterService.experimentTypeFilters?.length > filterSize )" >
         <i class="material-icons float-right"  *ngIf="((filterService.experimentTypeFilters?.length > filterSize || filterService.filterArray?.length >filterSize) && isCollapsed)" (click)="toggleCollapse()">add</i>
         <i class="material-icons float-right"   *ngIf="( (filterService.experimentTypeFilters?.length > filterSize || filterService.filterArray?.length >filterSize)  && !isCollapsed)" (click)="toggleCollapse()">remove</i>
-
+        </span>
     </h3>
     <ul  class="list-group" *ngIf="title === 'Experiment Type'">
         <ng-container *ngFor="let filter of filterService.experimentTypeFilters; let i = index">

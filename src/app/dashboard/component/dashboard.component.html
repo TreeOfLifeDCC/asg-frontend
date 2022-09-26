@@ -140,6 +140,8 @@
 
 
                 <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-metadata'})">Download metadata</button>
+                <button *ngIf="activeFilters.length > 0 || selectedFilterValue != '' && (this.AnnotationFilters.length > 0 || this.AnnotationCompleteFilters.length > 0 || this.AssembliesFilters.length > 0 || this.RawDataFilters.length > 0)" type="button" style="float: right;"
+                        class="btn btn-primary" mat-raised-button (click)="openDialog()">Download</button>
                 <h1 *ngIf="activeFilters.length > 0 || selectedFilterValue != ''">Filters:
                     <span *ngIf="(phylSelectedRank != '' && activeFilters.length > 1) || (phylSelectedRank == '' && activeFilters.length > 0)">
                         <span *ngFor="let filter of activeFilters">

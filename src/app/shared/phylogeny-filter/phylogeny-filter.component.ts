@@ -124,6 +124,7 @@ export class PhylogenyFilterComponent implements OnInit {
     // console.log(this.filterService.selectedTaxnomyFilter);
     // this.filterService.isFilterSelected = true;
     // this.filterService.selectedTaxonomy = this.filterService.currentTaxonomyTree[treeLength - 1];
+    // this.currentTaxaOnExpand='';
     this.filterService.urlAppendFilterArray.forEach(item => {
       setTimeout(() => {
         const inactiveClassName = '.' + item.name + '-inactive';

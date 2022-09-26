@@ -462,5 +462,6 @@ export class GisComponent implements AfterViewInit , OnDestroy {
 
   ngOnDestroy() {
     this.resetFilter();
+
   }
 }

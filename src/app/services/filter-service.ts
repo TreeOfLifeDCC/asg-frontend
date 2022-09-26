@@ -34,7 +34,7 @@ export class FilterService {
     isFilterSelected = false;
     isDoubleClick: Boolean;
     selectedFilterValue;
-    currentTaxaOnExpand;
+
     bioSampleTotalCount = 0;
     BiosamplesFilters = [];
     RawDataFilters = [];
