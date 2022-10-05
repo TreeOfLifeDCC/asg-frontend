@@ -13,9 +13,9 @@ import {tap} from 'rxjs/operators';
 })
 export class DashboardService {
 
-  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  private API_BASE_URL = 'http://localhost:8080';
+  // private API_BASE_URL = 'http://localhost:8080';
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
@@ -135,4 +135,20 @@ export class DashboardService {
           });
         })).subscribe();
   }
+  public download(filter: any,sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
+    let requestParams = `?from=${from}&size=${size}`
+    if (sortColumn != undefined) {
+      requestParams = requestParams + `&z=${sortColumn}&sortOrder=${sortOrder}`
+    }
+    if(taxonomyFilter != undefined) {
+      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
+      requestParams = requestParams + `&taxonomyFilter=${taxa}`
+    }
+    if(searchText) {
+      requestParams = requestParams + `&searchText=${searchText}`
+    }
+    let requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
+    return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});
+  }
+
 }

@@ -23,6 +23,8 @@
                 <hr>
                 <h1 class="col-md-12 page-header">Annotation</h1>
                 <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'annotation-metadata'})">Download metadata</button>
+                <button type="button" style="float: right;" class="btn btn-success" mat-raised-button (click)="downloadAnnotation()">Download all Annotations</button>
+
                 <mat-form-field>
                     <mat-label>Search</mat-label>
                     <input matInput (keyup)="annotationSearch($event)" #input>
@@ -91,6 +93,8 @@
                 <hr>
                 <h1 class="col-md-12 page-header">Related assemblies</h1>
                 <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'assemblies-metadata'})">Download metadata</button>
+                <button type="button" style="float: right;" class="btn btn-success" mat-raised-button (click)="downloadAssemblies()">Download all Assemblies</button>
+
                 <mat-form-field>
                     <mat-label>Search</mat-label>
                     <input matInput (keyup)="assembliesSearch($event)" placeholder="Ex. ILLUMINA" #input>
@@ -611,6 +615,16 @@
                             <mat-paginator style="width: 100%;" [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons [length]="specBioSampleTotalCount"></mat-paginator>
                         </div>
                     </div>
+                    <mat-tab-group dynamicHeight #tabgroup>
+                        <mat-tab label="Geo Location" *ngIf="geoLocation">
+                            <!-- Geo Section -->
+                            <hr>
+                            <div class="col-md-12" *ngIf="geoLocation">
+                                <app-mapcluster [orgGeoList]="orgGeoList" [specGeoList]="specGeoList"></app-mapcluster>
+                            </div>
+                            <hr>
+                        </mat-tab>
+                    </mat-tab-group>
                 </div>
             </div>
 

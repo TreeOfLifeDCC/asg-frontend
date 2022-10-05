@@ -6,6 +6,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { DashboardService } from '../../services/dashboard.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import {MatTabGroup} from '@angular/material/tabs';
 
 @Component({
   selector: 'dashboard-organism-details',
@@ -49,20 +50,23 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     organismPart: "",
     trackingSystem: ""
   };
-
+  geoLocation: Boolean;
+  orgGeoList: any
+  specGeoList: any
   dataSourceFiles;
   dataSourceFilesCount;
   dataSourceAssemblies;
   dataSourceAssembliesCount;
   dataSourceAnnotation;
   dataSourceAnnotationCount;
-
+  assembliesurls =[]
+  annotationsurls =[]
   experimentColumnsDefination = [{column: "study_accession", selected: true},{column: "secondary_study_accession", selected: false},{column: "sample_accession", selected: true},{column: "secondary_sample_accession", selected: false},{column: "experiment_accession", selected: true},{column: "run_accession", selected: true},{column: "submission_accession", selected: false},{column: "tax_id", selected: true},{column: "scientific_name", selected: true},{column: "instrument_platform", selected: false},{column: "instrument_model", selected: false},{column: "library_name", selected: false},{column: "nominal_length", selected: false},{column: "library_layout", selected: false},{column: "library_strategy", selected: false},{column: "library_source", selected: false},{column: "library_selection", selected: false},{column: "read_count", selected: false},{column: "base_count", selected: false},{column: "center_name", selected: false},{column: "first_public", selected: false},{column: "last_updated", selected: false},{column: "experiment_title", selected: false},{column: "study_title", selected: false},{column: "study_alias", selected: false},{column: "experiment_alias", selected: false},{column: "run_alias", selected: false},{column: "fastq_bytes", selected: false},{column: "fastq_md5", selected: false},{column: "fastq_ftp", selected: true},{column: "fastq_aspera", selected: false},{column: "fastq_galaxy", selected: false},{column: "submitted_bytes", selected: false},{column: "submitted_md5", selected: false},{column: "submitted_ftp", selected: true},{column: "submitted_aspera", selected: false},{column: "submitted_galaxy", selected: false},{column: "submitted_format", selected: false},{column: "sra_bytes", selected: false},{column: "sra_md5", selected: false},{column: "sra_ftp", selected: true},{column: "sra_aspera", selected: false},{column: "sra_galaxy", selected: false},{column: "cram_index_ftp", selected: false},{column: "cram_index_aspera", selected: false},{column: "cram_index_galaxy", selected: false},{column: "sample_alias", selected: false},{column: "broker_name", selected: false},{column: "sample_title", selected: false},{column: "nominal_sdev", selected: false},{column: "first_created", selected: false},{column: "library_construction_protocol", selected: true}]
-
+  private ENA_PORTAL_API_BASE_URL_FASTA = "https://www.ebi.ac.uk/ena/browser/api/fasta/"
   displayedColumnsFiles = [];
   displayedColumnsAssemblies = ['accession', 'assembly_name', 'description', 'version'];
   displayedColumnsAnnotation = ['accession', 'annotation', 'proteins', 'transcripts', 'softmasked_genome', 'other_data', 'view_in_browser'];
-  
+  @ViewChild("tabgroup", { static: false }) tabgroup: MatTabGroup;
   @ViewChild('experimentsTable') exPaginator: MatPaginator;
   @ViewChild('assembliesTable') asPaginator: MatPaginator;
   @ViewChild('annotationTable') anPaginator: MatPaginator;
@@ -72,6 +76,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.geoLocation = false;
     this.activeFilters = [];
     this.filterSize = 3;
     this.itemLimitSexFilter = this.filterSize;
@@ -116,6 +121,19 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         data => {
           const unpackedData = [];
           this.bioSampleObj = data;
+          this.orgGeoList = data.orgGeoList;
+          this.specGeoList = data.specGeoList;
+          if (this.orgGeoList!= undefined && this.orgGeoList.length != 0) {
+            this.geoLocation = true;
+            setTimeout(() => {
+              const tabGroup = this.tabgroup;
+              const selected = this.tabgroup.selectedIndex
+              tabGroup.selectedIndex = 4
+              setTimeout(() => {
+                tabGroup.selectedIndex = selected;
+              }, 1);
+            }, 400);
+          }
           for (const item of data.records) {
             unpackedData.push(this.unpackData(item));
           }
@@ -142,6 +160,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             if (data.assemblies != null) {
               this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
               this.dataSourceAssembliesCount = data.assemblies?.length;
+              for (let i = 0; i < data.assemblies.length ; i++) {
+                this.assembliesurls.push(this.ENA_PORTAL_API_BASE_URL_FASTA+data.assemblies[i].accession+"?download=true&gzip=true");
+              }
             }
             else {
               this.dataSourceAssemblies = new MatTableDataSource<Sample>();
@@ -150,6 +171,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             if (data.annotation != null) {
               this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
               this.dataSourceAnnotationCount = data.annotation?.length;
+              for (let i = 0; i < data.annotation.length ; i++) {
+                this.annotationsurls.push(this.ENA_PORTAL_API_BASE_URL_FASTA+data.annotation[i].accession+"?download=true&gzip=true");
+              }
             }
             else {
               this.dataSourceAnnotation = new MatTableDataSource<Sample>();
@@ -436,5 +460,43 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.dashboardService.downloadFastaq(this.INSDC_ID);
   }
 
+  downloadAnnotation(): void {
+    this.download_files(this.annotationsurls);
 
+  }
+
+  downloadAssemblies(): void {
+    this.download_files(this.assembliesurls);
+  }
+
+  download_files(files) {
+    function download_next(i) {
+      if (i >= files.length) {
+        return;
+      }
+      var a = document.createElement('a');
+      a.href = files[i];
+      a.target = '_parent';
+      // Use a.download if available, it prevents plugins from opening.
+      if ('download' in a) {
+        a.download = files[i].filename;
+      }
+      // Add a to the doc for click to work.
+      (document.body || document.documentElement).appendChild(a);
+      if (a.click) {
+        a.click(); // The click method is supported by most browsers.
+      } else {
+        $(a).click(); // Backup using jquery
+      }
+      // Delete the temporary link.
+      a.parentNode.removeChild(a);
+      // Download the next file with a small timeout. The timeout is necessary
+      // for IE, which will otherwise only download the first file.
+      setTimeout(function() {
+        download_next(i + 1);
+      }, 500);
+    }
+    // Initiate the first download.
+    download_next(0);
+  }
 }

@@ -14,7 +14,7 @@ export class DownloadConfirmationDialogComponent implements  OnDestroy {
 
 
 
-  private DOWNLOAD_URL = 'https://portal.darwintreeoflife.org/files/';
+  private DOWNLOAD_URL = 'https://portal.aquaticsymbiosisgenomics.org/files/';
   close(): void {
     this.dialogRef.close();
   }

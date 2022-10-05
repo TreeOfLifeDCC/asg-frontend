@@ -1,16 +1,33 @@
-.jumbotron {
-    background: url("../../assets/dtol banner thin.jpg") center center no-repeat;
-    background-size: cover;
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
+
+button {
+    margin-left: 5px;
 }
+
+.card-header,
+.btn-success,
+.badge-success {
+    background-color: lightblue;
+}
+
+.btn-primary {
+    background-color: midnightblue;
+}
+
+.active {
+    background-color: skyblue;
+}
+
 .page-header {
-    color: #4BBEFD;
+    color: midnightblue;
 }
+
 code {
     font-family: Consolas,"courier new";
     color: black;
     background-color: #f1f1f1;
     padding: 2px;
     font-size: 105%;
+}
+#dynamic {
+    background-image: linear-gradient(white, lightblue, lightskyblue);
 }

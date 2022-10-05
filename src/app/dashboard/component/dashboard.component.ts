@@ -627,7 +627,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.AssembliesFilters = this.filtersMap.assemblies.filter(i => i !== "");
         this.AnnotationCompleteFilters = this.filtersMap.annotation_complete.filter(i => i !== "");
         this.AnnotationFilters = this.filtersMap.annotation.filter(i => i !== "");
-        this.GenomeFilters = this.filtersMap.genome.filter(i => i !== '');
+        // this.GenomeFilters = this.filtersMap.genome.filter(i => i !== '');
       },
       err => console.log(err)
     );
