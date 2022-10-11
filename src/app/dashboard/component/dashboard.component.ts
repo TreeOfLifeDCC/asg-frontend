@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   phylSelectedRank = '';
   BiosamplesFilters = [];
   RawDataFilters = [];
-  MappedReadsFilters = [];
+
   AssembliesFilters = [];
   AnnotationFilters = [];
   AnnotationCompleteFilters = [];
@@ -107,7 +107,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   itemLimitBiosampleFilter: number;
   itemLimitEnaFilter: number;
 
-  dataColumnsDefination = [{name: "Organism", column: "organism", selected: true},{name: "Common Name", column: "commonName", selected: true},{name: "Current Status", column: "currentStatus", selected: true},{name: "External references", column: "goatInfo", selected: true},{name: "Submitted to Biosamples", column: "biosamples", selected: false},{name: "Raw data submitted to ENA", column: "raw_data", selected: false},{name: "Mapped reads submitted to ENA", column: "mapped_reads", selected: false},{name: "Assemblies submitted to ENA", column: "assemblies", selected: false},{name: "Annotation complete", column: "annotation_complete", selected: false}, {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
+  dataColumnsDefination = [{name: "Organism", column: "organism", selected: true},{name: "Common Name", column: "commonName", selected: true},{name: "Current Status", column: "currentStatus", selected: true},{name: "External references", column: "goatInfo", selected: true},{name: "Submitted to Biosamples", column: "biosamples", selected: false},{name: "Raw data submitted to ENA", column: "raw_data", selected: false},{name: "Assemblies submitted to ENA", column: "assemblies", selected: false},{name: "Annotation complete", column: "annotation_complete", selected: false}, {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
   displayedColumns = [];
   constructor(private titleService: Title, private dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService, private dialog: MatDialog) { }
@@ -345,8 +345,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       const ena_filters = filters[0].split(' - ');
       if (ena_filters[0] === 'Raw Data') {
         return data.raw_data === ena_filters[1];
-      } else if (ena_filters[0] === 'Mapped Reads') {
-        return data.mapped_reads === ena_filters[1];
       } else if (ena_filters[0] === 'Assemblies') {
         return data.assemblies === ena_filters[1];
       } else if (ena_filters[0] === 'Annotation complete') {
@@ -430,10 +428,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     } else if (key.toLowerCase() == "raw-data") {
       jsonObj = { "name": "raw_data", "value": value };
       this.urlAppendFilterArray.push(jsonObj);
-    } else if (key.toLowerCase() == "mapped-reads") {
-      jsonObj = { "name": "mapped_reads", "value": value };
-      this.urlAppendFilterArray.push(jsonObj);
-    } else if (key.toLowerCase() == "assemblies") {
+    }  else if (key.toLowerCase() == "assemblies") {
       jsonObj = { "name": "assemblies", "value": value };
       this.urlAppendFilterArray.push(jsonObj);
     } else if (key.toLowerCase() == "annotation-complete") {
@@ -623,7 +618,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.filtersMap = data;
         this.BiosamplesFilters = this.filtersMap.biosamples.filter(i => i !== "");
         this.RawDataFilters = this.filtersMap.raw_data.filter(i => i !== "");
-        this.MappedReadsFilters = this.filtersMap.mapped_reads.filter(i => i !== "");
         this.AssembliesFilters = this.filtersMap.assemblies.filter(i => i !== "");
         this.AnnotationCompleteFilters = this.filtersMap.annotation_complete.filter(i => i !== "");
         this.AnnotationFilters = this.filtersMap.annotation.filter(i => i !== "");
@@ -1108,13 +1102,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         return obj;
       }
     });
-    this.MappedReadsFilters = this.filtersMap.aggregations.mapped_reads.buckets.filter(i => {
-      if (i !== "" && i.key.toLowerCase() === "done") {
-        let obj = i;
-        obj.key = "Mapped reads - " + obj.key;
-        return obj;
-      }
-    });
+
     this.AssembliesFilters = this.filtersMap.aggregations.assemblies.buckets.filter(i => {
       if (i !== "" && i.key.toLowerCase() === "done") {
         let obj = i;
