@@ -232,10 +232,14 @@ export class GisComponent implements AfterViewInit , OnDestroy {
             if (tempArr[j].lat == '67.34.07' && tempArr[j].lng == '68.07.30') {
               llat = '67.3407';
               llng = '68.0730';
+            }else if(tempArr[j].lat == '23.4423s' && tempArr[j].lng == '151.9148e') {
+              llat = '23.4423';
+              llng = '151.9148';
             } else {
               llat = tempArr[j].lat;
               llng = tempArr[j].lng;
             }
+
             const latlng = L.latLng(llat, llng);
 
             let alreadyExists = false;
@@ -284,6 +288,9 @@ export class GisComponent implements AfterViewInit , OnDestroy {
             if (tempArr[j].lat == '67.34.07' && tempArr[j].lng == '68.07.30') {
               llat = '67.3407';
               llng = '68.0730';
+            }else if(tempArr[j].lat == '23.4423s' && tempArr[j].lng == '151.9148e') {
+              llat = '23.4423';
+              llng = '151.9148';
             }
             else {
               llat = tempArr[j].lat;

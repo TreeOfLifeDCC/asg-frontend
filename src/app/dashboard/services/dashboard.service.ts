@@ -20,10 +20,13 @@ export class DashboardService {
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(offset, limit, sortColumn?, sortOrder?): Observable<any> {
+  public getAllBiosample(offset, limit, sortColumn?, sortOrder? , searchText?): Observable<any> {
     let requestParams = `?offset=${offset}&limit=${limit}`
     if (sortColumn != undefined) {
       requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+    }
+    if(searchText) {
+      requestParams = requestParams + `&searchText=${searchText}`
     }
     return this.http.get(`${this.API_BASE_URL}/root_organisms${requestParams}`);
   }
@@ -75,10 +78,10 @@ export class DashboardService {
     return this.http.get(`${this.API_BASE_URL}/organisms/filters?accession=${accession}`);
   }
 
-  public getSearchResults(search: any, from?, size?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/root_organisms/search?filter=${search}&from=${from}&size=${size}`;
-    return this.http.get(`${requestURL}`);
-  }
+  // public getSearchResults(search: any, from?, size?): Observable<any> {
+  //   let requestURL = `${this.API_BASE_URL}/root_organisms/search?filter=${search}&from=${from}&size=${size}`;
+  //   return this.http.get(`${requestURL}`);
+  // }
 
   public getRootSearchResults(search: any,sortColumn?, sortOrder?, from?, size?): Observable<any> {
     let requestParams = `?filter=${search}&from=${from}&size=${size}`

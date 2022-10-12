@@ -38,7 +38,7 @@ export class FilterService {
     bioSampleTotalCount = 0;
     BiosamplesFilters = [];
     RawDataFilters = [];
-    MappedReadsFilters = [];
+
     AssembliesFilters = [];
     AnnotationFilters = [];
     AnnotationCompleteFilters = [];
@@ -96,9 +96,7 @@ export class FilterService {
             const ena_filters = filters[0].split(' - ');
             if (ena_filters[0] === 'Raw Data') {
                 return data.raw_data === ena_filters[1];
-            } else if (ena_filters[0] === 'Mapped Reads') {
-                return data.mapped_reads === ena_filters[1];
-            } else if (ena_filters[0] === 'Assemblies') {
+            }  else if (ena_filters[0] === 'Assemblies') {
                 return data.assemblies === ena_filters[1];
             } else if (ena_filters[0] === 'Annotation complete') {
                 return data.annotation_complete === ena_filters[1];
@@ -139,10 +137,7 @@ export class FilterService {
         } else if (key.toLowerCase() === 'raw-data') {
             jsonObj = { name: 'raw_data', value };
             this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'mapped-reads') {
-            jsonObj = { name: 'mapped_reads', value };
-            this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'assemblies') {
+        }  else if (key.toLowerCase() === 'assemblies') {
             jsonObj = { name: 'assemblies', value };
             this.urlAppendFilterArray.push(jsonObj);
         } else if (key.toLowerCase() === 'annotation-complete') {
@@ -283,21 +278,7 @@ export class FilterService {
             label: 'raw-data',
             count:  rawDataFiltersCount
         });
-        let mappedReadsFiltersCount = 0;
-        this.MappedReadsFilters = this.filtersMap.aggregations.mapped_reads.buckets.filter(i => {
-            if (i !== '' && i.key.toLowerCase() === 'done') {
-                const obj = i;
-                obj.key = 'Mapped reads - ' + obj.key;
-                mappedReadsFiltersCount = obj.doc_count;
-                return obj;
-            }
-        });
-        this.filterArray.push({
-            title: 'Mapped Reads - Submitted',
-            key: 'Mapped reads - Done',
-            label: 'mapped-reads',
-            count:  mappedReadsFiltersCount
-        });
+
         let assembliesFiltersCount = 0;
         this.AssembliesFilters = this.filtersMap.aggregations.assemblies.buckets.filter(i => {
             if (i !== '' && i.key.toLowerCase() === 'done') {

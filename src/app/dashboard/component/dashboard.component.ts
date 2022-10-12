@@ -236,7 +236,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.getFilters();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder)
+    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.searchText)
       .subscribe(
         data => {
           const unpackedData = [];
@@ -261,7 +261,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder)
+    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder,this.searchText)
       .subscribe(
         data => {
           const unpackedData = [];
@@ -395,7 +395,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   onFilterClick(event, label: string, filter: string) {
     this.paginator.pageIndex = 0;
     let taxonomy = [this.currentTaxonomyTree];
-    this.searchText = '';
     let inactiveClassName = label.toLowerCase().replace(" ", "-") + '-inactive';
     const filterIndex = this.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {
@@ -696,7 +695,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     }
     else {
+      this.isFilterSelected = false;
       this.activeFilters = [];
+      this.selectedFilterValue = '';
       this.dashboardService.getRootSearchResults(this.searchText, this.sort.active, this.sort.direction, from, size)
         .subscribe(
           data => {
@@ -1126,7 +1127,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
     // const genome = this.filtersMap.aggregations.genome.doc_count;
     // this.GenomeFilters = [{ key: 'Genome Notes - Submitted', doc_count: genome }];
-    const experiement = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
+    const experiement = (this.filtersMap.aggregations.experiment!= undefined && this.filtersMap.aggregations.experiment!= null)? this.filtersMap.aggregations.experiment.library_construction_protocol.buckets:[];
     this.experimentTypeFilters = experiement;
   }
   toggleCollapseForExp() {
