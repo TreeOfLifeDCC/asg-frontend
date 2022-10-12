@@ -87,3 +87,6 @@ table {
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
 }
+button {
+    margin-left: 5px;
+}

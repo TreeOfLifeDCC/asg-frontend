@@ -33,3 +33,8 @@ h1 {
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
 }
+
+#samplingMap{
+    margin-top: 5px;
+    background: steelblue !important;
+}

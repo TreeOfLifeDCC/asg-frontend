@@ -13,6 +13,8 @@ import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 
 import 'jquery';
 import 'bootstrap';
+import {MatDialog} from '@angular/material/dialog';
+import {DownloadConfirmationDialogComponent} from '../../download-confirmation-dialog-component/download-confirmation-dialog.component';
 
 
 @Component({
@@ -89,14 +91,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   isDoubleClick: Boolean;
   selectedFilterValue;
   currentTaxaOnExpand;
-
+  phylSelectedRank = '';
   BiosamplesFilters = [];
   RawDataFilters = [];
 
   AssembliesFilters = [];
   AnnotationFilters = [];
   AnnotationCompleteFilters = [];
-
+  experimentTypeFilters = [];
+  GenomeFilters = [];
+  isCollapsed = true;
+  itemLimit = 5;
   isBiosampleFilterCollapsed = true;
   isEnaFilterCollapsed = true;
   itemLimitBiosampleFilter: number;
@@ -105,7 +110,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   dataColumnsDefination = [{name: "Organism", column: "organism", selected: true},{name: "Common Name", column: "commonName", selected: true},{name: "Current Status", column: "currentStatus", selected: true},{name: "External references", column: "goatInfo", selected: true},{name: "Submitted to Biosamples", column: "biosamples", selected: false},{name: "Raw data submitted to ENA", column: "raw_data", selected: false},{name: "Assemblies submitted to ENA", column: "assemblies", selected: false},{name: "Annotation complete", column: "annotation_complete", selected: false}, {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
   displayedColumns = [];
   constructor(private titleService: Title, private dashboardService: DashboardService,
-    private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService) { }
+    private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getDisplayedColumns();
@@ -159,6 +164,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const params = queryParamMap['params'];
     if (Object.keys(params).length != 0) {
       for (let key in params) {
+        if (key == 'phylogeny') {
+          this.isFilterSelected = true;
+          this.phylSelectedRank = params[key];
+        }
         this.appendActiveFilters(key, params);
       }
       setTimeout(() => {
@@ -200,6 +209,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.filtersMap = data;
           this.parseFilterAggregation(data);
           this.childTaxanomy['superkingdom'] = [{ 'parent': 'Eukaryota', 'rank': 'kingdom', 'expanded': false, 'childData': data.aggregations.kingdomRank.scientificName.buckets }];
+          if (this.phylSelectedRank != '') {
+            let taxa = { 'rank': this.phylSelectedRank.split(' - ')[0], 'taxonomy': data.aggregations.childRank.scientificName.buckets[0].key, 'commonName': data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key, 'taxId': data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key };
+            this.selectedFilterValue = taxa;
+          }
           for (let i = 0; i < this.urlAppendFilterArray.length; i++) {
             setTimeout(() => {
               let inactiveClassName = '.' + this.urlAppendFilterArray[i].name + '-inactive';
@@ -223,7 +236,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.getFilters();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder)
+    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.searchText)
       .subscribe(
         data => {
           const unpackedData = [];
@@ -248,7 +261,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder)
+    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder,this.searchText)
       .subscribe(
         data => {
           const unpackedData = [];
@@ -339,6 +352,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       } else if (ena_filters[0] === 'Annotation') {
         return data.annotation === ena_filters[1];
       }
+      else if (ena_filters[0] === 'Genome Notes') {
+        return data.genome === ena_filters[1];
+      }
     }
   }
 
@@ -379,7 +395,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   onFilterClick(event, label: string, filter: string) {
     this.paginator.pageIndex = 0;
     let taxonomy = [this.currentTaxonomyTree];
-    this.searchText = '';
     let inactiveClassName = label.toLowerCase().replace(" ", "-") + '-inactive';
     const filterIndex = this.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {
@@ -422,6 +437,27 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       jsonObj = { "name": "annotation", "value": value };
       this.urlAppendFilterArray.push(jsonObj);
     }
+    // else if (key.toLowerCase() == 'genome') {
+    //   jsonObj = { name: 'genome', value };
+    //   this.urlAppendFilterArray.push(jsonObj);
+    // }
+    else if (key.toLowerCase() == 'phylogeny') {
+      jsonObj = { name: 'phylogeny', value };
+      this.urlAppendFilterArray.push(jsonObj);
+    } else if (key.toLowerCase() == 'experiment-type') {
+      let oldValue = [];
+      for (let i = 0; i < this.urlAppendFilterArray.length; i++) {
+        if (this.urlAppendFilterArray[i].name === 'experiment-type') {
+          oldValue.push(this.urlAppendFilterArray[i].value);
+        }
+      }
+      if ( oldValue === undefined || oldValue.length === 0){
+        jsonObj = { name: 'experiment-type', value };
+      }else{
+        jsonObj = { name: 'experiment-type', value: oldValue[oldValue.length - 1] == undefined ? value  : oldValue[oldValue.length - 1] + ',' + value };
+      }
+      this.urlAppendFilterArray.push(jsonObj);
+    }
 
   }
 
@@ -433,6 +469,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         params[paramArray[i].name] = paramArray[i].value;
       }
       this.router.navigate(['data'], { queryParams: params });
+    } else {
+      this.router.navigate(['data']);
     }
   }
 
@@ -440,24 +478,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   removeAllFilters() {
     this.paginator.pageIndex = 0;
     this.isFilterSelected = false;
-    $('#' + this.modalTaxa + '-kingdom').removeClass('active-filter')
-
-    $('.biosamples-inactive').removeClass('non-disp');
-    $('.raw-data-inactive').removeClass('non-disp');
-    $('.mapped-reads-inactive').removeClass('non-disp');
-    $('.assemblies-inactive').removeClass('non-disp');
-    $('.annotation-complete-inactive').removeClass('non-disp');
-    $('.annotation-inactive').removeClass('non-disp');
-
-    this.resetTaxaTree()
-    this.modalTaxa = "";
+    this.selectedFilterValue = '';
+    this.phylSelectedRank = '';
+    $('#' + this.modalTaxa + '-kingdom ').removeClass('active-filter');
+    this.resetTaxaTree();
+    this.modalTaxa = '';
     this.activeFilters = [];
     this.urlAppendFilterArray = [];
     this.dataSource.filter = undefined;
-    this.getFilters();
-    this.getAllBiosamples(0, 15, this.sort.active, this.sort.direction);
-    this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
-    
+    if (this.searchText.length != 0) {
+      this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, 0, 15, [this.currentTaxonomyTree]);
+      this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
+    }
+    else {
+      this.getFilters();
+      this.getAllBiosamples(0, 15, this.sort.active, this.sort.direction);
+      this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
+    }
     this.router.navigate(['data'], {});
     this.spinner.show();
     setTimeout(() => {
@@ -465,7 +502,45 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }, 800);
   }
 
-  // tslint:disable-next-line:typedef
+  removeTaxaFilter(taxonomy: any) {
+    this.spinner.show();
+    const filter = this.selectedFilterValue.rank + ' - ' + this.selectedFilterValue.taxId;
+    const filterIndex = this.activeFilters.indexOf(filter);
+    if (filterIndex !== -1) {
+      this.activeFilters.splice(filterIndex);
+    }
+
+    this.isFilterSelected = false;
+    this.phylSelectedRank = '';
+    setTimeout(() => {
+      this.updateDomForRemovedPhylogenyFilter(filter);
+      this.updateActiveRouteParams();
+    }, 100);
+    const taxa = { rank: 'superkingdom', taxonomy: 'Eukaryota', childRank: 'kingdom' };
+    this.currentTaxonomyTree = [];
+    this.currentTaxonomyTree = [taxa];
+    this.currentTaxonomy = taxa;
+    this.selectedFilterValue = '';
+    $(taxonomy + '-kingdom').removeClass('active-filter');
+    $('#myUL').css('display', 'block');
+    this.getActiveFiltersAndResult();
+    setTimeout(() => {
+      this.spinner.hide();
+    }, 400);
+  }
+
+  updateDomForRemovedPhylogenyFilter(filter: string) {
+    if (this.urlAppendFilterArray.length != 0) {
+      let inactiveClassName: string;
+      this.urlAppendFilterArray.filter(obj => {
+        if (obj.value == filter) {
+          const filterIndex = this.urlAppendFilterArray.indexOf(obj);
+          this.urlAppendFilterArray.splice(filterIndex, 1);
+        }
+      });
+    }
+  }
+
   removeFilter(filter: string) {
     this.paginator.pageIndex = 0;
     if (filter != undefined) {
@@ -478,23 +553,32 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, 0, 15, [this.currentTaxonomyTree]);
         if (this.currentTaxonomyTree.length > 1) {
           setTimeout(() => {
-            $('#' + this.modalTaxa + '-kingdom').addClass('active-filter')
+            $('#' + this.modalTaxa + '-kingdom').addClass('active-filter');
           }, 250);
         }
       }
       else if (this.currentTaxonomyTree.length > 1) {
-        if (this.activeFilters.length == 0) {
-          this.urlAppendFilterArray = [];
-          this.dataSource.filter = undefined;
-          this.router.navigate(['data'], {});
-        }
         this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, 0, 15, [this.currentTaxonomyTree]);
         setTimeout(() => {
-          $('#' + this.modalTaxa + '-kingdom').addClass('active-filter')
+          $('#' + this.modalTaxa + '-kingdom').addClass('active-filter');
         }, 250);
+      }
+      else if (this.searchText.length != 0) {
+        this.modalTaxa = '';
+        this.router.navigate(['data'], {});
+        this.isFilterSelected = false;
+        this.removeRankFromTaxaTree('superkingdom');
+        this.dataSource.filter = undefined;
+        this.activeFilters = [];
+        this.urlAppendFilterArray = [];
+        this.dataSource.filter = undefined;
+        this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, 0,15, [this.currentTaxonomyTree]);
+        this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
       }
       else {
         this.isFilterSelected = false;
+        this.selectedFilterValue = '';
+        this.phylSelectedRank = '';
         this.removeRankFromTaxaTree('superkingdom');
         this.dataSource.filter = undefined;
         this.activeFilters = [];
@@ -503,7 +587,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.getFilters();
         this.getAllBiosamples(0, 15, this.sort.active, this.sort.direction);
         this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
-        this.modalTaxa = "";
+        this.modalTaxa = '';
         this.router.navigate(['data'], {});
       }
     }
@@ -536,10 +620,17 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         this.AssembliesFilters = this.filtersMap.assemblies.filter(i => i !== "");
         this.AnnotationCompleteFilters = this.filtersMap.annotation_complete.filter(i => i !== "");
         this.AnnotationFilters = this.filtersMap.annotation.filter(i => i !== "");
+        // this.GenomeFilters = this.filtersMap.genome.filter(i => i !== '');
       },
       err => console.log(err)
     );
 
+    this.dashboardService.getExperimentTypeFilters().subscribe(
+        data => {
+          this.experimentTypeFilters = data.Experiment_type.filter(i => i !== '');
+        },
+        err => console.log(err)
+    );
 
   }
 
@@ -560,7 +651,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getFilterResults(filter, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?) {
     this.spinner.show();
-    this.dashboardService.getFilterResults(filter, this.sort.active, this.sort.direction, from, size, taxonomyFilter)
+    this.dashboardService.getFilterResults(filter, this.sort.active, this.sort.direction, from, size, taxonomyFilter,this.searchText)
       .subscribe(
         data => {
           this.selectedTaxonomy = []
@@ -604,7 +695,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     }
     else {
+      this.isFilterSelected = false;
       this.activeFilters = [];
+      this.selectedFilterValue = '';
       this.dashboardService.getRootSearchResults(this.searchText, this.sort.active, this.sort.direction, from, size)
         .subscribe(
           data => {
@@ -654,7 +747,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Ontology aware filter
   initTaxonomyObject() {
     this.childTaxanomy = {
-      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false, childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]} }] }],
+      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false, childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets:[]} }] }],
       superkingdom: [],
       kingdom: [],
       subkingdom: [],
@@ -746,6 +839,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           this.currentTaxonomyTree = [taxa];
           this.currentTaxonomy = taxa;
           this.selectedFilterValue = '';
+          this.isFilterSelected = false;
+          this.phylSelectedRank = '';
           $(event.target).removeClass('active-filter');
           this.getActiveFiltersAndResult();
           setTimeout(() => {
@@ -782,7 +877,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.currentTaxonomy = taxa;
     this.createTaxaTree(rank, taxa);
     if (this.showElement) {
-      this.taxanomyService.getChildTaxonomyRank(this.activeFilters, rank, taxonomy, childRank, this.currentTaxonomyTree, 'data').subscribe(
+      this.taxanomyService.getChildTaxonomyRank(this.activeFilters, rank, taxonomy, childRank, this.currentTaxonomyTree, 'data', this.searchText).subscribe(
         data => {
           this.parseAndPushTaxaData(rank, data);
           setTimeout(() => {
@@ -842,17 +937,22 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     }, 250);
   }
 
-  filterTaxonomy(rank: string, taxonomy: string, childRank: string, commonName) {
+  filterTaxonomy(rank: string, taxonomy: string, childRank: string, commonName, taxId) {
     this.paginator.pageIndex = 0;
     this.isDoubleClick = true;
     let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank, 'commonName': commonName };
     this.selectedFilterValue = taxa;
+    const filterObj = rank + ' - ' + taxId;
+    this.selectedFilterArray('phylogeny', filterObj);
+    this.updateActiveRouteParams();
+    this.paginator.pageIndex = 0;
+    this.isDoubleClick = true;
     this.createTaxaTree(rank, taxa);
     this.selectedTaxonomy.push(taxa);
     $('#taxonomyModal').modal('hide');
-    $(".modal-backdrop").hide();
+    $('.modal-backdrop').hide();
     setTimeout(() => {
-      let treeLength = this.currentTaxonomyTree.length;
+      const treeLength = this.currentTaxonomyTree.length;
       this.currentTaxonomy = this.currentTaxonomyTree[treeLength - 1];
       this.getActiveFiltersAndResult(this.currentTaxonomyTree);
     }, 300);
@@ -1025,6 +1125,37 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         return obj;
       }
     });
+    // const genome = this.filtersMap.aggregations.genome.doc_count;
+    // this.GenomeFilters = [{ key: 'Genome Notes - Submitted', doc_count: genome }];
+    const experiement = (this.filtersMap.aggregations.experiment!= undefined && this.filtersMap.aggregations.experiment!= null)? this.filtersMap.aggregations.experiment.library_construction_protocol.buckets:[];
+    this.experimentTypeFilters = experiement;
+  }
+  toggleCollapseForExp() {
+    if (this.isCollapsed) {
+      this.itemLimit = 10000;
+      this.isCollapsed = false;
+    } else {
+      this.itemLimit = 5;
+      this.isCollapsed = true;
+    }
   }
 
+  openDialog() {
+    const dialogRef = this.dialog.open(DownloadConfirmationDialogComponent, {
+      width: '550px',
+      autoFocus: false,
+      data: {
+        message: 'Are you sure want to donload?',
+        name: this.selectedFilterValue.taxonomy,
+        activeFilters: this.activeFilters.toString(),
+        sort: this.sort,
+        taxonomy: [this.currentTaxonomyTree],
+        searchText: this.searchText,
+        selectedOptions:[0,1,2],
+        hideAnnotation: this.AnnotationFilters.length === 0 && this.AnnotationCompleteFilters.length === 0 ,
+        hideAssemblies: this.AssembliesFilters.length === 0 ,
+        hideRawData: this.RawDataFilters.length === 0
+      }
+    });
+  }
 }

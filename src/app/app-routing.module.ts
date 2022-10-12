@@ -4,6 +4,8 @@ import { AboutComponent } from './about/about.component';
 import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
+import {GisComponent} from './gis/gis.component';
+import {BulkDownloadsComponent} from './bulk-downloads/bulk-downloads.component';
 
 const routes: Routes = [
   {
@@ -19,7 +21,13 @@ const routes: Routes = [
     path: 'about', component: AboutComponent
   },
   {
+    path: 'gis', component: GisComponent
+  },
+  {
     path: 'help', component: HelpComponent
+  },
+  {
+    path: 'bulk-downloads' , component: BulkDownloadsComponent
   },
   {
     path: '',
