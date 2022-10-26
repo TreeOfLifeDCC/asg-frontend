@@ -37,6 +37,7 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {BulkDownloadsComponent} from './bulk-downloads/bulk-downloads.component';
 import {DownloadConfirmationDialogComponent} from './download-confirmation-dialog-component/download-confirmation-dialog.component';
+import {DashboardModule} from './dashboard/dashboard.module';
 
 @NgModule({
   declarations: [
@@ -49,9 +50,6 @@ import {DownloadConfirmationDialogComponent} from './download-confirmation-dialo
     ConfirmationDialogComponent,
     BytesPipe,
     GisComponent,
-    FilterComponent,
-    ActiveFilterComponent,
-    PhylogenyFilterComponent,
     DownloadConfirmationDialogComponent,
     BulkDownloadsComponent
   ],
@@ -75,7 +73,8 @@ import {DownloadConfirmationDialogComponent} from './download-confirmation-dialo
     MatSlideToggleModule,
     MatInputModule,
     MatRadioModule,
-    MatTooltipModule
+    MatTooltipModule,
+    DashboardModule
   ],
   providers: [BytesPipe, GisService, FilterService],
   bootstrap: [AppComponent]

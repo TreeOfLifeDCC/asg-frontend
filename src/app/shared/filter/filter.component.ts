@@ -12,7 +12,7 @@ import {FilterService} from '../../services/filter-service';
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @Input() title: string;
-
+  @Input() isShowCount: boolean;
   @Input() filterSize: number;
 
   isCollapsed = true;
