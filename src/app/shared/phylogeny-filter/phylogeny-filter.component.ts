@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FilterService} from '../../services/filter-service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgxSpinnerService} from "ngx-spinner";
@@ -13,7 +13,7 @@ import {Taxonomy} from "../../taxanomy/taxonomy.model";
 })
 export class PhylogenyFilterComponent implements OnInit {
    childTaxanomy: Taxonomy;
-
+   @Input() isShowCount: boolean;
 
 
   constructor( private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService,
@@ -140,44 +140,39 @@ export class PhylogenyFilterComponent implements OnInit {
     this.resetTaxaTree();
     this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     $('.kingdom, .subkingdom').removeClass('active-filter');
-    // setTimeout(() => {
-    //   if (this.filterService.activeFilters.length !== 0 || this.filterService.currentTaxonomyTree.length != 0) {
-    //     const taxa = [this.currentTaxonomyTree];
-    //     // this.filterService.getFilterResults(this.filterService.activeFilters.toString(), this.filterService.sort.active, this.filterService.sort.direction, 0, this.filterService.pagesize, taxa);
-    //   }
-    //   else {
-    //     this.router.navigate(['gis'], {});
-    //     // this.dataSource.filter = undefined;
-    //     // this.getFilters();
-    //     // this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
-    //     this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
-    //   }
-    //   this.spinner.hide();
-    // }, 250);
+    this.spinner.hide();
   }
 
   showTaxonomyModal(event: any, rank: string, taxonomy: string, childRank: string) {
-
-    this.filterService.searchText = "";
     this.isDoubleClick = false;
     setTimeout(() => {
       if (!this.isDoubleClick) {
         $('#myUL').css('display', 'none');
         this.filterService.modalTaxa = taxonomy;
         if ($(event.target).hasClass('active-filter')) {
-          let taxa = { 'rank': 'superkingdom', 'taxonomy': 'Eukaryota', 'childRank': 'kingdom' };
+          this.spinner.show();
+          const filter = this.filterService.selectedFilterValue.rank + ' - ' + this.filterService.selectedFilterValue.taxId;
+          const filterIndex = this.filterService.activeFilters.indexOf(filter);
+          if (filterIndex !== -1) {
+            this.filterService.activeFilters.splice(filterIndex);
+          }
+          this.isFilterSelected = false;
+          this.filterService.phylSelectedRank = '';
+          setTimeout(() => {
+            this.filterService.updateDomForRemovedPhylogenyFilter(filter);
+            this.filterService.updateActiveRouteParams();
+          }, 100);
+          const taxa = { rank: 'superkingdom', taxonomy: 'Eukaryota', childRank: 'kingdom' };
           this.currentTaxonomyTree = [];
           this.currentTaxonomyTree = [taxa];
           this.currentTaxonomy = taxa;
           this.selectedFilterValue = '';
-          this.isFilterSelected = false;
-          this.filterService.phylSelectedRank = '';
           $(event.target).removeClass('active-filter');
+          $('#myUL').css('display', 'block');
           // this.getActiveFiltersAndResult();
           setTimeout(() => {
-            this.isFilterSelected = false;
-            $('#myUL').css('display', 'block');
-          }, 250);
+            this.spinner.hide();
+          }, 400);
         }
         else {
           this.spinner.show();
@@ -195,13 +190,14 @@ export class PhylogenyFilterComponent implements OnInit {
             $('.subkingdom').addClass('active');
             $('#taxonomyModal').modal({ backdrop: 'static', keyboard: false });
             $('#taxonomyModal').modal('show');
-            $(".modal-backdrop").show();
+            $('.modal-backdrop').show();
             this.spinner.hide();
           }, 900);
         }
       }
     }, 250);
   }
+
 
   getChildTaxonomyRank(rank: string, taxonomy: string, childRank: string) {
     let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
@@ -268,15 +264,14 @@ export class PhylogenyFilterComponent implements OnInit {
     }, 250);
   }
 
-  filterTaxonomy(rank: string, taxonomy: string, childRank: string, commonName, taxId) {
-
-    this.isDoubleClick = true;
-    let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank, 'commonName': commonName };
+  filterTaxonomy = (rank: string, taxonomy: string, childRank: string, commonName, taxId) => {
+    const taxa = { rank, taxonomy, childRank, commonName, taxId };
+    this.filterService.selectedFilterValue = taxa;
     this.selectedFilterValue = taxa;
     const filterObj = rank + ' - ' + taxId;
+    this.filterService.phylSelectedRank = filterObj;
     this.filterService.selectedFilterArray('phylogeny', filterObj);
     this.filterService.updateActiveRouteParams();
-
     this.isDoubleClick = true;
     this.createTaxaTree(rank, taxa);
     this.filterService.selectedTaxonomy.push(taxa);
@@ -285,11 +280,10 @@ export class PhylogenyFilterComponent implements OnInit {
     setTimeout(() => {
       const treeLength = this.currentTaxonomyTree.length;
       this.currentTaxonomy = this.currentTaxonomyTree[treeLength - 1];
-      // this.getActiveFiltersAndResult(this.currentTaxonomyTree);
     }, 300);
     setTimeout(() => {
       this.isFilterSelected = true;
-      $('#' + this.filterService.modalTaxa + '-kingdom').addClass('active-filter');
+      $('#' + taxonomy + '-kingdom').addClass('active-filter');
       this.isDoubleClick = false;
     }, 350);
 

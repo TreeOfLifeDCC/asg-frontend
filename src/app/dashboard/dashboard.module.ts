@@ -27,9 +27,13 @@ import { TaxanomyService } from '../taxanomy/taxanomy.service';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MapComponent} from './map/map.component';
 import {MapClusterComponent} from './map-cluster/map-cluster.component';
+import {FilterComponent} from '../shared/filter/filter.component';
+import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
+import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-filter.component';
 
 @NgModule({
-  declarations: [DashboardComponent, SpecimensComponent, DetailsComponent, OrganismDetailsComponent, TaxanomyComponent, MapComponent, MapClusterComponent],
+  declarations: [DashboardComponent, SpecimensComponent, DetailsComponent, OrganismDetailsComponent, TaxanomyComponent, MapComponent, MapClusterComponent,
+    FilterComponent, PhylogenyFilterComponent, ActiveFilterComponent],
   imports: [
     CommonModule,
     DashboardRoutingModule,
@@ -47,6 +51,9 @@ import {MapClusterComponent} from './map-cluster/map-cluster.component';
     MatExpansionModule,
     MatCheckboxModule,
     MatTabsModule
+  ],
+  exports: [
+    FilterComponent, PhylogenyFilterComponent, ActiveFilterComponent
   ],
   providers: [DashboardService, TaxanomyService]
 })
