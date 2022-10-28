@@ -45,17 +45,17 @@
                 <button *ngIf="filterService.activeFilters.length > 0 || filterService.selectedFilterValue != '' && (this.filterService.AnnotationFilters.length > 0 || this.filterService.AnnotationCompleteFilters.length > 0 || this.filterService.AssembliesFilters.length > 0 || this.filterService.RawDataFilters.length > 0)" type="button" style="float: right;"
                         class="btn btn-primary" mat-raised-button (click)="openDialog()">Download</button>
 
-                    <div *ngIf="hasActiveFilters()">
-                        <app-active-filter true></app-active-filter>
+                <div *ngIf="hasActiveFilters()">
+                    <app-active-filter true></app-active-filter>
 
-                        <span *ngIf="(filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '')">
+                    <span *ngIf="(filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '')">
                     <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
                         <span class="badge badge-light" (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">X</span>
                     </button>
                 </span>
-                        <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
+                    <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
 
-                    </div>
+                </div>
 
                 <mat-form-field>
                     <mat-label>Search</mat-label>
@@ -88,10 +88,10 @@
                         <mat-cell *matCellDef="let element" class="text-center" style=" padding-right: 0px; ">
                             <span>
                                 <a class="no-underline badge badge-pill goat-color" target="_blank"
-                                    href="{{element?.goatInfo}}">GoaT info</a>
+                                   href="{{element?.goatInfo}}">GoaT info</a>
                                 <ng-container *ngIf="checkTolidExists(element)">
                                     <a class="no-underline badge badge-pill goat-color2" target="_blank"
-                                        href="{{generateTolidLink(element)}}">ToL QC</a>
+                                       href="{{generateTolidLink(element)}}">ToL QC</a>
                                 </ng-container>
                             </span>
                         </mat-cell>
@@ -149,3 +149,4 @@
 
 
 </div>
+

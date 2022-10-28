@@ -140,6 +140,7 @@ export class PhylogenyFilterComponent implements OnInit {
     this.resetTaxaTree();
     this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     $('.kingdom, .subkingdom').removeClass('active-filter');
+    this.spinner.hide();
   }
 
   showTaxonomyModal(event: any, rank: string, taxonomy: string, childRank: string) {
@@ -196,6 +197,8 @@ export class PhylogenyFilterComponent implements OnInit {
       }
     }, 250);
   }
+
+
   getChildTaxonomyRank(rank: string, taxonomy: string, childRank: string) {
     let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
     this.currentTaxonomy = taxa;

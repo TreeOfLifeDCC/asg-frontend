@@ -79,7 +79,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   dataColumnsDefination = [{name: "Organism", column: "organism", selected: true},{name: "Common Name", column: "commonName", selected: true},{name: "Current Status", column: "currentStatus", selected: true},{name: "External references", column: "goatInfo", selected: true},{name: "Submitted to Biosamples", column: "biosamples", selected: false},{name: "Raw data submitted to ENA", column: "raw_data", selected: false},{name: "Assemblies submitted to ENA", column: "assemblies", selected: false},{name: "Annotation complete", column: "annotation_complete", selected: false}, {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
   displayedColumns = [];
   constructor(private titleService: Title, private dashboardService: DashboardService,
-    private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService, private dialog: MatDialog,public filterService: FilterService) { }
+              private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService, private dialog: MatDialog,public filterService: FilterService) { }
 
   ngOnInit(): void {
     this.getDisplayedColumns();
@@ -151,39 +151,39 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       taxonomy = [this.filterService.currentTaxonomyTree];
     }
     this.dashboardService.getFilterResults(this.filterService.activeFilters.toString(), this.sort.active, this.sort.direction, 0, this.pagesize, taxonomy)
-      .subscribe(
-        data => {
-          const unpackedData = [];
-          for (const item of data.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.bioSampleTotalCount = data.hits.total.value;
-          this.dataSource = new MatTableDataSource<any>(unpackedData);
-          this.dataSource.sort = this.sort;
-          this.dataSource.filterPredicate = this.filterPredicate;
-          this.unpackedData = unpackedData;
-          this.filtersMap = data;
-          if (this.phylSelectedRank != '') {
-            let taxa = { 'rank': this.phylSelectedRank.split(' - ')[0], 'taxonomy': data.aggregations.childRank.scientificName.buckets[0].key, 'commonName': data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key, 'taxId': data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key };
-            this.filterService.selectedFilterValue = taxa;
-          }
-          for (let i = 0; i < this.filterService.urlAppendFilterArray.length; i++) {
-            setTimeout(() => {
-              let inactiveClassName = '.' + this.filterService.urlAppendFilterArray[i].name + '-inactive';
-              let element = "li:contains('" + this.filterService.urlAppendFilterArray[i].value + "')";
-              $(element).addClass('active');
-            }, 1);
+        .subscribe(
+            data => {
+              const unpackedData = [];
+              for (const item of data.hits.hits) {
+                unpackedData.push(this.unpackData(item));
+              }
+              this.bioSampleTotalCount = data.hits.total.value;
+              this.dataSource = new MatTableDataSource<any>(unpackedData);
+              this.dataSource.sort = this.sort;
+              this.dataSource.filterPredicate = this.filterPredicate;
+              this.unpackedData = unpackedData;
+              this.filtersMap = data;
+              if (this.phylSelectedRank != '') {
+                let taxa = { 'rank': this.phylSelectedRank.split(' - ')[0], 'taxonomy': data.aggregations.childRank.scientificName.buckets[0].key, 'commonName': data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key, 'taxId': data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key };
+                this.filterService.selectedFilterValue = taxa;
+              }
+              for (let i = 0; i < this.filterService.urlAppendFilterArray.length; i++) {
+                setTimeout(() => {
+                  let inactiveClassName = '.' + this.filterService.urlAppendFilterArray[i].name + '-inactive';
+                  let element = "li:contains('" + this.filterService.urlAppendFilterArray[i].value + "')";
+                  $(element).addClass('active');
+                }, 1);
 
-            if (i == (this.filterService.urlAppendFilterArray.length - 1)) {
+                if (i == (this.filterService.urlAppendFilterArray.length - 1)) {
+                  this.spinner.hide();
+                }
+              }
+            },
+            err => {
+              console.log(err);
               this.spinner.hide();
             }
-          }
-        },
-        err => {
-          console.log(err);
-          this.spinner.hide();
-        }
-      )
+        )
   }
 
   // tslint:disable-next-line:typedef
@@ -191,49 +191,49 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText, this.filterService.activeFilters.join(','))
-      .subscribe(
-        data => {
-          const unpackedData = [];
-          this.filterService.getFilters(data.rootSamples);
-          for (const item of data.rootSamples.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.bioSampleTotalCount = data.count;
-          this.dataSource = new MatTableDataSource<any>(unpackedData);
-          this.dataSource.sort = this.sort;
-          this.dataSource.filterPredicate = this.filterPredicate;
-          this.unpackedData = unpackedData;
-          setTimeout(() => {
-            this.spinner.hide();
-          }, 100)
-        },
-        err => {
-          console.log(err);
-          this.spinner.hide();
-        }
-      );
+        .subscribe(
+            data => {
+              const unpackedData = [];
+              this.filterService.getFilters(data.rootSamples);
+              for (const item of data.rootSamples.hits.hits) {
+                unpackedData.push(this.unpackData(item));
+              }
+              this.bioSampleTotalCount = data.count;
+              this.dataSource = new MatTableDataSource<any>(unpackedData);
+              this.dataSource.sort = this.sort;
+              this.dataSource.filterPredicate = this.filterPredicate;
+              this.unpackedData = unpackedData;
+              setTimeout(() => {
+                this.spinner.hide();
+              }, 100)
+            },
+            err => {
+              console.log(err);
+              this.spinner.hide();
+            }
+        );
   }
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder,this.filterService.searchText)
-      .subscribe(
-        data => {
-          const unpackedData = [];
-          for (const item of data.rootSamples.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.dataSource = new MatTableDataSource<any>(unpackedData);
-          this.dataSource.sort = this.sort;
-          this.dataSource.filterPredicate = this.filterPredicate;
-          this.unpackedData = unpackedData;
-          this.spinner.hide();
-        },
-        err => {
-          console.log(err);
-          this.spinner.hide();
-        }
-      )
+        .subscribe(
+            data => {
+              const unpackedData = [];
+              for (const item of data.rootSamples.hits.hits) {
+                unpackedData.push(this.unpackData(item));
+              }
+              this.dataSource = new MatTableDataSource<any>(unpackedData);
+              this.dataSource.sort = this.sort;
+              this.dataSource.filterPredicate = this.filterPredicate;
+              this.unpackedData = unpackedData;
+              this.spinner.hide();
+            },
+            err => {
+              console.log(err);
+              this.spinner.hide();
+            }
+        )
   }
 
   pageChanged(event) {
@@ -463,3 +463,4 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     return false;
   }
 }
+
