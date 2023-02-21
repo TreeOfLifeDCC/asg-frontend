@@ -29,7 +29,7 @@ export class DownloadConfirmationDialogComponent implements  OnDestroy {
       form.setAttribute('method', method);
       form.setAttribute('action', downloadUrl);
 
-      form.appendChild(this.makeInputField('taxonomyFilter', JSON.stringify(this.data.taxonomy[0])));
+      form.appendChild(this.makeInputField('taxonomyFilter', JSON.stringify([{"rank":"superkingdom","taxonomy":"Eukaryota","childRank":"kingdom"}])));
       if (this.data.activeFilters != null && this.data.activeFilters.length > 0) {
         form.appendChild(this.makeInputField('filter', this.data.activeFilters));
       } else {
@@ -48,7 +48,7 @@ export class DownloadConfirmationDialogComponent implements  OnDestroy {
       form.setAttribute('method', method);
       form.setAttribute('action', downloadUrl);
 
-      form.appendChild(this.makeInputField('taxonomyFilter', JSON.stringify(this.data.taxonomy[0])));
+      form.appendChild(this.makeInputField('taxonomyFilter', JSON.stringify([{"rank":"superkingdom","taxonomy":"Eukaryota","childRank":"kingdom"}])));
 
       if (this.data.activeFilters != null && this.data.activeFilters.length > 0) {
         form.appendChild(this.makeInputField('filter', this.data.activeFilters));
