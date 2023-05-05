@@ -396,12 +396,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     const organismName = data.organism.split(' ').join('_');
     if (typeof(data.tolid) === 'string'){
       const clade = this.codes[data.tolid.charAt(0)];
-      return `https://tolqc.cog.sanger.ac.uk/darwin/${clade}/${organismName}`;
+      return `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
 
     }else {
       if (data.tolid.length > 0) {
         const clade = this.codes[data.tolid[0].charAt(0)];
-        return `https://tolqc.cog.sanger.ac.uk/darwin/${clade}/${organismName}`;
+        return `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
       }
     }
   }
