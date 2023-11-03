@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
+
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+
 import { Title } from '@angular/platform-browser';
 import { StatusesService } from "../services/statuses.service";
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -11,6 +11,8 @@ import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
 import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 
 import 'jquery';
+import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-tracking-system',
@@ -65,8 +67,12 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   selectedFilterValue;
   currentTaxaOnExpand;
 
-  constructor(private titleService: Title, private statusesService: StatusesService,
-    private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService) { }
+  constructor(private titleService: Title,
+              private statusesService: StatusesService,
+              private activatedRoute: ActivatedRoute,
+              private router: Router,
+              private spinner: NgxSpinnerService,
+              private taxanomyService: TaxanomyService) { }
 
   ngOnInit(): void {
     this.spinner.show();
@@ -1037,6 +1043,14 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.currentTaxonomy = this.currentTaxonomyTree[this.currentTaxonomyTree.length - 1];
     }, 50);
+  }
+
+  getBadgeColor(status: string) {
+    if (status === 'Done') {
+      return {'background-color': 'palegreen'};
+    } else {
+      return {'background-color': 'gold'};
+    }
   }
 
 }

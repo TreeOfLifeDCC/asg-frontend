@@ -18,6 +18,11 @@ table {
     width: 100%;
 }
 
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
 button {
     margin: 2px;
 }
@@ -232,4 +237,15 @@ ul[class*="other-"] {
 
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
+}
+
+mat-chip-set {
+    pointer-events: none;
+}
+.tol_qc {
+    margin-left: 3px;
+}
+
+.goat_info {
+    color: white;
 }

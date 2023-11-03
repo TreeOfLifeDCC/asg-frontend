@@ -82,6 +82,7 @@ table {
 
 .table-container {
     overflow: auto;
+    /*font-size: 5px;*/
 }
 
 #dynamic {
@@ -89,4 +90,14 @@ table {
 }
 button {
     margin-left: 5px;
+}
+
+mat-chip-set {
+    pointer-events: none;
+    font-size: 12px;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
 }

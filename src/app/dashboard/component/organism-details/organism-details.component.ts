@@ -2,11 +2,14 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Sample, samples } from '../../model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+
+
 import { DashboardService } from '../../services/dashboard.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import {MatTabGroup} from '@angular/material/tabs';
+import {MatPaginator} from "@angular/material/paginator";
+import {MatTabGroup} from "@angular/material/tabs";
+import {MatTableDataSource} from "@angular/material/table";
+
 
 @Component({
   selector: 'dashboard-organism-details',
@@ -61,17 +64,72 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   dataSourceAnnotationCount;
   assembliesurls =[]
   annotationsurls =[]
-  experimentColumnsDefination = [{column: "study_accession", selected: true},{column: "secondary_study_accession", selected: false},{column: "sample_accession", selected: true},{column: "secondary_sample_accession", selected: false},{column: "experiment_accession", selected: true},{column: "run_accession", selected: true},{column: "submission_accession", selected: false},{column: "tax_id", selected: true},{column: "scientific_name", selected: true},{column: "instrument_platform", selected: false},{column: "instrument_model", selected: false},{column: "library_name", selected: false},{column: "nominal_length", selected: false},{column: "library_layout", selected: false},{column: "library_strategy", selected: false},{column: "library_source", selected: false},{column: "library_selection", selected: false},{column: "read_count", selected: false},{column: "base_count", selected: false},{column: "center_name", selected: false},{column: "first_public", selected: false},{column: "last_updated", selected: false},{column: "experiment_title", selected: false},{column: "study_title", selected: false},{column: "study_alias", selected: false},{column: "experiment_alias", selected: false},{column: "run_alias", selected: false},{column: "fastq_bytes", selected: false},{column: "fastq_md5", selected: false},{column: "fastq_ftp", selected: true},{column: "fastq_aspera", selected: false},{column: "fastq_galaxy", selected: false},{column: "submitted_bytes", selected: false},{column: "submitted_md5", selected: false},{column: "submitted_ftp", selected: true},{column: "submitted_aspera", selected: false},{column: "submitted_galaxy", selected: false},{column: "submitted_format", selected: false},{column: "sra_bytes", selected: false},{column: "sra_md5", selected: false},{column: "sra_ftp", selected: true},{column: "sra_aspera", selected: false},{column: "sra_galaxy", selected: false},{column: "cram_index_ftp", selected: false},{column: "cram_index_aspera", selected: false},{column: "cram_index_galaxy", selected: false},{column: "sample_alias", selected: false},{column: "broker_name", selected: false},{column: "sample_title", selected: false},{column: "nominal_sdev", selected: false},{column: "first_created", selected: false},{column: "library_construction_protocol", selected: true}]
+  experimentColumnsDefination = [{column: "study_accession", selected: true},
+    {column: "secondary_study_accession", selected: false},
+    {column: "sample_accession", selected: true},
+    {column: "secondary_sample_accession", selected: false},
+    {column: "experiment_accession", selected: true},
+    {column: "run_accession", selected: true},
+    {column: "submission_accession", selected: false},
+    {column: "tax_id", selected: false},
+    {column: "scientific_name", selected: false},
+    {column: "instrument_platform", selected: false},
+    {column: "instrument_model", selected: false},
+    {column: "library_name", selected: false},
+    {column: "nominal_length", selected: false},
+    {column: "library_layout", selected: false},
+    {column: "library_strategy", selected: false},
+    {column: "library_source", selected: false},
+    {column: "library_selection", selected: false},
+    {column: "read_count", selected: false},
+    {column: "base_count", selected: false},
+    {column: "center_name", selected: false},
+    {column: "first_public", selected: false},
+    {column: "last_updated", selected: false},
+    {column: "experiment_title", selected: false},
+    {column: "study_title", selected: false},
+    {column: "study_alias", selected: false},
+    {column: "experiment_alias", selected: false},
+    {column: "run_alias", selected: false},
+    {column: "fastq_bytes", selected: false},
+    {column: "fastq_md5", selected: false},
+    {column: "fastq_ftp", selected: true},
+    {column: "fastq_aspera", selected: false},
+    {column: "fastq_galaxy", selected: false},
+    {column: "submitted_bytes", selected: false},
+    {column: "submitted_md5", selected: false},
+    {column: "submitted_ftp", selected: true},
+    {column: "submitted_aspera", selected: false},
+    {column: "submitted_galaxy", selected: false},
+    {column: "submitted_format", selected: false},
+    {column: "sra_bytes", selected: false},
+    {column: "sra_md5", selected: false},
+    {column: "sra_ftp", selected: false},
+    {column: "sra_aspera", selected: false},
+    {column: "sra_galaxy", selected: false},
+    {column: "cram_index_ftp", selected: false},
+    {column: "cram_index_aspera", selected: false},
+    {column: "cram_index_galaxy", selected: false},
+    {column: "sample_alias", selected: false},
+    {column: "broker_name", selected: false},
+    {column: "sample_title", selected: false},
+    {column: "nominal_sdev", selected: false},
+    {column: "first_created", selected: false},
+    {column: "library_construction_protocol", selected: true}]
   private ENA_PORTAL_API_BASE_URL_FASTA = "https://www.ebi.ac.uk/ena/browser/api/fasta/"
   displayedColumnsFiles = [];
   displayedColumnsAssemblies = ['accession', 'assembly_name', 'description', 'version'];
-  displayedColumnsAnnotation = ['accession', 'annotation', 'proteins', 'transcripts', 'softmasked_genome', 'other_data', 'view_in_browser'];
+  displayedColumnsAnnotation = ['accession', 'annotation', 'proteins', 'transcripts', 'softmasked_genome',
+    'other_data', 'view_in_browser'];
   @ViewChild("tabgroup", { static: false }) tabgroup: MatTabGroup;
   @ViewChild('experimentsTable') exPaginator: MatPaginator;
   @ViewChild('assembliesTable') asPaginator: MatPaginator;
   @ViewChild('annotationTable') anPaginator: MatPaginator;
 
-  constructor(private route: ActivatedRoute, private dashboardService: DashboardService, private spinner: NgxSpinnerService, private router: Router) {
+  constructor(private route: ActivatedRoute,
+              private dashboardService: DashboardService,
+              private spinner: NgxSpinnerService,
+              private router: Router) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
 
@@ -161,7 +219,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
               this.dataSourceAssembliesCount = data.assemblies?.length;
               for (let i = 0; i < data.assemblies.length ; i++) {
-                this.assembliesurls.push(this.ENA_PORTAL_API_BASE_URL_FASTA+data.assemblies[i].accession+"?download=true&gzip=true");
+                this.assembliesurls.push(
+                    this.ENA_PORTAL_API_BASE_URL_FASTA+data.assemblies[i].accession+"?download=true&gzip=true");
               }
             }
             else {
@@ -172,7 +231,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
               this.dataSourceAnnotationCount = data.annotation?.length;
               for (let i = 0; i < data.annotation.length ; i++) {
-                this.annotationsurls.push(this.ENA_PORTAL_API_BASE_URL_FASTA+data.annotation[i].accession+"?download=true&gzip=true");
+                this.annotationsurls.push(
+                    this.ENA_PORTAL_API_BASE_URL_FASTA+data.annotation[i].accession+"?download=true&gzip=true");
               }
             }
             else {

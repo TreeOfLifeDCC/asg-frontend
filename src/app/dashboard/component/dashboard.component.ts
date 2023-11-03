@@ -1,8 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { MatPaginator } from '@angular/material/paginator';
+
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -12,9 +11,11 @@ import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 
 import 'jquery';
 import 'bootstrap';
-import {MatDialog} from '@angular/material/dialog';
-import {DownloadConfirmationDialogComponent} from '../../download-confirmation-dialog-component/download-confirmation-dialog.component';
+// import {DownloadConfirmationDialogComponent} from '../../download-confirmation-dialog-component/download-confirmation-dialog.component';
 import {FilterService} from '../../services/filter-service';
+import {MatPaginator} from "@angular/material/paginator";
+import {MatTableDataSource} from "@angular/material/table";
+// import {MatDialog} from "@angular/material/dialog";
 
 
 @Component({
@@ -76,10 +77,25 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   itemLimitBiosampleFilter: number;
   itemLimitEnaFilter: number;
   pagesize = 15;
-  dataColumnsDefination = [{name: "Organism", column: "organism", selected: true},{name: "Common Name", column: "commonName", selected: true},{name: "Current Status", column: "currentStatus", selected: true},{name: "External references", column: "goatInfo", selected: true},{name: "Submitted to Biosamples", column: "biosamples", selected: false},{name: "Raw data submitted to ENA", column: "raw_data", selected: false},{name: "Assemblies submitted to ENA", column: "assemblies", selected: false},{name: "Annotation complete", column: "annotation_complete", selected: false}, {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
+  dataColumnsDefination = [
+      {name: "Organism", column: "organism", selected: true},
+    {name: "Common Name", column: "commonName", selected: true},
+    {name: "Current Status", column: "currentStatus", selected: true},
+    {name: "External references", column: "goatInfo", selected: true},
+    {name: "Submitted to Biosamples", column: "biosamples", selected: false},
+    {name: "Raw data submitted to ENA", column: "raw_data", selected: false},
+    {name: "Assemblies submitted to ENA", column: "assemblies", selected: false},
+    {name: "Annotation complete", column: "annotation_complete", selected: false},
+    {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
   displayedColumns = [];
-  constructor(private titleService: Title, private dashboardService: DashboardService,
-              private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService, private taxanomyService: TaxanomyService, private dialog: MatDialog,public filterService: FilterService) { }
+  constructor(private titleService: Title,
+              private dashboardService: DashboardService,
+              private activatedRoute: ActivatedRoute,
+              private router: Router,
+              private spinner: NgxSpinnerService,
+              private taxanomyService: TaxanomyService,
+              // private dialog: MatDialog,
+              public filterService: FilterService) { }
 
   ngOnInit(): void {
     this.getDisplayedColumns();
@@ -432,24 +448,24 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   //   }
   // }
   // tslint:disable-next-line:typedef
-  openDialog() {
-    const dialogRef = this.dialog.open(DownloadConfirmationDialogComponent, {
-      width: '550px',
-      autoFocus: false,
-      data: {
-        message: 'Are you sure want to donload?',
-        name: this.filterService.selectedFilterValue.taxonomy,
-        activeFilters: this.filterService.activeFilters.toString(),
-        sort: this.sort,
-        taxonomy: { rank: 'superkingdom', taxonomy: 'Eukaryota', childRank: 'kingdom' },
-        searchText: this.filterService.searchText,
-        selectedOptions: [0, 1, 2],
-        hideAnnotation: this.filterService.AnnotationFilters.length === 0 && this.filterService.AnnotationCompleteFilters.length === 0 ,
-        hideAssemblies: this.filterService.AssembliesFilters.length === 0 ,
-        hideRawData: this.filterService.RawDataFilters.length === 0
-      }
-    });
-  }
+  // openDialog() {
+  //   const dialogRef = this.dialog.open(DownloadConfirmationDialogComponent, {
+  //     width: '550px',
+  //     autoFocus: false,
+  //     data: {
+  //       message: 'Are you sure want to donload?',
+  //       name: this.filterService.selectedFilterValue.taxonomy,
+  //       activeFilters: this.filterService.activeFilters.toString(),
+  //       sort: this.sort,
+  //       taxonomy: { rank: 'superkingdom', taxonomy: 'Eukaryota', childRank: 'kingdom' },
+  //       searchText: this.filterService.searchText,
+  //       selectedOptions: [0, 1, 2],
+  //       hideAnnotation: this.filterService.AnnotationFilters.length === 0 && this.filterService.AnnotationCompleteFilters.length === 0 ,
+  //       hideAssemblies: this.filterService.AssembliesFilters.length === 0 ,
+  //       hideRawData: this.filterService.RawDataFilters.length === 0
+  //     }
+  //   });
+  // }
   // tslint:disable-next-line:typedef
   hasActiveFilters() {
     if (typeof this.filterService.activeFilters === 'undefined') {

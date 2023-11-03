@@ -101,7 +101,7 @@
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
                 </div> -->
                 <h1 class="page-header">Statuses</h1>
-                <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-statuses-metadata'})">Download metadata</button>
+<!--                <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-statuses-metadata'})">Download metadata</button>-->
                 <h1 *ngIf="activeFilters.length !== 0">Filters:
                     <button type="button" class="btn btn-success" *ngFor="let filter of activeFilters">
                         {{filter}}
@@ -115,7 +115,7 @@
                     <mat-label>Search</mat-label>
                     <input #searchInput matInput [(ngModel)]='searchText' (keyup)="getSearchResults()" placeholder="Ex. lutra" #input>
                 </mat-form-field>
-                <table mat-table #table matTableExporter #exporter="matTableExporter" [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
+                <table mat-table #table matTableExporter  [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
                     <!-- First Column -->
                     <ng-container matColumnDef="organism">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
@@ -136,28 +136,22 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Metadata submitted to BioSamples
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span class="badge badge-pill badge-success">{{element.biosamples}} </span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.biosamples_date">
-                                    {{element.biosamples_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.biosamples)">
+                                    {{element.biosamples}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
                     <!-- Fourth Column -->
                     <ng-container matColumnDef="raw_data_submitted_to_ena">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Raw data submitted to ENA </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span [ngClass]="getStatusClass(element.raw_data)">{{element.raw_data }}</span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.ena_date">
-                                    {{element.ena_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.raw_data)">
+                                    {{element.raw_data}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
                     <!-- Fifth Column -->
@@ -165,15 +159,11 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Mapped reads submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span [ngClass]="getStatusClass(element.mapped_reads)">{{element.mapped_reads }}
-                                    </span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.ena_date">
-                                    {{element.ena_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.mapped_reads)">
+                                    {{element.mapped_reads}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
 
@@ -181,29 +171,22 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Assemblies submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span [ngClass]="getStatusClass(element.assemblies)">{{element.assemblies }} </span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.ena_date">
-                                    {{element.ena_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.assemblies)">
+                                    {{element.assemblies}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="annotation_complete">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Annotation complete </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span [ngClass]="getStatusClass(element.annotation_complete)">
-                                        {{ element.annotation_complete }} </span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.annotation_date">
-                                    {{element.annotation_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.annotation_complete)">
+                                    {{element.annotation_complete}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
 
@@ -211,21 +194,19 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Annotation submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <mat-list>
-                                <mat-list-item>
-                                    <span [ngClass]="getStatusClass(element.annotation)">{{element.annotation }} </span>
-                                </mat-list-item>
-                                <mat-list-item *ngIf="element.annotation_date">
-                                    {{element.annotation_date}}
-                                </mat-list-item>
-                            </mat-list>
+                            <mat-chip-set>
+                                <mat-chip [ngStyle]="getBadgeColor(element.annotation)">
+                                    {{element.annotation}}
+                                </mat-chip>
+                            </mat-chip-set>
                         </mat-cell>
                     </ng-container>
 
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
                 </table>
-                <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]" showFirstLastButtons [length]="statusesTotalCount" (page)="pageChanged($event)"></mat-paginator>
+                <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]" showFirstLastButtons [length]="statusesTotalCount"
+                               (page)="pageChanged($event)" style="margin-bottom: 15px"></mat-paginator>
             </div>
         </div>
     </div>
