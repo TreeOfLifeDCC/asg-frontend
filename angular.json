@@ -32,7 +32,8 @@
                             "src/assets/css/jquery.dataTables.css",
                             "./node_modules/leaflet/dist/leaflet.css",
                             "src/assets/css/MarkerCluster.css",
-                            "src/assets/css/MarkerCluster.Default.css"
+                            "src/assets/css/MarkerCluster.Default.css",
+                            "node_modules/cookieconsent/build/cookieconsent.min.css"
                         ],
                         "scripts": [
                             "./node_modules/jquery/dist/jquery.min.js",
@@ -42,7 +43,8 @@
                             "./node_modules/swagger-ui-dist/swagger-ui-standalone-preset.js",
                             "src/assets/js/d3.v3.min.js",
                             "src/assets/js/jquery.dataTables.min.js",
-                            "src/assets/js/autocomplete.js"
+                            "src/assets/js/autocomplete.js",
+                            "node_modules/cookieconsent/build/cookieconsent.min.js"
                         ],
                         "vendorChunk": true,
                         "extractLicenses": false,
