@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 
 import { Sample } from '../model/dashboard.model';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog-component/confirmation-dialog.component';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import {BytesPipe} from '../../shared/bytes-pipe';
 import {tap} from 'rxjs/operators';
+import {MatDialog} from "@angular/material/dialog";
 
 @Injectable({
   providedIn: 'root'

@@ -37,6 +37,7 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatBadgeModule} from "@angular/material/badge";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatListModule} from "@angular/material/list";
+import {MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [DashboardComponent, SpecimensComponent, DetailsComponent, OrganismDetailsComponent, TaxanomyComponent, MapComponent, MapClusterComponent,
@@ -60,7 +61,8 @@ import {MatListModule} from "@angular/material/list";
     MatTabsModule,
     MatBadgeModule,
     MatChipsModule,
-    MatListModule
+    MatListModule,
+    MatDialogModule
   ],
   exports: [
     FilterComponent, PhylogenyFilterComponent, ActiveFilterComponent
