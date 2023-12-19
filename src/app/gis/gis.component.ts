@@ -8,7 +8,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import {control} from 'leaflet';
 import layers = control.layers;
-import {MatRadioChange as MatRadioChange} from '@angular/material/radio';
+import {MatRadioChange} from '@angular/material/radio';
 import {FilterService} from '../services/filter-service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 

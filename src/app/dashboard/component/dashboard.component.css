@@ -259,3 +259,7 @@ mat-chip-set {
     margin-bottom: 15px;
     font-size: 14px;
 }
+
+.searchField{
+    margin-top: 10px;
+}

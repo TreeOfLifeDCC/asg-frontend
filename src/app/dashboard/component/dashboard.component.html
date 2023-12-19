@@ -53,7 +53,7 @@
 
                 </div>
 
-                <mat-form-field>
+                <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
                     <input #searchInput matInput [(ngModel)]='filterService.searchText' (keyup)="getSearchResults()"
                            placeholder="Ex. lutra" #input>

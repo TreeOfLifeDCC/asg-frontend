@@ -5,8 +5,8 @@ import { PhylogeneticsRoutingModule } from './phylogenetics-routing.module';
 import { DynamicScriptLoaderService } from './phylogenetics/services/dynamic-script-loader.service';
 import { LOADERS } from 'ngx-spinner/lib/ngx-spinner.enum';
 import {NgxSpinnerModule} from 'ngx-spinner';
-import {MatFormFieldModule as MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule as MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 
 
 
