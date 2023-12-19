@@ -25,6 +25,12 @@
 .page-header {
     color: midnightblue;
 }
+
+h1.page-header{
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
 .leaflet-popup-close-button {
     display: none;
 }

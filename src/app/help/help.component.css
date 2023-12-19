@@ -12,6 +12,11 @@
     color: midnightblue;
 }
 
+h1.page-header{
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
 .display-2 {
     color: ghostwhite;
 }
