@@ -232,7 +232,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder,this.filterService.searchText)
+    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText,
+        this.filterService.activeFilters.join(','))
         .subscribe(
             data => {
               const unpackedData = [];
