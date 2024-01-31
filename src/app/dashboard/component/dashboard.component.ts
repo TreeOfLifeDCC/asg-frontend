@@ -15,6 +15,8 @@ import 'bootstrap';
 import {FilterService} from '../../services/filter-service';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
+import {Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 // import {MatDialog} from "@angular/material/dialog";
 
 
@@ -88,6 +90,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     {name: "Annotation complete", column: "annotation_complete", selected: false},
     {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
   displayedColumns = [];
+  searchUpdate = new Subject<string>();
+
   constructor(private titleService: Title,
               private dashboardService: DashboardService,
               private activatedRoute: ActivatedRoute,
@@ -95,7 +99,18 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               private spinner: NgxSpinnerService,
               private taxanomyService: TaxanomyService,
               // private dialog: MatDialog,
-              public filterService: FilterService) { }
+              public filterService: FilterService) {
+    this.searchUpdate.pipe(
+        debounceTime(500),
+        distinctUntilChanged()).subscribe(
+        value => {
+          this.spinner.show();
+          this.resetFilter();
+          this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+          this.filterService.updateActiveRouteParams();
+        }
+    );
+  }
 
   ngOnInit(): void {
     this.getDisplayedColumns();
