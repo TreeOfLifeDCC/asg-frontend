@@ -27,7 +27,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   checkFilterIsActive = (filter: string) => {
-    // console.log(this.filterService.activeFilters);
     if (this.filterService.activeFilters.indexOf(filter) !== -1) {
       return 'active-filter';
     }
@@ -35,9 +34,12 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   onFilterClick = (event, label: string, filter: string) => {
+    if (label === 'symbionts-status'){
+      filter = 'symbiontsStatus-' + filter;
+    }
     const filterIndex = this.filterService.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {
-      this.removeFilter(filter);
+      this.removeFilter(label, filter);
     } else {
       this.filterService.selectedFilterArray(label, filter);
       this.filterService.activeFilters.push(filter);
@@ -45,7 +47,9 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
       }
     }
-  removeFilter(filter: string) {
+
+  // tslint:disable-next-line:typedef
+  removeFilter(label: string, filter: string) {
     if (filter !== undefined) {
 
       this.filterService.updateDomForRemovedFilter(filter);
@@ -56,6 +60,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
     }
   }
+
   getStatusClass = (status: string) => {
     if (status === 'Annotation Complete') {
       return 'badge badge-pill badge-success';

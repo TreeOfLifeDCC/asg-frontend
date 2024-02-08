@@ -46,6 +46,8 @@ export class FilterService {
     selectedTaxnomyFilter = '';
     taxonomies = [];
     experimentTypeFilters = [];
+    symbiontsFilters = [];
+
     phylSelectedRank = '';
     filterArray = [];
 
@@ -129,30 +131,30 @@ export class FilterService {
         }
 
     }
-    selectedFilterArray = (key: string, value: string) => {
+    selectedFilterArray = (key: string, filterValue: string) => {
         let jsonObj: {};
         if (key.toLowerCase() === 'biosamples') {
-            jsonObj = { name: 'biosamples', value };
+            jsonObj = { name: 'biosamples', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         } else if (key.toLowerCase() === 'raw-data') {
-            jsonObj = { name: 'raw_data', value };
+            jsonObj = { name: 'raw_data', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         }  else if (key.toLowerCase() === 'assemblies') {
-            jsonObj = { name: 'assemblies', value };
+            jsonObj = { name: 'assemblies', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         } else if (key.toLowerCase() === 'annotation-complete') {
-            jsonObj = { name: 'annotation_complete', value };
+            jsonObj = { name: 'annotation_complete', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         } else if (key.toLowerCase() === 'annotation') {
-            jsonObj = { name: 'annotation', value };
+            jsonObj = { name: 'annotation', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         }
         else if (key.toLowerCase() === 'genome') {
-            jsonObj = { name: 'genome', value };
+            jsonObj = { name: 'genome', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         }
         else if (key.toLowerCase() === 'phylogeny') {
-            jsonObj = { name: 'phylogeny', value };
+            jsonObj = { name: 'phylogeny', value: filterValue };
             this.urlAppendFilterArray.push(jsonObj);
         } else if (key.toLowerCase() === 'experiment-type') {
             const oldValue = [];
@@ -163,42 +165,63 @@ export class FilterService {
             });
             jsonObj = oldValue === undefined || oldValue.length === 0 ? {
                 name: 'experiment-type',
-                value
+                value: filterValue
             } : {
                 name: 'experiment-type',
-                value: oldValue[oldValue.length - 1] === undefined ? value : oldValue[oldValue.length - 1] + ',' + value
+                value: oldValue[oldValue.length - 1] === undefined ? filterValue : oldValue[oldValue.length - 1] + ',' + filterValue
             };
             this.urlAppendFilterArray.push(jsonObj);
 
+        } else if (key.toLowerCase() === 'symbionts-status') {
+            const retainedFilters = [];
+            filterValue = filterValue.replace(/^symbiontsStatus-/, '');
+            console.log("this.urlAppendFilterArray: ", this.urlAppendFilterArray);
+            this.urlAppendFilterArray.forEach(obj => {
+                if (obj.name === 'symbionts-status') {
+                    retainedFilters.push(obj.value);
+                }
+            });
+            jsonObj = retainedFilters === undefined || retainedFilters.length === 0 ? {
+                name: 'symbionts-status',
+                value: filterValue
+            } : {
+                name: 'symbionts-status',
+                value: retainedFilters[retainedFilters.length - 1] + ',' + filterValue
+            };
+            this.urlAppendFilterArray.push(jsonObj);
         }
 
     }
 
     // his.filterService.selectedFilterArray(label, filter);
     // this.filterService.activeFilters.push(filter);
-    removeExperiemtntFilter = (filter: string) => {
-        const oldValue = [];
+    removeSimpleFilter = (filterTitle: string, filter: string) => {
+        const retainedFilters = [];
         let jsonObj: {};
         // tslint:disable-next-line:prefer-const
         let result = this.urlAppendFilterArray.filter(obj => {
             if (obj !== undefined) {
-                return obj.name === 'experiment-type';
+                return obj.name === filterTitle;
             }
         });
+        console.log(result);
         result[0].value.split(',').forEach(item => {
+            if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
+                filter = filter.replace(/^symbiontsStatus-/, '');
+            }
             if (item !== filter) {
-                oldValue.push(item);
+                retainedFilters.push(item);
             }
         });
-        if (oldValue.length > 0 ){
+        if (retainedFilters.length > 0 ){
             jsonObj = {
-                name: 'experiment-type',
-                value:  oldValue.join(',')
+                name: filterTitle,
+                value:  retainedFilters.join(',')
             };
         }
         let inactiveClassName: string;
         this.urlAppendFilterArray.filter(obj => {
-            if (obj.name.toLowerCase() === 'experiment-type') {
+            if (obj.name.toLowerCase() === filterTitle) {
 
                 const filterIndex = this.urlAppendFilterArray.indexOf(obj);
                 this.urlAppendFilterArray.splice(filterIndex, 1);
@@ -212,24 +235,52 @@ export class FilterService {
         });
     }
 
+    // updateDomForRemovedFilter = (label: string, filter: string) => {
+    //     // tslint:disable-next-line:triple-equals
+    //     if (this.urlAppendFilterArray.length != 0) {
+    //         let inactiveClassName: string;
+    //
+    //         this.urlAppendFilterArray.filter(obj => {
+    //             if (obj.name.toLowerCase() === label) {
+    //                 this.removeSimpleFilter(label, filter);
+    //             } else if (obj.value === filter){
+    //                 inactiveClassName = obj.name + '-inactive';
+    //                 $('.' + inactiveClassName).removeClass('active');
+    //                 const filterIndex = this.urlAppendFilterArray.indexOf(obj);
+    //                 this.urlAppendFilterArray.splice(filterIndex, 1);
+    //             }
+    //         });
+    //     }
+    // }
+
     updateDomForRemovedFilter = (filter: string) => {
         // tslint:disable-next-line:triple-equals
         if (this.urlAppendFilterArray.length != 0) {
             let inactiveClassName: string;
-            this.urlAppendFilterArray.filter(obj => {
-                // tslint:disable-next-line:triple-equals
-                if (obj.name.toLowerCase() === 'experiment-type') {
-                    this.removeExperiemtntFilter(filter);
-                }else if(obj.value === filter){
-                    inactiveClassName = obj.name + '-inactive';
-                    $('.' + inactiveClassName).removeClass('active');
-                    const filterIndex = this.urlAppendFilterArray.indexOf(obj);
-                    this.urlAppendFilterArray.splice(filterIndex, 1);
-                }
-            });
+
+            if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0) {
+                this.urlAppendFilterArray.filter(obj => {
+                    if (obj.name.toLowerCase() === 'symbionts-status') {
+                        this.removeSimpleFilter('symbionts-status', filter);
+                    }
+                });
+            } else {
+                this.urlAppendFilterArray.filter(obj => {
+                    console.log("updateDomForRemovedFilter: ", obj);
+                    // tslint:disable-next-line:triple-equals
+                    if (obj.name.toLowerCase() === 'experiment-type') {
+                        this.removeSimpleFilter('experiment-type', filter);
+                    }else if (obj.value === filter){
+                        inactiveClassName = obj.name + '-inactive';
+                        $('.' + inactiveClassName).removeClass('active');
+                        const filterIndex = this.urlAppendFilterArray.indexOf(obj);
+                        this.urlAppendFilterArray.splice(filterIndex, 1);
+                    }
+                });
+            }
+
         }
     }
-
 
     // tslint:disable-next-line:typedef
     getFilters(data) {
@@ -243,6 +294,7 @@ export class FilterService {
             };
         }
     }
+
     parseFilterAggregation = (data: any) => {
         this.filterArray = [] ;
         this.filtersMap = data;
@@ -335,8 +387,10 @@ export class FilterService {
             label: 'genome',
             count:  genome
         });
-        const experiement = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
-        this.experimentTypeFilters = experiement;
+
+        this.experimentTypeFilters = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
+        this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
+
         this.bioSampleTotalCount = data.hits.total.value;
         if (data.aggregations.childRank !== undefined) {
             this.selectedTaxonomy.push(data.aggregations.childRank.scientificName.buckets[0]);

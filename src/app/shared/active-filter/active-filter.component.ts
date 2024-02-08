@@ -27,6 +27,10 @@ export class ActiveFilterComponent {
   // tslint:disable-next-line:typedef
   clearFilter(filter: string) {
     if (filter != undefined) {
+      let label = '';
+      if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
+        label = 'symbionts-status';
+      }
       this.filterService.updateDomForRemovedFilter(filter);
       const filterIndex = this.filterService.activeFilters.indexOf(filter);
       this.filterService.activeFilters.splice(filterIndex, 1);
@@ -34,6 +38,14 @@ export class ActiveFilterComponent {
       this.filterService.updateActiveRouteParams();
 
     }
+  }
+
+  // tslint:disable-next-line:typedef
+  displayActiveFilterName(filterName: string){
+    if (filterName.includes('symbiontsStatus-')){
+      return filterName.replace(/^symbiontsStatus-/, 'Symbionts-');
+    }
+    return filterName;
   }
 
 }
