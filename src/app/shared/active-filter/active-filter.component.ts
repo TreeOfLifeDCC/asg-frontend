@@ -31,6 +31,12 @@ export class ActiveFilterComponent {
       if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
         label = 'symbionts-status';
       }
+      if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0){
+        label = 'metagenomes-status';
+      }
+      if (filter.includes('experimentType-') && filter.indexOf('experimentType-') === 0){
+        label = 'experiment-type';
+      }
       this.filterService.updateDomForRemovedFilter(filter);
       const filterIndex = this.filterService.activeFilters.indexOf(filter);
       this.filterService.activeFilters.splice(filterIndex, 1);
@@ -44,6 +50,12 @@ export class ActiveFilterComponent {
   displayActiveFilterName(filterName: string){
     if (filterName.includes('symbiontsStatus-')){
       return filterName.replace(/^symbiontsStatus-/, 'Symbionts-');
+    }
+    if (filterName.includes('metagenomesStatus-')){
+      return filterName.replace(/^metagenomesStatus-/, 'Metagenomes-');
+    }
+    if (filterName.includes('experimentType-')){
+      return filterName.replace(/^experimentType-/, '');
     }
     return filterName;
   }

@@ -10,11 +10,12 @@
                (click)="toggleCollapse()">remove</i>
         </span>
     </h3>
+
     <ul class="list-group" *ngIf="title === 'Experiment Type'">
         <ng-container *ngFor="let filter of filterService.experimentTypeFilters; let i = index">
             <li *ngIf="i<itemLimit"
                 class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
-                id="{{filter.key}}-Experiment Type" [ngClass]="checkFilterIsActive(filter.key)"
+                id="{{filter.key}}-Experiment Type" [ngClass]="checkFilterIsActive('experimentType-'+filter.key)"
                 (click)="onFilterClick($event, 'experiment-type', filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
                 <span *ngIf="isShowCount === 'true'"
@@ -30,6 +31,19 @@
                 class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
                 id="{{filter.key}}-Symbionts Status" [ngClass]="checkFilterIsActive('symbiontsStatus-'+filter.key)"
                 (click)="onFilterClick($event, 'symbionts-status', filter.key)" style="cursor: pointer">
+                <span>{{filter.key}}</span>
+                <span *ngIf="isShowCount === 'true'"
+                      class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+            </li>
+        </ng-container>
+    </ul>
+
+    <ul class="list-group" *ngIf="title === 'Metagenomes Status'">
+        <ng-container *ngFor="let filter of filterService.metagenomesFilters; let i = index">
+            <li *ngIf="i<itemLimit"
+                class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
+                id="{{filter.key}}-Metagenomes Status" [ngClass]="checkFilterIsActive('metagenomesStatus-'+filter.key)"
+                (click)="onFilterClick($event, 'metagenomes-status', filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
                 <span *ngIf="isShowCount === 'true'"
                       class="badge badge-pill badge-info">{{filter.doc_count}}</span>

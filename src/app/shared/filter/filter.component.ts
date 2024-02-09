@@ -36,6 +36,10 @@ export class FilterComponent implements OnInit, AfterViewInit {
   onFilterClick = (event, label: string, filter: string) => {
     if (label === 'symbionts-status'){
       filter = 'symbiontsStatus-' + filter;
+    } else if (label === 'metagenomes-status'){
+      filter = 'metagenomesStatus-' + filter;
+    }else if (label === 'experiment-type') {
+      filter = 'experimentType-' + filter;
     }
     const filterIndex = this.filterService.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {

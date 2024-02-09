@@ -130,12 +130,17 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         if (key === 'experiment-type') {
           const list = params[key].split(',');
           list.forEach((param: any) => {
-            this.filterService.activeFilters.push(param);
+            this.filterService.activeFilters.push('experimentType-' + param);
           });
         } else if (key === 'symbionts-status') {
           const list = params[key].split(',');
           list.forEach((param: any) => {
             this.filterService.activeFilters.push('symbiontsStatus-' + param);
+          });
+        } else if (key === 'metagenomes-status') {
+          const list = params[key].split(',');
+          list.forEach((param: any) => {
+            this.filterService.activeFilters.push('metagenomesStatus-' + param);
           });
         }
         else if (key === 'phylogeny') {
