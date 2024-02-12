@@ -25,7 +25,7 @@
 
     </ul>
 
-    <ul class="list-group" *ngIf="title === 'Symbionts Status'">
+    <ul class="list-group" *ngIf="title === 'Symbionts'">
         <ng-container *ngFor="let filter of filterService.symbiontsFilters; let i = index">
             <li *ngIf="i<itemLimit"
                 class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
@@ -38,7 +38,7 @@
         </ng-container>
     </ul>
 
-    <ul class="list-group" *ngIf="title === 'Metagenomes Status'">
+    <ul class="list-group" *ngIf="title === 'Metagenomes'">
         <ng-container *ngFor="let filter of filterService.metagenomesFilters; let i = index">
             <li *ngIf="i<itemLimit"
                 class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
