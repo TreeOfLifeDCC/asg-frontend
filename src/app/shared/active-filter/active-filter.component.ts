@@ -26,7 +26,7 @@ export class ActiveFilterComponent {
 
   // tslint:disable-next-line:typedef
   clearFilter(filter: string) {
-    if (filter != undefined) {
+    if (filter !== undefined) {
       let label = '';
       if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
         label = 'symbionts-status';

@@ -196,7 +196,6 @@ export class FilterService {
                 return obj.name === filterTitle;
             }
         });
-        console.log(result);
         result[0].value.split(',').forEach(item => {
             if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
                 filter = filter.replace(/^symbiontsStatus-/, '');
@@ -234,24 +233,6 @@ export class FilterService {
         });
     }
 
-    // updateDomForRemovedFilter = (label: string, filter: string) => {
-    //     // tslint:disable-next-line:triple-equals
-    //     if (this.urlAppendFilterArray.length != 0) {
-    //         let inactiveClassName: string;
-    //
-    //         this.urlAppendFilterArray.filter(obj => {
-    //             if (obj.name.toLowerCase() === label) {
-    //                 this.removeSimpleFilter(label, filter);
-    //             } else if (obj.value === filter){
-    //                 inactiveClassName = obj.name + '-inactive';
-    //                 $('.' + inactiveClassName).removeClass('active');
-    //                 const filterIndex = this.urlAppendFilterArray.indexOf(obj);
-    //                 this.urlAppendFilterArray.splice(filterIndex, 1);
-    //             }
-    //         });
-    //     }
-    // }
-
     updateDomForRemovedFilter = (filter: string) => {
         // tslint:disable-next-line:triple-equals
         if (this.urlAppendFilterArray.length != 0) {
@@ -278,7 +259,6 @@ export class FilterService {
             }
             else {
                 this.urlAppendFilterArray.filter(obj => {
-                    console.log("updateDomForRemovedFilter: ", obj);
                     // tslint:disable-next-line:triple-equals
                     if (obj.name.toLowerCase() === 'experiment-type') {
                         this.removeSimpleFilter('experiment-type', filter);
