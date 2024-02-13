@@ -142,12 +142,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
           list.forEach((param: any) => {
             this.filterService.activeFilters.push('metagenomesStatus-' + param);
           });
-        }
-        else if (key === 'phylogeny') {
+        } else if (key === 'phylogeny') {
           this.filterService.isFilterSelected = true;
           this.filterService.phylSelectedRank = params[key];
           this.filterService.activeFilters.push(params[key]);
-
         } else {
           this.filterService.activeFilters.push(params[key]);
         }

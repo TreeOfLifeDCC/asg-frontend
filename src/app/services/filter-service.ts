@@ -256,13 +256,9 @@ export class FilterService {
                         this.removeSimpleFilter('experiment-type', filter);
                     }
                 });
-            }
-            else {
+            } else {
                 this.urlAppendFilterArray.filter(obj => {
-                    // tslint:disable-next-line:triple-equals
-                    if (obj.name.toLowerCase() === 'experiment-type') {
-                        this.removeSimpleFilter('experiment-type', filter);
-                    }else if (obj.value === filter){
+                    if (obj.value === filter) {
                         inactiveClassName = obj.name + '-inactive';
                         $('.' + inactiveClassName).removeClass('active');
                         const filterIndex = this.urlAppendFilterArray.indexOf(obj);
@@ -381,8 +377,13 @@ export class FilterService {
         });
 
         this.experimentTypeFilters = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
-        this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
-        this.metagenomesFilters = this.filtersMap.aggregations.metagenomes_status.buckets;
+
+        if (this.filtersMap.aggregations.symbionts_status) {
+            this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
+        }
+        if (this.filtersMap.aggregations.metagenomes_status) {
+            this.metagenomesFilters = this.filtersMap.aggregations.metagenomes_status.buckets;
+        }
 
         this.bioSampleTotalCount = data.hits.total.value;
         if (data.aggregations.childRank !== undefined) {
