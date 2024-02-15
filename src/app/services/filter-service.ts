@@ -134,46 +134,58 @@ export class FilterService {
     }
     selectedFilterArray = (key: string, filterValue: string) => {
         let jsonObj: {};
-        if (key.toLowerCase() === 'biosamples') {
-            jsonObj = { name: 'biosamples', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'raw-data') {
-            jsonObj = { name: 'raw_data', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        }  else if (key.toLowerCase() === 'assemblies') {
-            jsonObj = { name: 'assemblies', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'annotation-complete') {
-            jsonObj = { name: 'annotation_complete', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'annotation') {
-            jsonObj = { name: 'annotation', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        }
-        else if (key.toLowerCase() === 'genome') {
-            jsonObj = { name: 'genome', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        }
-        else if (key.toLowerCase() === 'phylogeny') {
-            jsonObj = { name: 'phylogeny', value: filterValue };
-            this.urlAppendFilterArray.push(jsonObj);
-        } else if (key.toLowerCase() === 'experiment-type') {
-            filterValue = filterValue.replace(/^experimentType-/, '');
-            this.addSimpleFilter(filterValue, 'experiment-type', jsonObj);
-        } else if (key.toLowerCase() === 'symbionts_biosamples_status') {
-            filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
-            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
-        } else if (key.toLowerCase() === 'symbionts_raw_data_status') {
-            filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
-            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
-        } else if (key.toLowerCase() === 'symbionts_assemblies_status') {
-            filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
-            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
-        }
 
-        else if (key.toLowerCase() === 'metagenomes-status') {
-            filterValue = filterValue.replace(/^metagenomesStatus-/, '');
-            this.addSimpleFilter(filterValue, 'metagenomes-status', jsonObj);
+        switch (key.toLowerCase()) {
+            case 'biosamples':
+                jsonObj = { name: 'biosamples', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'raw-data':
+                jsonObj = { name: 'raw_data', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'assemblies':
+                jsonObj = { name: 'assemblies', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'annotation-complete':
+                jsonObj = { name: 'annotation_complete', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'annotation':
+                jsonObj = { name: 'annotation', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'genome':
+                jsonObj = { name: 'genome', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'phylogeny':
+                jsonObj = { name: 'phylogeny', value: filterValue };
+                this.urlAppendFilterArray.push(jsonObj);
+                break;
+            case 'experiment-type':
+                filterValue = filterValue.replace(/^experimentType-/, '');
+                this.addSimpleFilter(filterValue, 'experiment-type', jsonObj);
+                break;
+            case 'symbionts_biosamples_status':
+                filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+                break;
+            case 'symbionts_raw_data_status':
+                filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+                break;
+            case 'symbionts_assemblies_status':
+                filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+                break;
+            case 'metagenomes-status':
+                filterValue = filterValue.replace(/^metagenomesStatus-/, '');
+                this.addSimpleFilter(filterValue, 'metagenomes-status', jsonObj);
+                break;
+            default:
+                console.log(`Sorry, filter ${key} does not exist.`);
         }
 
     }
@@ -206,20 +218,20 @@ export class FilterService {
             }
         });
         result[0].value.split(',').forEach(item => {
-             if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0){
+             if (filter.startsWith('symbiontsBioSamplesStatus-')){
                 filter = filter.replace(/^symbiontsBioSamplesStatus-/, '');
             }
-            if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0){
+            if (filter.startsWith('symbiontsRawDataStatus-')){
                 filter = filter.replace(/^symbiontsRawDataStatus-/, '');
             }
-            if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0){
+            if (filter.startsWith('symbiontsAssembliesStatus-')){
                 filter = filter.replace(/^symbiontsAssembliesStatus-/, '');
             }
 
-            if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0){
+            if (filter.startsWith('metagenomesStatus-')){
                 filter = filter.replace(/^metagenomesStatus-/, '');
             }
-            if (filter.includes('experimentType-') && filter.indexOf('experimentType-') === 0){
+            if (filter.startsWith('experimentType-')){
                 filter = filter.replace(/^experimentType-/, '');
             }
 
@@ -249,43 +261,30 @@ export class FilterService {
         });
     }
 
+    filterUrlAppendFilterArray = (filterName: string, filter: string) => {
+        this.urlAppendFilterArray.filter(obj => {
+            if (obj.name.toLowerCase() === filterName) {
+                this.removeSimpleFilter(filterName, filter);
+            }
+        });
+    }
     updateDomForRemovedFilter = (filter: string) => {
         // tslint:disable-next-line:triple-equals
         if (this.urlAppendFilterArray.length != 0) {
             let inactiveClassName: string;
 
-          if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0) {
-                this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'symbionts_biosamples_status') {
-                        this.removeSimpleFilter('symbionts_biosamples_status', filter);
-                    }
-                });
-            } else if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0) {
-                this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'symbionts_raw_data_status') {
-                        this.removeSimpleFilter('symbionts_raw_data_status', filter);
-                    }
-                });
-            } else if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0) {
-                this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'symbionts_assemblies_status') {
-                        this.removeSimpleFilter('symbionts_assemblies_status', filter);
-                    }
-                });
+            if (filter.startsWith('symbiontsBioSamplesStatus-')) {
+                this.filterUrlAppendFilterArray('symbionts_biosamples_status', filter);
+            } else if (filter.startsWith('symbiontsRawDataStatus-')) {
+                this.filterUrlAppendFilterArray('symbionts_raw_data_status', filter);
+            } else if (filter.startsWith('symbiontsAssembliesStatus-')) {
+                this.filterUrlAppendFilterArray('symbionts_assemblies_status', filter);
             }
 
-            else if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0) {
-                this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'metagenomes-status') {
-                        this.removeSimpleFilter('metagenomes-status', filter);
-                    }
-                });
-            } else  if (filter.includes('experimentType-') && filter.indexOf('experimentType-') === 0) {
-                this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'experiment-type') {
-                        this.removeSimpleFilter('experiment-type', filter);
-                    }
-                });
+            else if (filter.startsWith('metagenomesStatus-')) {
+                this.filterUrlAppendFilterArray('metagenomes-status', filter);
+            } else  if (filter.startsWith('experimentType-')) {
+                this.filterUrlAppendFilterArray('experiment-type', filter);
             } else {
                 this.urlAppendFilterArray.filter(obj => {
                     if (obj.value === filter) {
