@@ -28,8 +28,14 @@ export class ActiveFilterComponent {
   clearFilter(filter: string) {
     if (filter !== undefined) {
       let label = '';
-      if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
-        label = 'symbionts-status';
+      if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0){
+        label = 'symbionts_biosamples_status';
+      }
+      if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0){
+        label = 'symbionts_raw_data_status';
+      }
+      if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0){
+        label = 'symbionts_assemblies_status';
       }
       if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0){
         label = 'metagenomes-status';
@@ -48,8 +54,15 @@ export class ActiveFilterComponent {
 
   // tslint:disable-next-line:typedef
   displayActiveFilterName(filterName: string){
-    if (filterName.includes('symbiontsStatus-')){
-      return filterName.replace(/^symbiontsStatus-/, 'Symbionts-');
+    console.log(filterName)
+    if (filterName.includes('symbiontsBioSamplesStatus-')){
+      return filterName.replace(/^symbiontsBioSamplesStatus-/, 'Symbionts-');
+    }
+    if (filterName.includes('symbiontsRawDataStatus-')){
+      return filterName.replace(/^symbiontsRawDataStatus-/, 'Symbionts-');
+    }
+    if (filterName.includes('symbiontsAssembliesStatus-')){
+      return filterName.replace(/^symbiontsAssembliesStatus-/, 'Symbionts-');
     }
     if (filterName.includes('metagenomesStatus-')){
       return filterName.replace(/^metagenomesStatus-/, 'Metagenomes-');

@@ -160,10 +160,18 @@ export class FilterService {
         } else if (key.toLowerCase() === 'experiment-type') {
             filterValue = filterValue.replace(/^experimentType-/, '');
             this.addSimpleFilter(filterValue, 'experiment-type', jsonObj);
-        } else if (key.toLowerCase() === 'symbionts-status') {
-            filterValue = filterValue.replace(/^symbiontsStatus-/, '');
-            this.addSimpleFilter(filterValue, 'symbionts-status', jsonObj);
-        }  else if (key.toLowerCase() === 'metagenomes-status') {
+        } else if (key.toLowerCase() === 'symbionts_biosamples_status') {
+            filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
+            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+        } else if (key.toLowerCase() === 'symbionts_raw_data_status') {
+            filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
+            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+        } else if (key.toLowerCase() === 'symbionts_assemblies_status') {
+            filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
+            this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+        }
+
+        else if (key.toLowerCase() === 'metagenomes-status') {
             filterValue = filterValue.replace(/^metagenomesStatus-/, '');
             this.addSimpleFilter(filterValue, 'metagenomes-status', jsonObj);
         }
@@ -184,6 +192,7 @@ export class FilterService {
             name: filterTerm,
             value: retainedFilters[retainedFilters.length - 1] + ',' + filterValue
         };
+        console.log("jsonObj: ", jsonObj)
         this.urlAppendFilterArray.push(jsonObj);
     }
 
@@ -197,9 +206,16 @@ export class FilterService {
             }
         });
         result[0].value.split(',').forEach(item => {
-            if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0){
-                filter = filter.replace(/^symbiontsStatus-/, '');
+             if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0){
+                filter = filter.replace(/^symbiontsBioSamplesStatus-/, '');
             }
+            if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0){
+                filter = filter.replace(/^symbiontsRawDataStatus-/, '');
+            }
+            if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0){
+                filter = filter.replace(/^symbiontsAssembliesStatus-/, '');
+            }
+
             if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0){
                 filter = filter.replace(/^metagenomesStatus-/, '');
             }
@@ -238,13 +254,27 @@ export class FilterService {
         if (this.urlAppendFilterArray.length != 0) {
             let inactiveClassName: string;
 
-            if (filter.includes('symbiontsStatus-') && filter.indexOf('symbiontsStatus-') === 0) {
+          if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0) {
                 this.urlAppendFilterArray.filter(obj => {
-                    if (obj.name.toLowerCase() === 'symbionts-status') {
-                        this.removeSimpleFilter('symbionts-status', filter);
+                    if (obj.name.toLowerCase() === 'symbionts_biosamples_status') {
+                        this.removeSimpleFilter('symbionts_biosamples_status', filter);
                     }
                 });
-            } else if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0) {
+            } else if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0) {
+                this.urlAppendFilterArray.filter(obj => {
+                    if (obj.name.toLowerCase() === 'symbionts_raw_data_status') {
+                        this.removeSimpleFilter('symbionts_raw_data_status', filter);
+                    }
+                });
+            } else if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0) {
+                this.urlAppendFilterArray.filter(obj => {
+                    if (obj.name.toLowerCase() === 'symbionts_assemblies_status') {
+                        this.removeSimpleFilter('symbionts_assemblies_status', filter);
+                    }
+                });
+            }
+
+            else if (filter.includes('metagenomesStatus-') && filter.indexOf('metagenomesStatus-') === 0) {
                 this.urlAppendFilterArray.filter(obj => {
                     if (obj.name.toLowerCase() === 'metagenomes-status') {
                         this.removeSimpleFilter('metagenomes-status', filter);
@@ -284,7 +314,9 @@ export class FilterService {
     }
 
     parseFilterAggregation = (data: any) => {
+        console.log("parseFilterAggregation data: ", data)
         this.filterArray = [] ;
+        this.symbiontsFilters = [];
         this.filtersMap = data;
         let biosamplesFiltersCount = 0;
         this.BiosamplesFilters = this.filtersMap.aggregations.biosamples.buckets.filter(i => {
@@ -378,9 +410,25 @@ export class FilterService {
 
         this.experimentTypeFilters = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
 
+        //todelete
         if (this.filtersMap.aggregations.symbionts_status) {
-            this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
+            // this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
         }
+
+        if (this.filtersMap.aggregations.symbionts_biosamples_status) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.filtersMap.aggregations.symbionts_biosamples_status.buckets, 'symbionts_biosamples_status', 'symbiontsBioSamplesStatus');
+        }
+        if (this.filtersMap.aggregations.symbionts_raw_data_status) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.filtersMap.aggregations.symbionts_raw_data_status.buckets, 'symbionts_raw_data_status', 'symbiontsRawDataStatus');
+        }
+        if (this.filtersMap.aggregations.symbionts_assemblies_status) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.filtersMap.aggregations.symbionts_assemblies_status.buckets, 'symbionts_assemblies_status', 'symbiontsAssembliesStatus');
+        }
+
+
         if (this.filtersMap.aggregations.metagenomes_status) {
             this.metagenomesFilters = this.filtersMap.aggregations.metagenomes_status.buckets;
         }
@@ -392,6 +440,14 @@ export class FilterService {
     }
 
 
+    merge = (first: any[], second: any[], filterLabel, filterPrefix) => {
+        for (let i = 0; i < second.length; i++) {
+            second[i].label = filterLabel;
+            second[i].filterPrefix = filterPrefix;
+            first.push(second[i]);
+        }
+        return first;
+    }
 
 
     updateActiveRouteParams = () => {

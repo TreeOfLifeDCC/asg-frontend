@@ -29,8 +29,8 @@
         <ng-container *ngFor="let filter of filterService.symbiontsFilters; let i = index">
             <li *ngIf="i<itemLimit"
                 class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
-                id="{{filter.key}}-Symbionts Status" [ngClass]="checkFilterIsActive('symbiontsStatus-'+filter.key)"
-                (click)="onFilterClick($event, 'symbionts-status', filter.key)" style="cursor: pointer">
+                id="{{filter.key}}-Symbionts Status" [ngClass]="checkFilterIsActive(filter.filterPrefix+'-'+filter.key)"
+                (click)="onFilterClick($event, filter.label, filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
                 <span *ngIf="isShowCount === 'true'"
                       class="badge badge-pill badge-info">{{filter.doc_count}}</span>

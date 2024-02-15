@@ -132,12 +132,24 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
           list.forEach((param: any) => {
             this.filterService.activeFilters.push('experimentType-' + param);
           });
-        } else if (key === 'symbionts-status') {
+        } else if (key === 'symbionts_biosamples_status') {
           const list = params[key].split(',');
           list.forEach((param: any) => {
-            this.filterService.activeFilters.push('symbiontsStatus-' + param);
+            this.filterService.activeFilters.push('symbiontsBioSamplesStatus-' + param);
           });
-        } else if (key === 'metagenomes-status') {
+        } else if (key === 'symbionts_raw_data_status') {
+          const list = params[key].split(',');
+          list.forEach((param: any) => {
+            this.filterService.activeFilters.push('symbiontsRawDataStatus-' + param);
+          });
+        } else if (key === 'symbionts_assemblies_status') {
+          const list = params[key].split(',');
+          list.forEach((param: any) => {
+            this.filterService.activeFilters.push('symbiontsAssembliesStatus-' + param);
+          });
+        }
+
+        else if (key === 'metagenomes-status') {
           const list = params[key].split(',');
           list.forEach((param: any) => {
             this.filterService.activeFilters.push('metagenomesStatus-' + param);
@@ -233,6 +245,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText, this.filterService.activeFilters.join(','))
         .subscribe(
             data => {
+              console.log("getAllBiosample data: ", data)
               const unpackedData = [];
               this.filterService.getFilters(data.rootSamples);
               for (const item of data.rootSamples.hits.hits) {
