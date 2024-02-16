@@ -141,9 +141,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
           case 'symbionts_assemblies_status':
             this.addToActiveFilters(params[key], 'symbiontsAssembliesStatus');
             break;
-          case 'metagenomes-status':
-            this.addToActiveFilters(params[key], 'metagenomesStatus');
-            break;
           case 'metagenomes_biosamples_status':
             this.addToActiveFilters(params[key], 'metagenomesBioSamplesStatus');
             break;

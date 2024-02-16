@@ -180,9 +180,17 @@ export class FilterService {
                 filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
-            case 'metagenomes-status':
-                filterValue = filterValue.replace(/^metagenomesStatus-/, '');
-                this.addSimpleFilter(filterValue, 'metagenomes-status', jsonObj);
+            case 'metagenomes_biosamples_status':
+                filterValue = filterValue.replace(/^metagenomesBioSamplesStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+                break;
+            case 'metagenomes_raw_data_status':
+                filterValue = filterValue.replace(/^metagenomesRawDataStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
+                break;
+            case 'metagenomes_assemblies_status':
+                filterValue = filterValue.replace(/^metagenomesAssembliesStatus-/, '');
+                this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             default:
                 console.log(`Sorry, filter ${key} does not exist.`);
@@ -218,7 +226,7 @@ export class FilterService {
             }
         });
         result[0].value.split(',').forEach(item => {
-             if (filter.startsWith('symbiontsBioSamplesStatus-')){
+            if (filter.startsWith('symbiontsBioSamplesStatus-')){
                 filter = filter.replace(/^symbiontsBioSamplesStatus-/, '');
             }
             if (filter.startsWith('symbiontsRawDataStatus-')){
@@ -227,9 +235,14 @@ export class FilterService {
             if (filter.startsWith('symbiontsAssembliesStatus-')){
                 filter = filter.replace(/^symbiontsAssembliesStatus-/, '');
             }
-
-            if (filter.startsWith('metagenomesStatus-')){
-                filter = filter.replace(/^metagenomesStatus-/, '');
+            if (filter.startsWith('metagenomesBioSamplesStatus-')){
+                filter = filter.replace(/^metagenomesBioSamplesStatus-/, '');
+            }
+            if (filter.startsWith('metagenomesRawDataStatus-')){
+                filter = filter.replace(/^metagenomesRawDataStatus-/, '');
+            }
+            if (filter.startsWith('metagenomesAssembliesStatus-')){
+                filter = filter.replace(/^metagenomesAssembliesStatus-/, '');
             }
             if (filter.startsWith('experimentType-')){
                 filter = filter.replace(/^experimentType-/, '');
@@ -279,10 +292,12 @@ export class FilterService {
                 this.filterUrlAppendFilterArray('symbionts_raw_data_status', filter);
             } else if (filter.startsWith('symbiontsAssembliesStatus-')) {
                 this.filterUrlAppendFilterArray('symbionts_assemblies_status', filter);
-            }
-
-            else if (filter.startsWith('metagenomesStatus-')) {
-                this.filterUrlAppendFilterArray('metagenomes-status', filter);
+            } else    if (filter.startsWith('metagenomesBioSamplesStatus-')) {
+                this.filterUrlAppendFilterArray('metagenomes_biosamples_status', filter);
+            } else if (filter.startsWith('metagenomesRawDataStatus-')) {
+                this.filterUrlAppendFilterArray('metagenomes_raw_data_status', filter);
+            } else if (filter.startsWith('metagenomesAssembliesStatus-')) {
+                this.filterUrlAppendFilterArray('metagenomes_assemblies_status', filter);
             } else  if (filter.startsWith('experimentType-')) {
                 this.filterUrlAppendFilterArray('experiment-type', filter);
             } else {
@@ -316,6 +331,7 @@ export class FilterService {
         console.log("parseFilterAggregation data: ", data)
         this.filterArray = [] ;
         this.symbiontsFilters = [];
+        this.metagenomesFilters = [];
         this.filtersMap = data;
         let biosamplesFiltersCount = 0;
         this.BiosamplesFilters = this.filtersMap.aggregations.biosamples.buckets.filter(i => {
@@ -426,10 +442,17 @@ export class FilterService {
             this.symbiontsFilters = this.merge(this.symbiontsFilters,
                 this.filtersMap.aggregations.symbionts_assemblies_status.buckets, 'symbionts_assemblies_status', 'symbiontsAssembliesStatus');
         }
-
-
-        if (this.filtersMap.aggregations.metagenomes_status) {
-            this.metagenomesFilters = this.filtersMap.aggregations.metagenomes_status.buckets;
+        if (this.filtersMap.aggregations.metagenomes_biosamples_status) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.filtersMap.aggregations.metagenomes_biosamples_status.buckets, 'metagenomes_biosamples_status', 'metagenomesBioSamplesStatus');
+        }
+        if (this.filtersMap.aggregations.metagenomes_raw_data_status) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.filtersMap.aggregations.metagenomes_raw_data_status.buckets, 'metagenomes_raw_data_status', 'metagenomesRawDataStatus');
+        }
+        if (this.filtersMap.aggregations.metagenomes_assemblies_status) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.filtersMap.aggregations.metagenomes_assemblies_status.buckets, 'metagenomes_assemblies_status', 'metagenomesAssembliesStatus');
         }
 
         this.bioSampleTotalCount = data.hits.total.value;

@@ -34,15 +34,18 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   onFilterClick = (event, label: string, filter: string) => {
-    console.log(label)
     if (label === 'symbionts_biosamples_status'){
       filter = 'symbiontsBioSamplesStatus-' + filter;
     } else if (label === 'symbionts_raw_data_status'){
       filter = 'symbiontsRawDataStatus-' + filter;
     } else if (label === 'symbionts_assemblies_status'){
       filter = 'symbiontsAssembliesStatus-' + filter;
-    } else if (label === 'metagenomes-status'){
-      filter = 'metagenomesStatus-' + filter;
+    } else if (label === 'metagenomes_biosamples_status'){
+      filter = 'metagenomesBioSamplesStatus-' + filter;
+    } else if (label === 'metagenomes_raw_data_status'){
+      filter = 'metagenomesRawDataStatus-' + filter;
+    } else if (label === 'metagenomes_assemblies_status'){
+      filter = 'metagenomesAssembliesStatus-' + filter;
     } else if (label === 'experiment-type') {
       filter = 'experimentType-' + filter;
     }
