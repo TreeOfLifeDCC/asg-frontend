@@ -425,11 +425,6 @@ export class FilterService {
 
         this.experimentTypeFilters = this.filtersMap.aggregations.experiment.library_construction_protocol.buckets;
 
-        //todelete
-        if (this.filtersMap.aggregations.symbionts_status) {
-            // this.symbiontsFilters = this.filtersMap.aggregations.symbionts_status.buckets;
-        }
-
         if (this.filtersMap.aggregations.symbionts_biosamples_status) {
             this.symbiontsFilters = this.merge(this.symbiontsFilters,
                 this.filtersMap.aggregations.symbionts_biosamples_status.buckets, 'symbionts_biosamples_status', 'symbiontsBioSamplesStatus');
