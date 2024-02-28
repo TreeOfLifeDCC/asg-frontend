@@ -427,27 +427,39 @@ export class FilterService {
 
         if (this.filtersMap.aggregations.symbionts_biosamples_status) {
             this.symbiontsFilters = this.merge(this.symbiontsFilters,
-                this.filtersMap.aggregations.symbionts_biosamples_status.buckets, 'symbionts_biosamples_status', 'symbiontsBioSamplesStatus');
+                this.filtersMap.aggregations.symbionts_biosamples_status.buckets,
+                'symbionts_biosamples_status',
+                'symbiontsBioSamplesStatus');
         }
         if (this.filtersMap.aggregations.symbionts_raw_data_status) {
             this.symbiontsFilters = this.merge(this.symbiontsFilters,
-                this.filtersMap.aggregations.symbionts_raw_data_status.buckets, 'symbionts_raw_data_status', 'symbiontsRawDataStatus');
+                this.filtersMap.aggregations.symbionts_raw_data_status.buckets,
+                'symbionts_raw_data_status',
+                'symbiontsRawDataStatus');
         }
         if (this.filtersMap.aggregations.symbionts_assemblies_status) {
             this.symbiontsFilters = this.merge(this.symbiontsFilters,
-                this.filtersMap.aggregations.symbionts_assemblies_status.buckets, 'symbionts_assemblies_status', 'symbiontsAssembliesStatus');
+                this.filtersMap.aggregations.symbionts_assemblies_status.buckets,
+                'symbionts_assemblies_status',
+                'symbiontsAssembliesStatus');
         }
         if (this.filtersMap.aggregations.metagenomes_biosamples_status) {
             this.metagenomesFilters = this.merge(this.metagenomesFilters,
-                this.filtersMap.aggregations.metagenomes_biosamples_status.buckets, 'metagenomes_biosamples_status', 'metagenomesBioSamplesStatus');
+                this.filtersMap.aggregations.metagenomes_biosamples_status.buckets,
+                'metagenomes_biosamples_status',
+                'metagenomesBioSamplesStatus');
         }
         if (this.filtersMap.aggregations.metagenomes_raw_data_status) {
             this.metagenomesFilters = this.merge(this.metagenomesFilters,
-                this.filtersMap.aggregations.metagenomes_raw_data_status.buckets, 'metagenomes_raw_data_status', 'metagenomesRawDataStatus');
+                this.filtersMap.aggregations.metagenomes_raw_data_status.buckets,
+                'metagenomes_raw_data_status',
+                'metagenomesRawDataStatus');
         }
         if (this.filtersMap.aggregations.metagenomes_assemblies_status) {
             this.metagenomesFilters = this.merge(this.metagenomesFilters,
-                this.filtersMap.aggregations.metagenomes_assemblies_status.buckets, 'metagenomes_assemblies_status', 'metagenomesAssembliesStatus');
+                this.filtersMap.aggregations.metagenomes_assemblies_status.buckets,
+                'metagenomes_assemblies_status',
+                'metagenomesAssembliesStatus');
         }
 
         this.bioSampleTotalCount = data.hits.total.value;
