@@ -250,7 +250,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText, this.filterService.activeFilters.join(','))
         .subscribe(
             data => {
-              console.log("getAllBiosample data: ", data)
               const unpackedData = [];
               this.filterService.getFilters(data.rootSamples);
               for (const item of data.rootSamples.hits.hits) {

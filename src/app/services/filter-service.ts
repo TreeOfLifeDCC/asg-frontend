@@ -212,7 +212,6 @@ export class FilterService {
             name: filterTerm,
             value: retainedFilters[retainedFilters.length - 1] + ',' + filterValue
         };
-        console.log("jsonObj: ", jsonObj)
         this.urlAppendFilterArray.push(jsonObj);
     }
 
@@ -328,7 +327,6 @@ export class FilterService {
     }
 
     parseFilterAggregation = (data: any) => {
-        console.log("parseFilterAggregation data: ", data)
         this.filterArray = [] ;
         this.symbiontsFilters = [];
         this.metagenomesFilters = [];
