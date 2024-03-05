@@ -13,6 +13,8 @@ import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 import 'jquery';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
+import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-tracking-system',
@@ -66,13 +68,22 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   isDoubleClick: Boolean;
   selectedFilterValue;
   currentTaxaOnExpand;
+  searchUpdate = new Subject<string>();
 
   constructor(private titleService: Title,
               private statusesService: StatusesService,
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private spinner: NgxSpinnerService,
-              private taxanomyService: TaxanomyService) { }
+              private taxanomyService: TaxanomyService) {
+    this.searchUpdate.pipe(
+        debounceTime(500),
+        distinctUntilChanged()).subscribe(
+        value => {
+          this.spinner.show();
+          this.getSearchResults();
+        });
+  }
 
   ngOnInit(): void {
     this.spinner.show();
