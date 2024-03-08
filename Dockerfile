@@ -1,11 +1,12 @@
-FROM node:18.18.2 as build
+FROM node:21.6.2 as build
 
 WORKDIR /source
 
 # Copy the package lock file into the container
 COPY package*.json ./
 # Run ci only for the production dependencies
-RUN npm ci --legacy-peer-deps
+RUN npm cache clean --force
+RUN npm install
 
 # Copy the rest of the files into the container and build
 COPY . .
