@@ -22,7 +22,7 @@ import {ConfirmationDialogComponent} from './confirmation-dialog-component/confi
 import {BytesPipe} from './shared/bytes-pipe';
 import {GisComponent} from './gis/gis.component';
 import {GisService} from './gis/gis.service';
-import {FilterService} from "./services/filter-service";
+import {FilterService} from './services/filter-service';
 import {FilterComponent} from './shared/filter/filter.component';
 import {ActiveFilterComponent} from './shared/active-filter/active-filter.component';
 import {PhylogenyFilterComponent} from './shared/phylogeny-filter/phylogeny-filter.component';

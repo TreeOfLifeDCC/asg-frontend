@@ -68,9 +68,11 @@
 }
 
 table {
-    width: 100%;
+    width: 110%;
 }
-
+.table-container {
+    overflow: auto;
+}
 .mat-row {
     height: auto;
 }
@@ -80,10 +82,7 @@ table {
     word-break: break-word;
 }
 
-.table-container {
-    overflow: auto;
-    /*font-size: 5px;*/
-}
+
 
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
