@@ -28,25 +28,25 @@ export class ActiveFilterComponent {
   clearFilter(filter: string) {
     if (filter !== undefined) {
       let label = '';
-      if (filter.includes('symbiontsBioSamplesStatus-') && filter.indexOf('symbiontsBioSamplesStatus-') === 0){
+      if (filter.startsWith('symbiontsBioSamplesStatus-')){
         label = 'symbionts_biosamples_status';
       }
-      if (filter.includes('symbiontsRawDataStatus-') && filter.indexOf('symbiontsRawDataStatus-') === 0){
+      if (filter.startsWith('symbiontsRawDataStatus-')){
         label = 'symbionts_raw_data_status';
       }
-      if (filter.includes('symbiontsAssembliesStatus-') && filter.indexOf('symbiontsAssembliesStatus-') === 0){
+      if (filter.startsWith('symbiontsAssembliesStatus-')){
         label = 'symbionts_assemblies_status';
       }
-      if (filter.includes('metagenomesBioSamplesStatus-') && filter.indexOf('metagenomesBioSamplesStatus-') === 0){
+      if (filter.startsWith('metagenomesBioSamplesStatus-')){
         label = 'metagenomes_biosamples_status';
       }
-      if (filter.includes('metagenomesRawDataStatus-') && filter.indexOf('metagenomesRawDataStatus-') === 0){
+      if (filter.startsWith('metagenomesRawDataStatus-')){
         label = 'metagenomes_raw_data_status';
       }
-      if (filter.includes('metagenomesAssembliesStatus-') && filter.indexOf('metagenomesAssembliesStatus-') === 0){
+      if (filter.startsWith('metagenomesAssembliesStatus-')){
         label = 'metagenomes_assemblies_status';
       }
-      if (filter.includes('experimentType-') && filter.indexOf('experimentType-') === 0){
+      if (filter.startsWith('experimentType-') && filter.indexOf('experimentType-') === 0){
         label = 'experiment-type';
       }
       this.filterService.updateDomForRemovedFilter(filter);

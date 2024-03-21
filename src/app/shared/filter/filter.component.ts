@@ -51,7 +51,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }
     const filterIndex = this.filterService.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {
-      this.removeFilter(label, filter);
+      this.removeFilter(filter);
     } else {
       this.filterService.selectedFilterArray(label, filter);
       this.filterService.activeFilters.push(filter);
@@ -61,7 +61,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
     }
 
   // tslint:disable-next-line:typedef
-  removeFilter(label: string, filter: string) {
+  removeFilter(filter: string) {
     if (filter !== undefined) {
 
       this.filterService.updateDomForRemovedFilter(filter);
