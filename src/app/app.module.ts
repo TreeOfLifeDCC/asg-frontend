@@ -6,7 +6,7 @@ import {AppComponent, cookieConfig} from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { CookieLawModule } from 'angular2-cookie-law';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,46 +40,38 @@ import {MatInputModule} from "@angular/material/input";
 import {MatRadioModule} from "@angular/material/radio";
 import {MatTooltipModule} from "@angular/material/tooltip";
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    AboutComponent,
-    HelpComponent,
-    HomeComponent,
-    ApiComponent,
-    ConfirmationDialogComponent,
-    BytesPipe,
-    GisComponent,
-    DownloadConfirmationDialogComponent,
-    BulkDownloadsComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    // CookieLawModule,
-    HttpClientModule,
-    MatTreeModule,
-    MatIconModule,
-    MatButtonModule,
-    // MatTableExporterModule,
-    PhylogeneticsModule,
-    MatDialogModule,
-    NgxSpinnerModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatSlideToggleModule,
-    MatInputModule,
-    MatRadioModule,
-    MatTooltipModule,
-    DashboardModule,
-    NgcCookieConsentModule.forRoot(cookieConfig)
-  ],
-  providers: [BytesPipe, GisService, FilterService],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        HeaderComponent,
+        AboutComponent,
+        HelpComponent,
+        HomeComponent,
+        ApiComponent,
+        ConfirmationDialogComponent,
+        BytesPipe,
+        GisComponent,
+        DownloadConfirmationDialogComponent,
+        BulkDownloadsComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatTreeModule,
+        MatIconModule,
+        MatButtonModule,
+        // MatTableExporterModule,
+        PhylogeneticsModule,
+        MatDialogModule,
+        NgxSpinnerModule,
+        MatAutocompleteModule,
+        MatFormFieldModule,
+        MatSlideToggleModule,
+        MatInputModule,
+        MatRadioModule,
+        MatTooltipModule,
+        DashboardModule,
+        NgcCookieConsentModule.forRoot(cookieConfig)], providers: [BytesPipe, GisService, FilterService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
 
