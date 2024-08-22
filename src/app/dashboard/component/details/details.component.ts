@@ -1,15 +1,43 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Sample, samples } from '../../model/dashboard.model';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell, MatHeaderCellDef,
+  MatHeaderRow, MatHeaderRowDef,
+  MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource
+} from '@angular/material/table';
 import { DashboardService } from '../../services/dashboard.service';
+import {NgForOf, NgIf} from '@angular/common';
+import {MatFormField} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
 
 
 @Component({
+  standalone: true,
   selector: 'app-details',
   templateUrl: './details.component.html',
+  imports: [
+    NgIf,
+    NgForOf,
+    MatFormField,
+    FormsModule,
+    MatHeaderCell,
+    MatCell,
+    MatCellDef,
+    RouterLink,
+    MatTable,
+    MatHeaderRow,
+    MatRow,
+    MatPaginator,
+    MatHeaderRowDef,
+    MatRowDef,
+    MatHeaderCellDef
+  ],
   styleUrls: ['./details.component.css']
 })
 export class DetailsComponent implements OnInit {
@@ -38,12 +66,11 @@ export class DetailsComponent implements OnInit {
   };
   sexFilters = [];
   organismPartFilters = [];
-  unpackedData;
   organismName;
   relatedRecords;
   filterJson = {
-    sex: "",
-    organismPart: "",
+    sex: '',
+    organismPart: '',
   };
 
   constructor(private route: ActivatedRoute, private dashboardService: DashboardService, private router: Router) {

@@ -1,28 +1,94 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
 
-import { MatSort } from '@angular/material/sort';
+import {MatSort, MatSortModule} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 
 import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
 import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 
 import 'jquery';
 import 'bootstrap';
-// import {DownloadConfirmationDialogComponent} from '../../download-confirmation-dialog-component/download-confirmation-dialog.component';
 import {FilterService} from '../../services/filter-service';
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource, MatTableModule
+} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-// import {MatDialog} from "@angular/material/dialog";
+import {FilterComponent} from '../../shared/filter/filter.component';
+import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
+import {MatExpansionModule, MatExpansionPanel} from '@angular/material/expansion';
+import {MatCheckbox, MatCheckboxModule} from '@angular/material/checkbox';
+import {CommonModule, NgClass, NgIf, NgStyle} from '@angular/common';
+import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
+import {MatChip, MatChipSet, MatChipsModule} from '@angular/material/chips';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatInputModule} from '@angular/material/input';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatListModule} from '@angular/material/list';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 @Component({
+  standalone: true,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
+  imports: [
+    NgxSpinnerModule,
+    FilterComponent,
+    PhylogenyFilterComponent,
+    CommonModule,
+    MatExpansionPanel,
+    MatCheckbox,
+    NgIf,
+    ActiveFilterComponent,
+    MatFormField,
+    MatTable,
+    MatSort,
+    MatHeaderCell,
+    MatHeaderCellDef,
+    MatCell,
+    MatCellDef,
+    RouterLink,
+    MatChipSet,
+    MatChip,
+    NgStyle,
+    NgClass,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef,
+    MatPaginator,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSortModule,
+    MatTableModule,
+    MatTooltipModule,
+    MatPaginatorModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatExpansionModule,
+    MatCheckboxModule,
+    MatTabsModule,
+    MatBadgeModule,
+    MatChipsModule,
+    MatListModule,
+    MatDialogModule
+  ],
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
@@ -80,15 +146,15 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   itemLimitEnaFilter: number;
   pagesize = 15;
   dataColumnsDefination = [
-      {name: "Organism", column: "organism", selected: true},
-    {name: "Common Name", column: "commonName", selected: true},
-    {name: "Current Status", column: "currentStatus", selected: true},
-    {name: "External references", column: "goatInfo", selected: true},
-    {name: "Submitted to Biosamples", column: "biosamples", selected: false},
-    {name: "Raw data submitted to ENA", column: "raw_data", selected: false},
-    {name: "Assemblies submitted to ENA", column: "assemblies", selected: false},
-    {name: "Annotation complete", column: "annotation_complete", selected: false},
-    {name: "Annotation submitted to ENA", column: "annotation", selected: false}]
+    {name: 'Organism', column: 'organism', selected: true},
+    {name: 'Common Name', column: 'commonName', selected: true},
+    {name: 'Current Status', column: 'currentStatus', selected: true},
+    {name: 'External references', column: 'goatInfo', selected: true},
+    {name: 'Submitted to Biosamples', column: 'biosamples', selected: false},
+    {name: 'Raw data submitted to ENA', column: 'raw_data', selected: false},
+    {name: 'Assemblies submitted to ENA', column: 'assemblies', selected: false},
+    {name: 'Annotation complete', column: 'annotation_complete', selected: false},
+    {name: 'Annotation submitted to ENA', column: 'annotation', selected: false}];
   displayedColumns = [];
   searchUpdate = new Subject<string>();
 

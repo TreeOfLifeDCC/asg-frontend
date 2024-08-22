@@ -3,16 +3,40 @@ import { ActivatedRoute } from '@angular/router';
 import { Sample, samples } from '../../../dashboard/model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource
+} from '@angular/material/table';
 import { StatusesService } from '../../services/statuses.service';
+import {NgForOf, NgIf} from "@angular/common";
+import {MatFormField} from "@angular/material/form-field";
 
 
 @Component({
+  standalone: true,
   selector: 'app-details',
   templateUrl: './details.component.html',
+  imports: [
+    NgIf,
+    NgForOf,
+    MatFormField,
+    MatTable,
+    MatHeaderCell,
+    MatCell,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef
+  ],
   styleUrls: ['./details.component.css']
 })
-export class DetailsComponent implements OnInit {
+export class TrackingDetailsComponent implements OnInit {
 
   bioSampleId;
   bioSampleObj;

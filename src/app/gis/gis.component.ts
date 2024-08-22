@@ -1,16 +1,18 @@
-import {Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
+import {Component, AfterViewInit, OnDestroy} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { GisService } from './gis.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { UntypedFormControl } from '@angular/forms';
-import { map, startWith } from 'rxjs/operators';
-import { Observable } from 'rxjs';
-import {control} from 'leaflet';
-import layers = control.layers;
-import {MatRadioChange} from '@angular/material/radio';
+import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
+import {FormsModule, UntypedFormControl} from '@angular/forms';
+import {MatRadioButton, MatRadioChange, MatRadioGroup} from '@angular/material/radio';
 import {FilterService} from '../services/filter-service';
 import {ActivatedRoute, Params, Router} from '@angular/router';
+import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-filter.component';
+import {FilterComponent} from '../shared/filter/filter.component';
+import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
+import {NgForOf, NgIf} from '@angular/common';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -29,8 +31,25 @@ L.Marker.prototype.options.icon = iconDefault;
 
 
 @Component({
+  standalone: true,
   selector: 'app-gis',
   templateUrl: './gis.component.html',
+  imports: [
+    FormsModule,
+    NgxSpinnerModule,
+    MatAutocomplete,
+    MatOption,
+    MatFormField,
+    MatFormFieldModule,
+    MatRadioGroup,
+    MatRadioButton,
+    MatAutocompleteTrigger,
+    PhylogenyFilterComponent,
+    FilterComponent,
+    ActiveFilterComponent,
+    NgIf,
+    NgForOf
+  ],
   styleUrls: ['./gis.component.css']
 })
 export class GisComponent implements AfterViewInit , OnDestroy {
@@ -92,10 +111,10 @@ export class GisComponent implements AfterViewInit , OnDestroy {
   }
 
   filterSearchResults() {
-    if (this.filterService.searchText != '' && this.filterService.searchText.length > 1) {
+    if (this.filterService.searchText !== '' && this.filterService.searchText.length > 1) {
       const filterValue = this.filterService.searchText.toLowerCase();
       this.filteredOptions = this.unpackedData.filter(option => {
-        if (option.id != undefined) {
+        if (option.id !== undefined) {
           if (option.id.toLowerCase().includes(filterValue)) {
             return option.id;
           }
@@ -128,7 +147,7 @@ export class GisComponent implements AfterViewInit , OnDestroy {
         this.setMarkers();
         this.getAllLatLong();
         this.map.addLayer(this.markers);
-        if (this.myControl.value == ''){
+        if (this.myControl.value === ''){
           this.resetMapView();
         }
         this.spinner.hide();
@@ -226,13 +245,13 @@ export class GisComponent implements AfterViewInit , OnDestroy {
         const tempArrSize = tempArr === undefined ? 0 : tempArr.length;
 
         for (let j = 0; j < tempArrSize; j++) {
-          if (tempArr[j].lat != 'not collected' && tempArr[j].lat != 'not provided') {
+          if (tempArr[j].lat !== 'not collected' && tempArr[j].lat !== 'not provided') {
             let llat: any;
             let llng: any;
-            if (tempArr[j].lat == '67.34.07' && tempArr[j].lng == '68.07.30') {
+            if (tempArr[j].lat === '67.34.07' && tempArr[j].lng === '68.07.30') {
               llat = '67.3407';
               llng = '68.0730';
-            }else if(tempArr[j].lat == '23.4423s' && tempArr[j].lng == '151.9148e') {
+            }else if(tempArr[j].lat === '23.4423s' && tempArr[j].lng === '151.9148e') {
               llat = '23.4423';
               llng = '151.9148';
             } else {
@@ -282,13 +301,13 @@ export class GisComponent implements AfterViewInit , OnDestroy {
 
         const tempArrSize = tempArr === undefined ? 0 : tempArr.length;
         for (let j = 0; j < tempArrSize; j++) {
-          if (tempArr[j].lat != 'not collected' && tempArr[j].lat != 'not provided') {
+          if (tempArr[j].lat !== 'not collected' && tempArr[j].lat !== 'not provided') {
             let llat: any;
             let llng: any;
-            if (tempArr[j].lat == '67.34.07' && tempArr[j].lng == '68.07.30') {
+            if (tempArr[j].lat === '67.34.07' && tempArr[j].lng === '68.07.30') {
               llat = '67.3407';
               llng = '68.0730';
-            }else if(tempArr[j].lat == '23.4423s' && tempArr[j].lng == '151.9148e') {
+            }else if (tempArr[j].lat === '23.4423s' && tempArr[j].lng === '151.9148e') {
               llat = '23.4423';
               llng = '151.9148';
             }
@@ -321,14 +340,14 @@ export class GisComponent implements AfterViewInit , OnDestroy {
 
     const specGeoSize = this.unpackedData.length;
     for (let i = 0; i < specGeoSize; i++) {
-      if (Object.keys(this.unpackedData[i]).length != 0 ) {
+      if (Object.keys(this.unpackedData[i]).length !== 0 ) {
         const tempspecArr = this.unpackedData[i].specimens;
         const tempspecArrSize = tempspecArr === undefined ? 0 : tempspecArr.length;
         for (let j = 0; j < tempspecArrSize; j++) {
-          if (tempspecArr[j].lat != 'not collected' && tempspecArr[j].lat != 'not provided') {
+          if (tempspecArr[j].lat !== 'not collected' && tempspecArr[j].lat !== 'not provided') {
             let llat: any;
             let llng: any;
-            if (tempspecArr[j].lat == '67.34.07' && tempspecArr[j].lng == '68.07.30') {
+            if (tempspecArr[j].lat === '67.34.07' && tempspecArr[j].lng === '68.07.30') {
               llat = '67.3407';
               llng = '68.0730';
             }

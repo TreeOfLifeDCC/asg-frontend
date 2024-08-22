@@ -1,24 +1,61 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
 import { MatSort } from '@angular/material/sort';
 
 import { Title } from '@angular/platform-browser';
-import { StatusesService } from "../services/statuses.service";
-import { NgxSpinnerService } from 'ngx-spinner';
+import { StatusesService } from '../services/statuses.service';
+import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 
 import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
 import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 
 import 'jquery';
-import {MatTableDataSource} from "@angular/material/table";
-import {MatPaginator} from "@angular/material/paginator";
-import {debounceTime, distinctUntilChanged} from "rxjs/operators";
-import {Subject} from "rxjs";
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource
+} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {NgClass, NgForOf, NgIf, NgStyle, UpperCasePipe} from '@angular/common';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
+import {MatChip, MatChipSet} from '@angular/material/chips';
 
 @Component({
+  standalone: true,
   selector: 'app-tracking-system',
   templateUrl: './tracking-system.component.html',
+  imports: [
+    NgxSpinnerModule,
+    NgForOf,
+    NgClass,
+    NgIf,
+    MatFormField,
+    MatFormFieldModule,
+    FormsModule,
+    MatTable,
+    MatSort,
+    MatHeaderCell,
+    MatHeaderCellDef,
+    MatCell,
+    MatCellDef,
+    RouterLink,
+    MatChipSet,
+    MatChip,
+    NgStyle,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef,
+    MatPaginator,
+    UpperCasePipe
+  ],
   styleUrls: ['./tracking-system.component.css']
 })
 export class TrackingSystemComponent implements OnInit, AfterViewInit {

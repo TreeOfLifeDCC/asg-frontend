@@ -1,14 +1,21 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FilterService} from '../../services/filter-service';
-import {ActivatedRoute, Router} from "@angular/router";
-import {NgxSpinnerService} from "ngx-spinner";
-import {TaxanomyService} from "../../taxanomy/taxanomy.service";
-import {Taxonomy} from "../../taxanomy/taxonomy.model";
+import {ActivatedRoute, Router} from '@angular/router';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {TaxanomyService} from '../../taxanomy/taxanomy.service';
+import {Taxonomy} from '../../taxanomy/taxonomy.model';
+import {NgForOf, NgIf, UpperCasePipe} from "@angular/common";
 
 
 @Component({
+  standalone: true,
   selector: 'app-phylogeny-filter',
   templateUrl: './phylogeny-filter.component.html',
+  imports: [
+    NgIf,
+    NgForOf,
+    UpperCasePipe
+  ],
   styleUrls: ['./phylogeny-filter.component.css']
 })
 export class PhylogenyFilterComponent implements OnInit {
@@ -33,7 +40,8 @@ export class PhylogenyFilterComponent implements OnInit {
   // Ontology aware filter
   initTaxonomyObject() {
     this.childTaxanomy = {
-      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false, childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets:[]} }] }],
+      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false,
+        childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets:[]} }] }],
       superkingdom: [],
       kingdom: [],
       subkingdom: [],
@@ -69,7 +77,7 @@ export class PhylogenyFilterComponent implements OnInit {
       forma: []
     };
     this.filterService.taxonomies = [
-      "cellularorganism",
+      'cellularorganism',
       "superkingdom",
       "kingdom",
       "subkingdom",

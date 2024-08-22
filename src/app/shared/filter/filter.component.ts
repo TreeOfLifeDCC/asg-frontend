@@ -1,13 +1,17 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 
-import {Title} from '@angular/platform-browser';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {FilterService} from '../../services/filter-service';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'app-filter',
   templateUrl: './filter.component.html',
+  imports: [
+    NgIf,
+    NgForOf,
+    NgClass
+  ],
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit, AfterViewInit {

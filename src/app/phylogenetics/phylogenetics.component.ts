@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DynamicScriptLoaderService } from './services/dynamic-script-loader.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
+  standalone: true,
   selector: 'app-phylogenetics',
   templateUrl: './phylogenetics.component.html',
+  imports: [
+    MatFormFieldModule
+  ],
   styleUrls: ['./phylogenetics.component.css']
 })
 export class PhylogeneticsComponent implements OnInit {
@@ -15,7 +20,7 @@ export class PhylogeneticsComponent implements OnInit {
 
   ngOnInit() {
   }
-  
+
   private loadScripts() {
     // You can load multiple scripts by just providing the key as argument into load method of the service
     this.dynamicScriptLoader.load('d3min', 'd3tree',  'autocomplete').then(data => {

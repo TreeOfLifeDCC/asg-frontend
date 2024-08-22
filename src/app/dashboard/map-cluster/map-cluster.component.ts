@@ -18,6 +18,7 @@ const iconDefault = L.icon({
 L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
+  standalone: true,
   selector: 'app-mapcluster',
   templateUrl: './map-cluster.component.html',
   styleUrls: ['./map-cluster.component.css']
@@ -77,9 +78,10 @@ export class MapClusterComponent implements AfterViewInit {
   }
 
   getLatLong(): any {
-    let orgGeoSize = this.orgGeoList.length
-    for (var i = 0; i < orgGeoSize; i++) {
-      if (this.orgGeoList[i].lat != 'not collected' && this.orgGeoList[i].lat != 'not provided') {
+    let i;
+    const orgGeoSize = this.orgGeoList.length;
+    for (i = 0; i < orgGeoSize; i++) {
+      if (this.orgGeoList[i].lat !== 'not collected' && this.orgGeoList[i].lat !== 'not provided') {
         const latlng = L.latLng(this.orgGeoList[i].lat, this.orgGeoList[i].lng);
         const m = L.marker(latlng);
         const accession = `<div><a target="_blank" href=/data/organism/details/${this.orgGeoList[i].accession}>${this.orgGeoList[i].accession}</a></div>`;
@@ -98,9 +100,9 @@ export class MapClusterComponent implements AfterViewInit {
       }
     }
 
-    let specGeoSize = this.specGeoList.length
-    for (var i = 0; i < specGeoSize; i++) {
-      if (this.specGeoList[i].lat != 'not collected' && this.specGeoList[i].lat != 'not provided') {
+    const specGeoSize = this.specGeoList.length
+    for (i = 0; i < specGeoSize; i++) {
+      if (this.specGeoList[i].lat !== 'not collected' && this.specGeoList[i].lat !== 'not provided') {
         const latlng = L.latLng(this.specGeoList[i].lat, this.specGeoList[i].lng);
         const m = L.marker(latlng);
         const accession = `<div><a target="_blank" href=/data/specimens/details/${this.specGeoList[i].accession}>${this.specGeoList[i].accession}</a></div>`;
@@ -122,15 +124,15 @@ export class MapClusterComponent implements AfterViewInit {
   showCursorCoordinates() {
     const Coordinates = L.Control.extend({
       onAdd: map => {
-        const container = L.DomUtil.create("div");
-        container.style.backgroundColor = "rgba(255,255,255,.8)";
-        map.addEventListener("mousemove", e => {
+        const container = L.DomUtil.create('div');
+        container.style.backgroundColor = 'rgba(255,255,255,.8)';
+        map.addEventListener('mousemove', e => {
           container.innerHTML = `Lat: ${e.latlng.lat.toFixed(4)} Lng: ${e.latlng.lng.toFixed(4)}`;
         });
         return container;
       }
     });
-    this.map.addControl(new Coordinates({ position: "bottomright" }));
+    this.map.addControl(new Coordinates({ position: 'bottomright' }));
   }
 
 }

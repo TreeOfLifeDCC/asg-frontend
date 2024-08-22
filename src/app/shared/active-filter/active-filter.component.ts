@@ -1,9 +1,15 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {FilterService} from '../../services/filter-service';
+import {NgForOf, NgIf} from '@angular/common';
 
 @Component({
+  standalone: true,
   selector: 'app-active-filter',
   templateUrl: './active-filter.component.html',
+  imports: [
+    NgIf,
+    NgForOf
+  ],
   styleUrls: ['./active-filter.component.css']
 })
 export class ActiveFilterComponent {
