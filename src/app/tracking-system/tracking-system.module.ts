@@ -9,21 +9,19 @@ import {MatSortModule} from '@angular/material/sort';
 
 import { DetailsComponent } from './tracking-system/details/details.component';
 
-import { NgxSpinnerModule } from "ngx-spinner";
-import {MatButtonModule} from "@angular/material/button";
-import {MatTableModule} from "@angular/material/table";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatPaginatorModule} from "@angular/material/paginator";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatListModule} from "@angular/material/list";
-import {MatChipsModule} from "@angular/material/chips";
-// import { MatTableExporterModule } from 'mat-table-exporter';
-
+import { NgxSpinnerModule } from 'ngx-spinner';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTableModule} from '@angular/material/table';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatChipsModule} from '@angular/material/chips';
 
 
 @NgModule({
-  declarations: [TrackingSystemComponent, DetailsComponent],
+  declarations: [],
   imports: [
     CommonModule,
     TrackingSystemRoutingModule,
@@ -39,7 +37,8 @@ import {MatChipsModule} from "@angular/material/chips";
     MatListModule,
     NgxSpinnerModule,
     MatChipsModule,
-    // MatTableExporterModule
+    TrackingSystemComponent,
+    DetailsComponent,
   ]
 })
 export class TrackingSystemModule { }

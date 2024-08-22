@@ -1,16 +1,22 @@
-
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { HttpClient } from "@angular/common/http";
+import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
+import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'confirmation-dialog',
-  templateUrl: './confirmation-dialog.component.html',
-  styleUrls: ['./confirmation-dialog.component.scss']
+    standalone: true,
+    selector: 'confirmation-dialog',
+    templateUrl: './confirmation-dialog.component.html',
+    imports: [
+        MatDialogClose,
+        NgIf
+    ],
+    styleUrls: ['./confirmation-dialog.component.scss']
 })
 export class ConfirmationDialogComponent {
 
-  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient) {
+  constructor(public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any, private http: HttpClient) {
   }
 
   close(): void {

@@ -1,16 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { TaxanomyService } from './taxanomy.service';
 import { Taxonomy } from './taxonomy.model';
+import {NgForOf, NgIf} from "@angular/common";
 
 @Component({
+  standalone: true,
   selector: 'app-taxanomy',
   templateUrl: './taxanomy.component.html',
+  imports: [
+    NgForOf,
+    NgIf
+  ],
   styleUrls: ['./taxanomy.component.css']
 })
 export class TaxanomyComponent implements OnInit {
 
   taxonomies: any;
-  
+
   childTaxanomy: Taxonomy;
   selectedTaxonomy: any;
 
@@ -23,7 +29,8 @@ export class TaxanomyComponent implements OnInit {
 
   initTaxonomyObject() {
     this.childTaxanomy = {
-      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false, childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets:[]} }] }],
+      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false,
+        childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets: []} }] }],
       superkingdom: [],
       kingdom: [],
       subkingdom: [],
@@ -82,7 +89,7 @@ export class TaxanomyComponent implements OnInit {
 
   parseAndPushTaxaData(rank, data) {
     let temp = this.childTaxanomy[rank];
-    if(temp.length > 0) {
+    if (temp.length > 0) {
       if (!(temp.filter(function(e) { return e.parent === data[rank].parent; }).length > 0)) {
         this.childTaxanomy[rank].push(data[rank]);
       }

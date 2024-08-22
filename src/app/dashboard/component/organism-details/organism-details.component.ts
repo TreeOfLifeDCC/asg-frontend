@@ -1,19 +1,49 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Sample, samples } from '../../model/dashboard.model';
+import { Sample } from '../../model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
-
-
 import { DashboardService } from '../../services/dashboard.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import {MatPaginator} from "@angular/material/paginator";
-import {MatTabGroup} from "@angular/material/tabs";
-import {MatTableDataSource} from "@angular/material/table";
+import { MatPaginator } from '@angular/material/paginator';
+import {MatTab, MatTabGroup} from '@angular/material/tabs';
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource
+} from '@angular/material/table';
+import {NgIf, NgStyle} from '@angular/common';
+import {MatChip, MatChipSet} from '@angular/material/chips';
+import {MatFormField} from '@angular/material/form-field';
+import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
 
 
 @Component({
+  standalone: true,
   selector: 'dashboard-organism-details',
   templateUrl: './organism-details.component.html',
+  imports: [
+    NgIf,
+    MatChipSet,
+    MatChip,
+    NgStyle,
+    MatTabGroup,
+    MatTab,
+    MatFormField,
+    MatHeaderCell,
+    MatCell,
+    MatTable,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRow,
+    MatRow,
+    MatPaginator,
+    MatRowDef,
+    MatHeaderRowDef,
+    MapClusterComponent
+  ],
   styleUrls: ['./organism-details.component.css']
 })
 export class OrganismDetailsComponent implements OnInit, AfterViewInit {
@@ -29,8 +59,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   dataSourceSymbiontsAssembliesCount;
   dataSourceSymbiontsAssemblies;
 
-  dataSourceMetagenomesAssembliesCount;
-  dataSourceMetagenomesAssemblies;
+  dataSourceMetagenomesAssembliesCount: number;
+  dataSourceMetagenomesAssemblies: MatTableDataSource<any, MatPaginator>;
   specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart', 'trackingSystem'];
 
   INSDC_ID = null;
@@ -52,19 +82,16 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   sexFilters = [];
   trackingSystemFilters = [];
   organismPartFilters = [];
-  unpackedData;
-  unpackedSymbiontsData
-  unpackedMetagenomesData
   organismName;
   relatedRecords;
   filterJson = {
-    sex: "",
-    organismPart: "",
-    trackingSystem: ""
+    sex: '',
+    organismPart: '',
+    trackingSystem: ''
   };
   geoLocation: Boolean;
-  orgGeoList: any
-  specGeoList: any
+  orgGeoList: any;
+  specGeoList: any;
   dataSourceFiles;
   dataSourceFilesCount;
   dataSourceAssemblies;
@@ -73,66 +100,66 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   dataSourceAnnotationCount;
   dataSourceSymbiontsRecords;
   dataSourceMetagenomesRecords;
-  assembliesurls =[]
-  annotationsurls =[]
-  experimentColumnsDefination = [{column: "study_accession", selected: true},
-    {column: "secondary_study_accession", selected: false},
-    {column: "sample_accession", selected: true},
-    {column: "secondary_sample_accession", selected: false},
-    {column: "experiment_accession", selected: true},
-    {column: "run_accession", selected: true},
-    {column: "submission_accession", selected: false},
-    {column: "tax_id", selected: false},
-    {column: "scientific_name", selected: false},
-    {column: "instrument_platform", selected: false},
-    {column: "instrument_model", selected: false},
-    {column: "library_name", selected: false},
-    {column: "nominal_length", selected: false},
-    {column: "library_layout", selected: false},
-    {column: "library_strategy", selected: false},
-    {column: "library_source", selected: false},
-    {column: "library_selection", selected: false},
-    {column: "read_count", selected: false},
-    {column: "base_count", selected: false},
-    {column: "center_name", selected: false},
-    {column: "first_public", selected: false},
-    {column: "last_updated", selected: false},
-    {column: "experiment_title", selected: false},
-    {column: "study_title", selected: false},
-    {column: "study_alias", selected: false},
-    {column: "experiment_alias", selected: false},
-    {column: "run_alias", selected: false},
-    {column: "fastq_bytes", selected: false},
-    {column: "fastq_md5", selected: false},
-    {column: "fastq_ftp", selected: true},
-    {column: "fastq_aspera", selected: false},
-    {column: "fastq_galaxy", selected: false},
-    {column: "submitted_bytes", selected: false},
-    {column: "submitted_md5", selected: false},
-    {column: "submitted_ftp", selected: true},
-    {column: "submitted_aspera", selected: false},
-    {column: "submitted_galaxy", selected: false},
-    {column: "submitted_format", selected: false},
-    {column: "sra_bytes", selected: false},
-    {column: "sra_md5", selected: false},
-    {column: "sra_ftp", selected: false},
-    {column: "sra_aspera", selected: false},
-    {column: "sra_galaxy", selected: false},
-    {column: "cram_index_ftp", selected: false},
-    {column: "cram_index_aspera", selected: false},
-    {column: "cram_index_galaxy", selected: false},
-    {column: "sample_alias", selected: false},
-    {column: "broker_name", selected: false},
-    {column: "sample_title", selected: false},
-    {column: "nominal_sdev", selected: false},
-    {column: "first_created", selected: false},
-    {column: "library_construction_protocol", selected: true}]
-  private ENA_PORTAL_API_BASE_URL_FASTA = "https://www.ebi.ac.uk/ena/browser/api/fasta/"
+  assembliesurls = [];
+  annotationsurls = [];
+  experimentColumnsDefination = [{column: 'study_accession', selected: true},
+    {column: 'secondary_study_accession', selected: false},
+    {column: 'sample_accession', selected: true},
+    {column: 'secondary_sample_accession', selected: false},
+    {column: 'experiment_accession', selected: true},
+    {column: 'run_accession', selected: true},
+    {column: 'submission_accession', selected: false},
+    {column: 'tax_id', selected: false},
+    {column: 'scientific_name', selected: false},
+    {column: 'instrument_platform', selected: false},
+    {column: 'instrument_model', selected: false},
+    {column: 'library_name', selected: false},
+    {column: 'nominal_length', selected: false},
+    {column: 'library_layout', selected: false},
+    {column: 'library_strategy', selected: false},
+    {column: 'library_source', selected: false},
+    {column: 'library_selection', selected: false},
+    {column: 'read_count', selected: false},
+    {column: 'base_count', selected: false},
+    {column: 'center_name', selected: false},
+    {column: 'first_public', selected: false},
+    {column: 'last_updated', selected: false},
+    {column: 'experiment_title', selected: false},
+    {column: 'study_title', selected: false},
+    {column: 'study_alias', selected: false},
+    {column: 'experiment_alias', selected: false},
+    {column: 'run_alias', selected: false},
+    {column: 'fastq_bytes', selected: false},
+    {column: 'fastq_md5', selected: false},
+    {column: 'fastq_ftp', selected: true},
+    {column: 'fastq_aspera', selected: false},
+    {column: 'fastq_galaxy', selected: false},
+    {column: 'submitted_bytes', selected: false},
+    {column: 'submitted_md5', selected: false},
+    {column: 'submitted_ftp', selected: true},
+    {column: 'submitted_aspera', selected: false},
+    {column: 'submitted_galaxy', selected: false},
+    {column: 'submitted_format', selected: false},
+    {column: 'sra_bytes', selected: false},
+    {column: 'sra_md5', selected: false},
+    {column: 'sra_ftp', selected: false},
+    {column: 'sra_aspera', selected: false},
+    {column: 'sra_galaxy', selected: false},
+    {column: 'cram_index_ftp', selected: false},
+    {column: 'cram_index_aspera', selected: false},
+    {column: 'cram_index_galaxy', selected: false},
+    {column: 'sample_alias', selected: false},
+    {column: 'broker_name', selected: false},
+    {column: 'sample_title', selected: false},
+    {column: 'nominal_sdev', selected: false},
+    {column: 'first_created', selected: false},
+    {column: 'library_construction_protocol', selected: true}];
+  private ENA_PORTAL_API_BASE_URL_FASTA = 'https://www.ebi.ac.uk/ena/browser/api/fasta/';
   displayedColumnsFiles = [];
   displayedColumnsAssemblies = ['accession', 'assembly_name', 'description', 'version'];
   displayedColumnsAnnotation = ['accession', 'annotation', 'proteins', 'transcripts', 'softmasked_genome',
     'other_data', 'view_in_browser'];
-  @ViewChild("tabgroup", { static: false }) tabgroup: MatTabGroup;
+  @ViewChild('tabgroup', { static: false }) tabgroup: MatTabGroup;
   @ViewChild('experimentsTable') exPaginator: MatPaginator;
   @ViewChild('assembliesTable') asPaginator: MatPaginator;
   @ViewChild('annotationTable') anPaginator: MatPaginator;
@@ -157,9 +184,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.itemLimitOrgFilter = this.filterSize;
     this.itemLimitTrackFilter = this.filterSize;
     this.relatedRecords = [];
-    this.filterJson['sex'] = '';
-    this.filterJson['organismPart'] = '';
-    this.filterJson['trackingSystem'] = '';
+    this.filterJson.sex = '';
+    this.filterJson.organismPart = '';
+    this.filterJson.trackingSystem = '';
     this.getDisplayedColumns();
     this.getBiosampleByOrganism();
 
@@ -168,8 +195,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   getDisplayedColumns() {
     this.displayedColumnsFiles = [];
     this.experimentColumnsDefination.forEach(obj => {
-      if(obj.selected) {
-        this.displayedColumnsFiles.push(obj.column)
+      if (obj.selected) {
+        this.displayedColumnsFiles.push(obj.column);
       }
     });
   }
@@ -178,8 +205,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   showSelectedColumn(selectedColumn, checked) {
-    let index = this.experimentColumnsDefination.indexOf(selectedColumn);
-    let item = this.experimentColumnsDefination[index];
+    const index = this.experimentColumnsDefination.indexOf(selectedColumn);
+    const item = this.experimentColumnsDefination[index];
     item.selected = checked;
     this.experimentColumnsDefination[index] = item;
     this.getDisplayedColumns();
@@ -199,12 +226,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
           this.bioSampleObj = data;
           this.orgGeoList = data.orgGeoList;
           this.specGeoList = data.specGeoList;
-          if (this.orgGeoList!= undefined && this.orgGeoList.length != 0) {
+          if (this.orgGeoList !== undefined && this.orgGeoList.length !== 0) {
             this.geoLocation = true;
             setTimeout(() => {
               const tabGroup = this.tabgroup;
-              const selected = this.tabgroup.selectedIndex
-              tabGroup.selectedIndex = 4
+              const selected = this.tabgroup.selectedIndex;
+              tabGroup.selectedIndex = 4;
               setTimeout(() => {
                 tabGroup.selectedIndex = selected;
               }, 1);
@@ -252,7 +279,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               this.dataSourceAssembliesCount = data.assemblies?.length;
               for (let i = 0; i < data.assemblies.length ; i++) {
                 this.assembliesurls.push(
-                    this.ENA_PORTAL_API_BASE_URL_FASTA+data.assemblies[i].accession+"?download=true&gzip=true");
+                    this.ENA_PORTAL_API_BASE_URL_FASTA + data.assemblies[i].accession + '?download=true&gzip=true');
               }
             }
             else {
@@ -264,7 +291,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               this.dataSourceAnnotationCount = data.annotation?.length;
               for (let i = 0; i < data.annotation.length ; i++) {
                 this.annotationsurls.push(
-                    this.ENA_PORTAL_API_BASE_URL_FASTA+data.annotation[i].accession+"?download=true&gzip=true");
+                    this.ENA_PORTAL_API_BASE_URL_FASTA + data.annotation[i].accession + '?download=true&gzip=true');
               }
             }
             else {
@@ -300,7 +327,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             this.dataSourceFiles.sort = this.sort;
             this.dataSourceAssemblies.sort = this.sort;
             this.dataSourceAnnotation.sort = this.sort;
-          }, 50)
+          }, 50);
         },
         err => console.log(err)
       );
@@ -337,7 +364,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       }
       else {
         if (key === 'commonName' && data[key] == null) {
-          dataToReturn[key] = "-"
+          dataToReturn[key] = '-';
         }
         else {
           dataToReturn[key] = data[key];
@@ -356,8 +383,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   onFilterClick(event, label: string, filter: string) {
     this.searchText = '';
-    let inactiveClassName = label.toLowerCase().replace(" ", "-") + '-inactive';
-    this.createFilterJson(label.toLowerCase().replace(" ", ""), filter);
+    const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
+    this.createFilterJson(label.toLowerCase().replace(' ', ''), filter);
     const filterIndex = this.activeFilters.indexOf(filter);
 
     if (filterIndex !== -1) {
@@ -376,13 +403,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   createFilterJson(key, value) {
     if (key === 'sex') {
-      this.filterJson['sex'] = value;
+      this.filterJson.sex = value;
     }
     else if (key === 'organismpart') {
-      this.filterJson['organismPart'] = value;
+      this.filterJson.organismPart = value;
     }
     else if (key === 'trackingstatus') {
-      this.filterJson['trackingSystem'] = value;
+      this.filterJson.trackingSystem = value;
     }
     this.dataSourceRecords.filterPredicate = ((data, filter) => {
       const a = !filter.sex || data.sex === filter.sex;
@@ -431,17 +458,17 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     const sexFilterObj = Object.entries(this.filters.sex);
     const trackFilterObj = Object.entries(this.filters.trackingSystem);
     const orgFilterObj = Object.entries(this.filters.organismPart);
-    let j = 0;
+    const j = 0;
     for (let i = 0; i < sexFilterObj.length; i++) {
-      let jsonObj = { "key": sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
+      const jsonObj = { key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
       this.sexFilters.push(jsonObj);
     }
     for (let i = 0; i < trackFilterObj.length; i++) {
-      let jsonObj = { "key": trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
+      const jsonObj = { key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
       this.trackingSystemFilters.push(jsonObj);
     }
     for (let i = 0; i < orgFilterObj.length; i++) {
-      let jsonObj = { "key": orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
+      const jsonObj = { key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
       this.organismPartFilters.push(jsonObj);
     }
   }
@@ -451,9 +478,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     $('.tracking-status-inactive').removeClass('non-disp');
     $('.org-part-inactive').removeClass('non-disp');
     this.activeFilters = [];
-    this.filterJson['sex'] = '';
-    this.filterJson['organismPart'] = '';
-    this.filterJson['trackingSystem'] = '';
+    this.filterJson.sex = '';
+    this.filterJson.organismPart = '';
+    this.filterJson.trackingSystem = '';
     this.dataSourceRecords.filter = this.filterJson;
     this.getBiosampleByOrganism();
   }
@@ -467,9 +494,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         this.dataSourceRecords.filter = this.filterJson;
         this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
       } else {
-        this.filterJson['sex'] = '';
-        this.filterJson['organismPart'] = '';
-        this.filterJson['trackingSystem'] = '';
+        this.filterJson.sex = '';
+        this.filterJson.organismPart = '';
+        this.filterJson.trackingSystem = '';
         this.dataSourceRecords.filter = this.filterJson;
         this.getBiosampleByOrganism();
       }
@@ -477,14 +504,14 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   spliceFilterArray(filter: string) {
-    if (this.filterJson['sex'] === filter) {
-      this.filterJson['sex'] = '';
+    if (this.filterJson.sex === filter) {
+      this.filterJson.sex = '';
     }
-    else if (this.filterJson['organismPart'] === filter) {
-      this.filterJson['organismPart'] = '';
+    else if (this.filterJson.organismPart === filter) {
+      this.filterJson.organismPart = '';
     }
-    else if (this.filterJson['trackingSystem'] === filter) {
-      this.filterJson['trackingSystem'] = '';
+    else if (this.filterJson.trackingSystem === filter) {
+      this.filterJson.trackingSystem = '';
     }
   }
 
@@ -493,9 +520,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.dashboardService.getDetailTableOrganismFilters(organism).subscribe(
       data => {
         this.filtersMap = data;
-        this.sexFilters = this.filtersMap.sex.filter(i => i !== "");
-        this.trackingSystemFilters = this.filtersMap.trackingSystem.filter(i => i !== "");
-        this.organismPartFilters = this.filtersMap.organismPart.filter(i => i !== "");
+        this.sexFilters = this.filtersMap.sex.filter(i => i !== '');
+        this.trackingSystemFilters = this.filtersMap.trackingSystem.filter(i => i !== '');
+        this.organismPartFilters = this.filtersMap.organismPart.filter(i => i !== '');
       },
       err => console.log(err)
     );
@@ -507,7 +534,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     if (status === 'Annotation Complete') {
       return 'badge badge-pill badge-success';
     } else {
-      return 'badge badge-pill badge-warning'
+      return 'badge badge-pill badge-warning';
     }
   }
 
@@ -565,7 +592,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   redirectTo(accession: string) {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-      this.router.navigate(["/data/root/details/" + accession]));
+      this.router.navigate(['/data/root/details/' + accession]));
   }
 
   downloadRawFiles(): void {
@@ -586,7 +613,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       if (i >= files.length) {
         return;
       }
-      var a = document.createElement('a');
+      const a = document.createElement('a');
       a.href = files[i];
       a.target = '_parent';
       // Use a.download if available, it prevents plugins from opening.

@@ -1,18 +1,31 @@
 import {Component, Inject, OnDestroy} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogClose, MatDialogRef} from '@angular/material/dialog';
 import {DashboardService} from '../dashboard/services/dashboard.service';
+import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
+import {FormsModule} from '@angular/forms';
+import {NgIf} from '@angular/common';
+import {RouterLink} from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'download-confirmation-dialog',
   templateUrl: './download-confirmation-dialog.component.html',
+  imports: [
+    MatRadioGroup,
+    FormsModule,
+    MatRadioButton,
+    NgIf,
+    RouterLink,
+    MatDialogClose
+  ],
   styleUrls: ['./download-confirmation-dialog.component.scss']
 })
 export class DownloadConfirmationDialogComponent implements  OnDestroy {
   radioOptions: string;
-  constructor(private dashboardService: DashboardService, public dialogRef: MatDialogRef<DownloadConfirmationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(private dashboardService: DashboardService,
+              public dialogRef: MatDialogRef<DownloadConfirmationDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: any) {
   }
-
-
 
   private DOWNLOAD_URL = 'https://portal.aquaticsymbiosisgenomics.org/files/';
   close(): void {

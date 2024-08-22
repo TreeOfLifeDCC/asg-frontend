@@ -1,4 +1,3 @@
-
 import {Pipe, PipeTransform} from '@angular/core';
 import {isInteger, isNumberFinite, isPositive, toDecimal} from './utils';
 

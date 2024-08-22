@@ -1,11 +1,17 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
-import {GisComponent} from './gis/gis.component';
-import {BulkDownloadsComponent} from './bulk-downloads/bulk-downloads.component';
+import { GisComponent } from './gis/gis.component';
+import { BulkDownloadsComponent } from './bulk-downloads/bulk-downloads.component';
+import { SpecimensComponent } from './dashboard/specimens/specimens.component';
+import { DetailsComponent } from './dashboard/component/details/details.component';
+import { OrganismDetailsComponent } from './dashboard/component/organism-details/organism-details.component';
+import { DashboardComponent } from './dashboard/component/dashboard.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { PhylogeneticsComponent } from './phylogenetics/phylogenetics.component';
 
 const routes: Routes = [
   {
@@ -29,12 +35,10 @@ const routes: Routes = [
   {
     path: 'bulk-downloads' , component: BulkDownloadsComponent
   },
-  {
-    path: '',
-    children: [
-      { path: 'data', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) }
-    ]
-  },
+  { path: 'data/specimens/details/:id', component: SpecimensComponent },
+  { path: 'data/organism/details/:id', component: DetailsComponent },
+  { path: 'data/root/details/:id', component: OrganismDetailsComponent },
+  { path: 'data', title: 'data', component: DashboardComponent },
   {
     path: '',
     children: [
@@ -44,20 +48,12 @@ const routes: Routes = [
       }
     ]
   },
+  { path: 'tree', component: PhylogeneticsComponent},
   {
     path: '',
     children: [
-      {
-        path: 'tree', loadChildren: () => import('./phylogenetics/phylogenetics.module').then(
-            m => m.PhylogeneticsModule)
-      }
-    ]
-  },
-  {
-    path: '',
-    children: [
-      { path: '404', loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundModule) },
-      { path: '**', loadChildren: () => import('./not-found/not-found.module').then(m => m.NotFoundModule) }
+      { path: '404', component: NotFoundComponent },
+      { path: '**', component: NotFoundComponent }
     ]
   }
 
