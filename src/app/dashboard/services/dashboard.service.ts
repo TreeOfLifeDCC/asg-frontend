@@ -6,7 +6,7 @@ import { Sample } from '../model/dashboard.model';
 import {ConfirmationDialogComponent} from '../../confirmation-dialog-component/confirmation-dialog.component';
 import {BytesPipe} from '../../shared/bytes-pipe';
 import {tap} from 'rxjs/operators';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog} from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root'
@@ -20,24 +20,24 @@ export class DashboardService {
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(offset, limit, sortColumn?, sortOrder? , searchText?,filter?): Observable<any> {
-    let requestParams = `?offset=${offset}&limit=${limit}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+  public getAllBiosample(offset, limit, sortColumn?, sortOrder? , searchText?, filter?): Observable<any> {
+    let requestParams = `?offset=${offset}&limit=${limit}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
     }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
+    if (searchText) {
+      requestParams = requestParams + `&searchText=${searchText}`;
     }
     return this.http.post(`${this.API_BASE_URL}/root_organisms${requestParams}`, filter);
   }
 
   public getDistinctOrganisms(size, sortColumn?, sortOrder?, afterKey?): Observable<any> {
-    let requestParams = `?size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+    let requestParams = `?size=${size}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
     }
-    if (afterKey != undefined) {
-      requestParams = requestParams + `&afterKey=${afterKey}`
+    if (afterKey !== undefined) {
+      requestParams = requestParams + `&afterKey=${afterKey}`;
     }
     return this.http.get(`${this.API_BASE_URL}/root_organisms${requestParams}`);
   }
@@ -83,26 +83,26 @@ export class DashboardService {
   //   return this.http.get(`${requestURL}`);
   // }
 
-  public getRootSearchResults(search: any,sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestParams = `?filter=${search}&from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+  public getRootSearchResults(search: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
+    let requestParams = `?filter=${search}&from=${from}&size=${size}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
     }
     let requestURL = `${this.API_BASE_URL}/root_organisms/search${requestParams}`;
     return this.http.get(`${requestURL}`);
   }
 
-  public getFilterResults(filter: any,sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
-    let requestParams = `?from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+  public getFilterResults(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
+    let requestParams = `?from=${from}&size=${size}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
     }
-    if(taxonomyFilter != undefined) {
+    if (taxonomyFilter !== undefined) {
       let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`
+      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
     }
     if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
+      requestParams = requestParams + `&searchText=${searchText}`;
     }
     const requestURL = `${this.API_BASE_URL}/root_organisms/root/filter/results${requestParams}`;
     return this.http.post(`${requestURL}`, filter);
@@ -138,17 +138,17 @@ export class DashboardService {
           });
         })).subscribe();
   }
-  public download(filter: any,sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
-    let requestParams = `?from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&z=${sortColumn}&sortOrder=${sortOrder}`
+  public download(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
+    let requestParams = `?from=${from}&size=${size}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&z=${sortColumn}&sortOrder=${sortOrder}`;
     }
-    if(taxonomyFilter != undefined) {
+    if (taxonomyFilter !== undefined) {
       let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`
+      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
     }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
+    if (searchText) {
+      requestParams = requestParams + `&searchText=${searchText}`;
     }
     let requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
     return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});

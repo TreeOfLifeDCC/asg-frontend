@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { Sample } from '../../model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
 import { DashboardService } from '../../services/dashboard.service';
@@ -14,10 +14,15 @@ import {
   MatTable,
   MatTableDataSource
 } from '@angular/material/table';
-import {NgIf, NgStyle} from '@angular/common';
+import {CommonModule, NgIf, NgStyle} from '@angular/common';
 import {MatChip, MatChipSet} from '@angular/material/chips';
-import {MatFormField} from '@angular/material/form-field';
+import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
+import {MatList, MatListItem} from '@angular/material/list';
+import {MatExpansionPanel} from '@angular/material/expansion';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {FormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
 
 
 @Component({
@@ -42,7 +47,16 @@ import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
     MatPaginator,
     MatRowDef,
     MatHeaderRowDef,
-    MapClusterComponent
+    MapClusterComponent,
+    MatList,
+    MatListItem,
+    RouterLink,
+    MatExpansionPanel,
+    MatFormFieldModule,
+    MatCheckbox,
+    FormsModule,
+    MatInputModule,
+    CommonModule
   ],
   styleUrls: ['./organism-details.component.css']
 })

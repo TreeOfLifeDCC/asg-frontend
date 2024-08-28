@@ -1,5 +1,4 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { HelpComponent } from './help/help.component';
 import { HomeComponent } from './home/home.component';
@@ -15,7 +14,7 @@ import { PhylogeneticsComponent } from './phylogenetics/phylogenetics.component'
 import { TrackingSystemComponent } from './tracking-system/tracking-system/tracking-system.component';
 import { TrackingDetailsComponent } from './tracking-system/tracking-system/details/details.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'documentation',
     component: ApiComponent
@@ -47,11 +46,4 @@ const routes: Routes = [
       { path: '**', component: NotFoundComponent }
     ]
   }
-
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {})],
-  exports: [RouterModule]
-})
-export class AppRoutes { }
