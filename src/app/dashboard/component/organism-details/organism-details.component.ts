@@ -1,28 +1,21 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Sample } from '../../model/dashboard.model';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { CommonModule, NgIf, NgStyle } from '@angular/common';
+import { MatChip, MatChipsModule } from '@angular/material/chips';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MapClusterComponent } from '../../map-cluster/map-cluster.component';
+import { MatList, MatListModule } from '@angular/material/list';
+import { MatExpansionPanel, MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MatPaginator } from '@angular/material/paginator';
-import {MatTab, MatTabGroup} from '@angular/material/tabs';
-import {
-  MatCell,
-  MatCellDef,
-  MatHeaderCell,
-  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
-  MatTable,
-  MatTableDataSource
-} from '@angular/material/table';
-import {CommonModule, NgIf, NgStyle} from '@angular/common';
-import {MatChip, MatChipSet} from '@angular/material/chips';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {MatList, MatListItem} from '@angular/material/list';
-import {MatExpansionPanel} from '@angular/material/expansion';
-import {MatCheckbox} from '@angular/material/checkbox';
-import {FormsModule} from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
 
 
 @Component({
@@ -31,29 +24,18 @@ import {MatInputModule} from '@angular/material/input';
   templateUrl: './organism-details.component.html',
   imports: [
     NgIf,
-    MatChipSet,
-    MatChip,
+    MatChipsModule,
     NgStyle,
-    MatTabGroup,
-    MatTab,
-    MatFormField,
-    MatHeaderCell,
-    MatCell,
-    MatTable,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatHeaderRow,
-    MatRow,
-    MatPaginator,
-    MatRowDef,
-    MatHeaderRowDef,
-    MapClusterComponent,
-    MatList,
-    MatListItem,
-    RouterLink,
-    MatExpansionPanel,
+    MatTabsModule,
     MatFormFieldModule,
-    MatCheckbox,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MapClusterComponent,
+    MatListModule,
+    RouterLink,
+    MatExpansionModule,
+    MatCheckboxModule,
     FormsModule,
     MatInputModule,
     CommonModule
@@ -65,12 +47,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   bioSampleId: string;
-  bioSampleObj;
+  bioSampleObj: any;
   dataSourceRecords;
-  specBioSampleTotalCount;
-  specSymbiontsTotalCount;
-  specMetagenomesTotalCount;
-  dataSourceSymbiontsAssembliesCount;
+  specBioSampleTotalCount = 0;
+  specSymbiontsTotalCount = 0;
+  specMetagenomesTotalCount = 0;
+  dataSourceSymbiontsAssembliesCount = 0;
   dataSourceSymbiontsAssemblies;
 
   dataSourceMetagenomesAssembliesCount: number;
@@ -87,7 +69,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   filterSize: number;
   searchText = '';
   activeFilters = [];
-  filtersMap;
+  filtersMap: { sex: any[]; trackingSystem: any[]; organismPart: any[]; };
   filters = {
     sex: {},
     trackingSystem: {},
@@ -96,78 +78,80 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   sexFilters = [];
   trackingSystemFilters = [];
   organismPartFilters = [];
-  organismName;
-  relatedRecords;
+  organismName: any;
+  relatedRecords: any[];
   filterJson = {
     sex: '',
     organismPart: '',
     trackingSystem: ''
   };
-  geoLocation: Boolean;
+  geoLocation: boolean;
   orgGeoList: any;
   specGeoList: any;
-  dataSourceFiles;
-  dataSourceFilesCount;
-  dataSourceAssemblies;
-  dataSourceAssembliesCount;
-  dataSourceAnnotation;
-  dataSourceAnnotationCount;
-  dataSourceSymbiontsRecords;
-  dataSourceMetagenomesRecords;
+  dataSourceFiles: MatTableDataSource<Sample, MatPaginator>;
+  dataSourceFilesCount: number;
+  dataSourceAssemblies: MatTableDataSource<any, MatPaginator>;
+  dataSourceAssembliesCount: number;
+  dataSourceAnnotation: MatTableDataSource<any, MatPaginator>;
+  dataSourceAnnotationCount: number;
+  dataSourceSymbiontsRecords: MatTableDataSource<any, MatPaginator>;
+  dataSourceMetagenomesRecords: MatTableDataSource<any, MatPaginator>;
   assembliesurls = [];
   annotationsurls = [];
-  experimentColumnsDefination = [{column: 'study_accession', selected: true},
-    {column: 'secondary_study_accession', selected: false},
-    {column: 'sample_accession', selected: true},
-    {column: 'secondary_sample_accession', selected: false},
-    {column: 'experiment_accession', selected: true},
-    {column: 'run_accession', selected: true},
-    {column: 'submission_accession', selected: false},
-    {column: 'tax_id', selected: false},
-    {column: 'scientific_name', selected: false},
-    {column: 'instrument_platform', selected: false},
-    {column: 'instrument_model', selected: false},
-    {column: 'library_name', selected: false},
-    {column: 'nominal_length', selected: false},
-    {column: 'library_layout', selected: false},
-    {column: 'library_strategy', selected: false},
-    {column: 'library_source', selected: false},
-    {column: 'library_selection', selected: false},
-    {column: 'read_count', selected: false},
-    {column: 'base_count', selected: false},
-    {column: 'center_name', selected: false},
-    {column: 'first_public', selected: false},
-    {column: 'last_updated', selected: false},
-    {column: 'experiment_title', selected: false},
-    {column: 'study_title', selected: false},
-    {column: 'study_alias', selected: false},
-    {column: 'experiment_alias', selected: false},
-    {column: 'run_alias', selected: false},
-    {column: 'fastq_bytes', selected: false},
-    {column: 'fastq_md5', selected: false},
-    {column: 'fastq_ftp', selected: true},
-    {column: 'fastq_aspera', selected: false},
-    {column: 'fastq_galaxy', selected: false},
-    {column: 'submitted_bytes', selected: false},
-    {column: 'submitted_md5', selected: false},
-    {column: 'submitted_ftp', selected: true},
-    {column: 'submitted_aspera', selected: false},
-    {column: 'submitted_galaxy', selected: false},
-    {column: 'submitted_format', selected: false},
-    {column: 'sra_bytes', selected: false},
-    {column: 'sra_md5', selected: false},
-    {column: 'sra_ftp', selected: false},
-    {column: 'sra_aspera', selected: false},
-    {column: 'sra_galaxy', selected: false},
-    {column: 'cram_index_ftp', selected: false},
-    {column: 'cram_index_aspera', selected: false},
-    {column: 'cram_index_galaxy', selected: false},
-    {column: 'sample_alias', selected: false},
-    {column: 'broker_name', selected: false},
-    {column: 'sample_title', selected: false},
-    {column: 'nominal_sdev', selected: false},
-    {column: 'first_created', selected: false},
-    {column: 'library_construction_protocol', selected: true}];
+  experimentColumnsDefination = [
+    { column: 'study_accession', selected: true },
+    { column: 'secondary_study_accession', selected: false },
+    { column: 'sample_accession', selected: true },
+    { column: 'secondary_sample_accession', selected: false },
+    { column: 'experiment_accession', selected: true },
+    { column: 'run_accession', selected: true },
+    { column: 'submission_accession', selected: false },
+    { column: 'tax_id', selected: false },
+    { column: 'scientific_name', selected: false },
+    { column: 'instrument_platform', selected: false },
+    { column: 'instrument_model', selected: false },
+    { column: 'library_name', selected: false },
+    { column: 'nominal_length', selected: false },
+    { column: 'library_layout', selected: false },
+    { column: 'library_strategy', selected: false },
+    { column: 'library_source', selected: false },
+    { column: 'library_selection', selected: false },
+    { column: 'read_count', selected: false },
+    { column: 'base_count', selected: false },
+    { column: 'center_name', selected: false },
+    { column: 'first_public', selected: false },
+    { column: 'last_updated', selected: false },
+    { column: 'experiment_title', selected: false },
+    { column: 'study_title', selected: false },
+    { column: 'study_alias', selected: false },
+    { column: 'experiment_alias', selected: false },
+    { column: 'run_alias', selected: false },
+    { column: 'fastq_bytes', selected: false },
+    { column: 'fastq_md5', selected: false },
+    { column: 'fastq_ftp', selected: true },
+    { column: 'fastq_aspera', selected: false },
+    { column: 'fastq_galaxy', selected: false },
+    { column: 'submitted_bytes', selected: false },
+    { column: 'submitted_md5', selected: false },
+    { column: 'submitted_ftp', selected: true },
+    { column: 'submitted_aspera', selected: false },
+    { column: 'submitted_galaxy', selected: false },
+    { column: 'submitted_format', selected: false },
+    { column: 'sra_bytes', selected: false },
+    { column: 'sra_md5', selected: false },
+    { column: 'sra_ftp', selected: false },
+    { column: 'sra_aspera', selected: false },
+    { column: 'sra_galaxy', selected: false },
+    { column: 'cram_index_ftp', selected: false },
+    { column: 'cram_index_aspera', selected: false },
+    { column: 'cram_index_galaxy', selected: false },
+    { column: 'sample_alias', selected: false },
+    { column: 'broker_name', selected: false },
+    { column: 'sample_title', selected: false },
+    { column: 'nominal_sdev', selected: false },
+    { column: 'first_created', selected: false },
+    { column: 'library_construction_protocol', selected: true }
+  ];
   private ENA_PORTAL_API_BASE_URL_FASTA = 'https://www.ebi.ac.uk/ena/browser/api/fasta/';
   displayedColumnsFiles = [];
   displayedColumnsAssemblies = ['accession', 'assembly_name', 'description', 'version'];
@@ -203,7 +187,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.filterJson.trackingSystem = '';
     this.getDisplayedColumns();
     this.getBiosampleByOrganism();
-
   }
 
   getDisplayedColumns() {
@@ -232,119 +215,118 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   getBiosampleByOrganism() {
     this.dashboardService.getRootOrganismById(this.bioSampleId)
-      .subscribe(
-        data => {
-          const unpackedData = [];
-          const unpackedSymbiontsData = [];
-          const unpackedMetagenomesData = [];
-          this.bioSampleObj = data;
-          this.orgGeoList = data.orgGeoList;
-          this.specGeoList = data.specGeoList;
-          if (this.orgGeoList !== undefined && this.orgGeoList.length !== 0) {
-            this.geoLocation = true;
-            setTimeout(() => {
-              const tabGroup = this.tabgroup;
-              const selected = this.tabgroup.selectedIndex;
-              tabGroup.selectedIndex = 4;
+        .subscribe(
+            data => {
+              const unpackedData = [];
+              const unpackedSymbiontsData = [];
+              const unpackedMetagenomesData = [];
+              this.bioSampleObj = data;
+              this.orgGeoList = data.orgGeoList;
+              this.specGeoList = data.specGeoList;
+              if (this.orgGeoList !== undefined && this.orgGeoList.length !== 0) {
+                this.geoLocation = true;
+                setTimeout(() => {
+                  const tabGroup = this.tabgroup;
+                  const selected = this.tabgroup.selectedIndex;
+                  tabGroup.selectedIndex = 4;
+                  setTimeout(() => {
+                    tabGroup.selectedIndex = selected;
+                  }, 1);
+                }, 400);
+              }
+              for (const item of data.records) {
+                unpackedData.push(this.unpackData(item));
+              }
+              if (data.symbionts_records && data.symbionts_records.length) {
+                for (const item of data.symbionts_records) {
+                  unpackedSymbiontsData.push(this.unpackData(item));
+                }
+              }
+              if (data.metagenomes_records && data.metagenomes_records.length) {
+                for (const item of data.metagenomes_records) {
+                  unpackedMetagenomesData.push(this.unpackData(item));
+                }
+              }
+              if (unpackedData.length > 0) {
+                this.getFilters(data.organism);
+              }
               setTimeout(() => {
-                tabGroup.selectedIndex = selected;
-              }, 1);
-            }, 400);
-          }
-          for (const item of data.records) {
-            unpackedData.push(this.unpackData(item));
-          }
-          if (data.symbionts_records && data.symbionts_records.length) {
-            for (const item of data.symbionts_records) {
-              unpackedSymbiontsData.push(this.unpackData(item));
-            }
-          }
-          if (data.metagenomes_records && data.metagenomes_records.length) {
-            for (const item of data.metagenomes_records) {
-              unpackedMetagenomesData.push(this.unpackData(item));
-            }
-          }
-          if (unpackedData.length > 0) {
-            this.getFilters(data.organism);
-          }
-          setTimeout(() => {
-            this.organismName = data.organism;
-            this.dataSourceRecords = new MatTableDataSource<any>(unpackedData);
-            this.dataSourceSymbiontsRecords = new MatTableDataSource<any>(unpackedSymbiontsData);
-            this.dataSourceMetagenomesRecords = new MatTableDataSource<any>(unpackedMetagenomesData);
-            this.specBioSampleTotalCount = unpackedData?.length;
-            this.specSymbiontsTotalCount = unpackedSymbiontsData?.length;
-            this.specMetagenomesTotalCount = unpackedMetagenomesData?.length;
-            this.dataSourceRecords.paginator = this.paginator;
+                this.organismName = data.organism;
+                this.dataSourceRecords = new MatTableDataSource<any>(unpackedData);
+                this.dataSourceSymbiontsRecords = new MatTableDataSource<any>(unpackedSymbiontsData);
+                this.dataSourceMetagenomesRecords = new MatTableDataSource<any>(unpackedMetagenomesData);
+                this.specBioSampleTotalCount = unpackedData?.length;
+                this.specSymbiontsTotalCount = unpackedSymbiontsData?.length;
+                this.specMetagenomesTotalCount = unpackedMetagenomesData?.length;
+                this.dataSourceRecords.paginator = this.paginator;
 
-            if (data.experiment != null) {
-              this.dataSourceFiles = new MatTableDataSource<Sample>(data.experiment);
-              this.dataSourceFilesCount = data.experiment?.length;
-            }
-            if (data.experiment?.length > 0) {
-              this.INSDC_ID = data.experiment[0].study_accession;
-            }
-            else {
-              this.dataSourceFiles = new MatTableDataSource<Sample>();
-              this.dataSourceFilesCount = 0;
-            }
-            if (data.assemblies != null) {
-              this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
-              this.dataSourceAssembliesCount = data.assemblies?.length;
-              for (let i = 0; i < data.assemblies.length ; i++) {
-                this.assembliesurls.push(
-                    this.ENA_PORTAL_API_BASE_URL_FASTA + data.assemblies[i].accession + '?download=true&gzip=true');
-              }
-            }
-            else {
-              this.dataSourceAssemblies = new MatTableDataSource<Sample>();
-              this.dataSourceAssembliesCount = 0;
-            }
-            if (data.annotation != null) {
-              this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
-              this.dataSourceAnnotationCount = data.annotation?.length;
-              for (let i = 0; i < data.annotation.length ; i++) {
-                this.annotationsurls.push(
-                    this.ENA_PORTAL_API_BASE_URL_FASTA + data.annotation[i].accession + '?download=true&gzip=true');
-              }
-            }
-            else {
-              this.dataSourceAnnotation = new MatTableDataSource<Sample>();
-              this.dataSourceAnnotationCount = 0;
-            }
-            if (data.symbionts_assemblies != null) {
-              this.dataSourceSymbiontsAssemblies = new MatTableDataSource<any>(data.symbionts_assemblies);
-              this.dataSourceSymbiontsAssembliesCount = data.symbionts_assemblies?.length;
-            } else {
-              this.dataSourceSymbiontsAssemblies = new MatTableDataSource<Sample>();
-              this.dataSourceSymbiontsAssembliesCount = 0;
-            }
+                if (data.experiment != null) {
+                  this.dataSourceFiles = new MatTableDataSource<Sample>(data.experiment);
+                  this.dataSourceFilesCount = data.experiment?.length;
+                }
+                if (data.experiment?.length > 0) {
+                  this.INSDC_ID = data.experiment[0].study_accession;
+                } else {
+                  this.dataSourceFiles = new MatTableDataSource<Sample>();
+                  this.dataSourceFilesCount = 0;
+                }
+                if (data.assemblies != null) {
+                  this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
+                  this.dataSourceAssembliesCount = data.assemblies?.length;
+                  for (let i = 0; i < data.assemblies.length; i++) {
+                    this.assembliesurls.push(
+                        this.ENA_PORTAL_API_BASE_URL_FASTA + data.assemblies[i].accession + '?download=true&gzip=true'
+                    );
+                  }
+                } else {
+                  this.dataSourceAssemblies = new MatTableDataSource<Sample>();
+                  this.dataSourceAssembliesCount = 0;
+                }
+                if (data.annotation != null) {
+                  this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
+                  this.dataSourceAnnotationCount = data.annotation?.length;
+                  for (let i = 0; i < data.annotation.length; i++) {
+                    this.annotationsurls.push(
+                        this.ENA_PORTAL_API_BASE_URL_FASTA + data.annotation[i].accession + '?download=true&gzip=true'
+                    );
+                  }
+                } else {
+                  this.dataSourceAnnotation = new MatTableDataSource<Sample>();
+                  this.dataSourceAnnotationCount = 0;
+                }
+                if (data.symbionts_assemblies != null) {
+                  this.dataSourceSymbiontsAssemblies = new MatTableDataSource<any>(data.symbionts_assemblies);
+                  this.dataSourceSymbiontsAssembliesCount = data.symbionts_assemblies?.length;
+                } else {
+                  this.dataSourceSymbiontsAssemblies = new MatTableDataSource<Sample>();
+                  this.dataSourceSymbiontsAssembliesCount = 0;
+                }
 
-            if (data.metagenomes_assemblies != null) {
-              this.dataSourceMetagenomesAssemblies = new MatTableDataSource<any>(data.metagenomes_assemblies);
-              this.dataSourceMetagenomesAssembliesCount = data.metagenomes_assemblies?.length;
-            } else {
-              this.dataSourceMetagenomesAssemblies = new MatTableDataSource<Sample>();
-              this.dataSourceMetagenomesAssembliesCount = 0;
-            }
+                if (data.metagenomes_assemblies != null) {
+                  this.dataSourceMetagenomesAssemblies = new MatTableDataSource<any>(data.metagenomes_assemblies);
+                  this.dataSourceMetagenomesAssembliesCount = data.metagenomes_assemblies?.length;
+                } else {
+                  this.dataSourceMetagenomesAssemblies = new MatTableDataSource<Sample>();
+                  this.dataSourceMetagenomesAssembliesCount = 0;
+                }
 
-            this.dataSourceFiles.paginator = this.exPaginator;
-            this.dataSourceAssemblies.paginator = this.asPaginator;
-            this.dataSourceAnnotation.paginator = this.anPaginator;
+                this.dataSourceFiles.paginator = this.exPaginator;
+                this.dataSourceAssemblies.paginator = this.asPaginator;
+                this.dataSourceAnnotation.paginator = this.anPaginator;
 
-            this.dataSourceSymbiontsRecords.paginator = this.symPaginator;
-            this.dataSourceSymbiontsAssemblies.paginator = this.asSymPaginator;
-            this.dataSourceMetagenomesRecords.paginator = this.metPaginator;
-            this.dataSourceMetagenomesAssemblies.paginator = this.asMetPaginator;
+                this.dataSourceSymbiontsRecords.paginator = this.symPaginator;
+                this.dataSourceSymbiontsAssemblies.paginator = this.asSymPaginator;
+                this.dataSourceMetagenomesRecords.paginator = this.metPaginator;
+                this.dataSourceMetagenomesAssemblies.paginator = this.asMetPaginator;
 
-            this.dataSourceRecords.sort = this.sort;
-            this.dataSourceFiles.sort = this.sort;
-            this.dataSourceAssemblies.sort = this.sort;
-            this.dataSourceAnnotation.sort = this.sort;
-          }, 50);
-        },
-        err => console.log(err)
-      );
+                this.dataSourceRecords.sort = this.sort;
+                this.dataSourceFiles.sort = this.sort;
+                this.dataSourceAssemblies.sort = this.sort;
+                this.dataSourceAnnotation.sort = this.sort;
+              }, 50);
+            },
+            err => console.log(err)
+        );
   }
 
   filesSearch(event: Event) {
@@ -375,12 +357,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     for (const key of Object.keys(data)) {
       if (key === 'organism') {
         dataToReturn[key] = data.organism.text;
-      }
-      else {
+      } else {
         if (key === 'commonName' && data[key] == null) {
           dataToReturn[key] = '-';
-        }
-        else {
+        } else {
           dataToReturn[key] = data[key];
         }
       }
@@ -392,7 +372,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     if (this.activeFilters.indexOf(filter) !== -1) {
       return 'active';
     }
-
   }
 
   onFilterClick(event, label: string, filter: string) {
@@ -406,7 +385,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       this.removeFilter(filter);
     } else {
       this.activeFilters.push(filter);
-      this.dataSourceRecords.filter = this.filterJson;
+      this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
       this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
       $('.' + inactiveClassName).addClass('non-disp');
       $(event.target).removeClass('non-disp');
@@ -418,19 +397,21 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   createFilterJson(key, value) {
     if (key === 'sex') {
       this.filterJson.sex = value;
-    }
-    else if (key === 'organismpart') {
+    } else if (key === 'organismpart') {
       this.filterJson.organismPart = value;
-    }
-    else if (key === 'trackingstatus') {
+    } else if (key === 'trackingstatus') {
       this.filterJson.trackingSystem = value;
     }
+
     this.dataSourceRecords.filterPredicate = ((data, filter) => {
-      const a = !filter.sex || data.sex === filter.sex;
-      const b = !filter.organismPart || data.organismPart === filter.organismPart;
-      const c = !filter.trackingSystem || data.trackingSystem === filter.trackingSystem;
+      const parsedFilter = JSON.parse(filter);
+      const a = !parsedFilter.sex || data.sex === parsedFilter.sex;
+      const b = !parsedFilter.organismPart || data.organismPart === parsedFilter.organismPart;
+      const c = !parsedFilter.trackingSystem || data.trackingSystem === parsedFilter.trackingSystem;
       return a && b && c;
     }) as (PeriodicElement, string) => boolean;
+
+    this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
   }
 
   getFiltersForSelectedFilter(data: any) {
@@ -495,7 +476,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.filterJson.sex = '';
     this.filterJson.organismPart = '';
     this.filterJson.trackingSystem = '';
-    this.dataSourceRecords.filter = this.filterJson;
+    this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
     this.getBiosampleByOrganism();
   }
 
@@ -505,13 +486,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       if (this.activeFilters.length !== 0) {
         this.spliceFilterArray(filter);
         this.activeFilters.splice(filterIndex, 1);
-        this.dataSourceRecords.filter = this.filterJson;
+        this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
         this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
       } else {
         this.filterJson.sex = '';
         this.filterJson.organismPart = '';
         this.filterJson.trackingSystem = '';
-        this.dataSourceRecords.filter = this.filterJson;
+        this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
         this.getBiosampleByOrganism();
       }
     }
@@ -520,28 +501,24 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   spliceFilterArray(filter: string) {
     if (this.filterJson.sex === filter) {
       this.filterJson.sex = '';
-    }
-    else if (this.filterJson.organismPart === filter) {
+    } else if (this.filterJson.organismPart === filter) {
       this.filterJson.organismPart = '';
-    }
-    else if (this.filterJson.trackingSystem === filter) {
+    } else if (this.filterJson.trackingSystem === filter) {
       this.filterJson.trackingSystem = '';
     }
+    this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
   }
 
-  // tslint:disable-next-line:typedef
   getFilters(organism) {
     this.dashboardService.getDetailTableOrganismFilters(organism).subscribe(
-      data => {
-        this.filtersMap = data;
-        this.sexFilters = this.filtersMap.sex.filter(i => i !== '');
-        this.trackingSystemFilters = this.filtersMap.trackingSystem.filter(i => i !== '');
-        this.organismPartFilters = this.filtersMap.organismPart.filter(i => i !== '');
-      },
-      err => console.log(err)
+        data => {
+          this.filtersMap = data;
+          this.sexFilters = this.filtersMap.sex.filter(i => i !== '');
+          this.trackingSystemFilters = this.filtersMap.trackingSystem.filter(i => i !== '');
+          this.organismPartFilters = this.filtersMap.organismPart.filter(i => i !== '');
+        },
+        err => console.log(err)
     );
-
-
   }
 
   getStatusClass(status: string) {
@@ -558,8 +535,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     $('.org-part-inactive').removeClass('non-disp active');
     if (this.searchText.length == 0) {
       this.getBiosampleByOrganism();
-    }
-    else {
+    } else {
       this.activeFilters = [];
       this.dataSourceRecords.filter = this.searchText.trim();
       this.dataSourceRecords.filterPredicate = ((data, filter) => {
@@ -575,7 +551,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   toggleCollapse(filterKey) {
-    if (filterKey == 'Sex') {
+    if (filterKey === 'Sex') {
       if (this.isSexFilterCollapsed) {
         this.itemLimitSexFilter = 10000;
         this.isSexFilterCollapsed = false;
@@ -583,8 +559,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         this.itemLimitSexFilter = 3;
         this.isSexFilterCollapsed = true;
       }
-    }
-    else if (filterKey == 'Tracking Status') {
+    } else if (filterKey === 'Tracking Status') {
       if (this.isTrackCollapsed) {
         this.itemLimitTrackFilter = 10000;
         this.isTrackCollapsed = false;
@@ -592,8 +567,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         this.itemLimitTrackFilter = 3;
         this.isTrackCollapsed = true;
       }
-    }
-    else if (filterKey == 'Organism Part') {
+    } else if (filterKey === 'Organism Part') {
       if (this.isOrganismPartCollapsed) {
         this.itemLimitOrgFilter = 10000;
         this.isOrganismPartCollapsed = false;
@@ -606,7 +580,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   redirectTo(accession: string) {
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-      this.router.navigate(['/data/root/details/' + accession]));
+        this.router.navigate(['/data/root/details/' + accession]));
   }
 
   downloadRawFiles(): void {
@@ -615,7 +589,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   downloadAnnotation(): void {
     this.download_files(this.annotationsurls);
-
   }
 
   downloadAssemblies(): void {
@@ -630,26 +603,20 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       const a = document.createElement('a');
       a.href = files[i];
       a.target = '_parent';
-      // Use a.download if available, it prevents plugins from opening.
       if ('download' in a) {
         a.download = files[i].filename;
       }
-      // Add a to the doc for click to work.
       (document.body || document.documentElement).appendChild(a);
       if (a.click) {
-        a.click(); // The click method is supported by most browsers.
+        a.click();
       } else {
-        $(a).click(); // Backup using jquery
+        $(a).click();
       }
-      // Delete the temporary link.
       a.parentNode.removeChild(a);
-      // Download the next file with a small timeout. The timeout is necessary
-      // for IE, which will otherwise only download the first file.
       setTimeout(function() {
         download_next(i + 1);
       }, 500);
     }
-    // Initiate the first download.
     download_next(0);
   }
 }

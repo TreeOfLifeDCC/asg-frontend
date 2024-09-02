@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Sample, samples } from '../../../dashboard/model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
@@ -12,8 +12,8 @@ import {
   MatTableDataSource
 } from '@angular/material/table';
 import { StatusesService } from '../../services/statuses.service';
-import {NgForOf, NgIf} from "@angular/common";
-import {MatFormField} from "@angular/material/form-field";
+import {NgForOf, NgIf} from '@angular/common';
+import {MatFormField} from '@angular/material/form-field';
 
 
 @Component({
@@ -32,7 +32,8 @@ import {MatFormField} from "@angular/material/form-field";
     MatHeaderRow,
     MatHeaderRowDef,
     MatRow,
-    MatRowDef
+    MatRowDef,
+    MatPaginator
   ],
   styleUrls: ['./details.component.css']
 })

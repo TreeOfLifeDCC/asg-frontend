@@ -66,11 +66,11 @@
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
-                    <input  #searchInput matInput [(ngModel)]='filterService.searchText'
-                            (ngModelChange)="this.searchUpdate.next($event)"
-                            placeholder="Ex. lutra" #input>
+                    <input #searchInput matInput [(ngModel)]='filterService.searchText'
+                           (ngModelChange)="this.searchUpdate.next($event)"
+                           placeholder="Ex. lutra" #input>
                 </mat-form-field>
-                <table mat-table  #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
+                <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
                     <ng-container matColumnDef="organism">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
                         <mat-cell *matCellDef="let element">

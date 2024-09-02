@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DynamicScriptLoaderService } from './services/dynamic-script-loader.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 
 @Component({
   standalone: true,
   selector: 'app-phylogenetics',
   templateUrl: './phylogenetics.component.html',
   imports: [
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatInputModule
   ],
   styleUrls: ['./phylogenetics.component.css']
 })
