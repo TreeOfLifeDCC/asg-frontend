@@ -418,6 +418,105 @@
                 </div>
             </mat-tab>
 
+            <mat-tab label="Publications" *ngIf="bioSampleObj?.genome_notes && bioSampleObj?.genome_notes.length">
+                <!-- Genome Notes Section -->
+                <div class="goat-box" *ngIf="bioSampleObj?.genome_notes">
+                    <hr>
+                    <mat-expansion-panel [expanded]="true" *ngIf="bioSampleObj?.genome_notes?.length">
+                        <mat-expansion-panel-header class="page-header">
+                            <h1>Published Genome Note</h1>
+                        </mat-expansion-panel-header>
+                        <div *ngFor="let gen of bioSampleObj?.genome_notes">
+                            <div class="card figpanel">
+                                <div class="row">
+                                    <h1 class="page-header">{{gen.title}}</h1>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img class="card-img-left" src="{{gen.figureURI}}" style="width: 150px;float: left;">
+                                    </div>
+                                    <div class="col-md-10">
+                                        <!-- <h1>Abstract</h1> -->
+                                        <p>{{gen.abstract}}</p>
+                                        <a href="{{gen.url}}" class="btn btn-success" target="_blank">Read the Genome
+                                            Note
+                                            in
+                                            full
+                                            here</a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="card-title rounded mx-auto d-block">{{gen.caption}}</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="card-title rounded mx-auto d-block">{{gen.citeURL}}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-expansion-panel>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Genome Stats (GoAT)" *ngIf="bioSampleObj?.goat_info && (bioSampleObj?.goat_info | json) != '{}'">
+                <!-- Goat Info Section -->
+                <div class="tab-box" *ngIf="bioSampleObj?.goat_info">
+                    <hr>
+                    <mat-expansion-panel [expanded]="true" *ngIf="bioSampleObj?.goat_info?.attributes.length">
+                        <mat-expansion-panel-header class="page-header">
+                            <h1>Goat Info</h1>
+                        </mat-expansion-panel-header>
+                        <div class="figpanel">
+                            <div class="row">
+                                <table mat-table matTableExporter  [dataSource]="dataSourceGoatInfo" matSort style="width: 100%;" class="genomeStatsTable">
+                                    <ng-container matColumnDef="name">
+                                        <mat-header-cell *matHeaderCellDef> Attribute </mat-header-cell>
+                                        <mat-cell *matCellDef="let element"> {{element.name}}
+                                        </mat-cell>
+                                    </ng-container>
+                                    <ng-container matColumnDef="value">
+                                        <mat-header-cell *matHeaderCellDef> Value </mat-header-cell>
+                                        <mat-cell *matCellDef="let element"> {{element.value}}
+                                        </mat-cell>
+                                    </ng-container>
+                                    <ng-container matColumnDef="count">
+                                        <mat-header-cell *matHeaderCellDef> Count </mat-header-cell>
+                                        <mat-cell *matCellDef="let element"> {{element.count}}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="aggregation_method">
+                                        <mat-header-cell *matHeaderCellDef> Summary </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{element.aggregation_method}}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <ng-container matColumnDef="aggregation_source">
+                                        <mat-header-cell *matHeaderCellDef> Source </mat-header-cell>
+                                        <mat-cell *matCellDef="let element">
+                                            {{element.aggregation_source}}
+                                        </mat-cell>
+                                    </ng-container>
+
+                                    <mat-header-row *matHeaderRowDef="displayedColumnsGoatInfo"></mat-header-row>
+                                    <mat-row *matRowDef="let row; columns: displayedColumnsGoatInfo;"></mat-row>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <a href="{{bioSampleObj?.goat_info.url}}" class="btn btn-success" target="_blank">Read the
+                                Goat
+                                Info in full here</a>
+                        </div>
+                    </mat-expansion-panel>
+                    <hr>
+                </div>
+            </mat-tab>
+
             <mat-tab label="Symbionts" *ngIf="bioSampleObj?.symbionts_records?.length">
                 <div class="col-md-12">
                     <hr>

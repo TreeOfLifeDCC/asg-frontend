@@ -166,6 +166,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('assembliesSymbiontsTable') asSymPaginator: MatPaginator;
   @ViewChild('relatedMetagenomes') metPaginator: MatPaginator;
   @ViewChild('assembliesMetagenomesTable') asMetPaginator: MatPaginator;
+  dataSourceGoatInfo;
+  displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService,
@@ -468,20 +470,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  removeAllFilters() {
-    $('.sex-inactive').removeClass('non-disp');
-    $('.tracking-status-inactive').removeClass('non-disp');
-    $('.org-part-inactive').removeClass('non-disp');
-    this.activeFilters = [];
-    this.filterJson.sex = '';
-    this.filterJson.organismPart = '';
-    this.filterJson.trackingSystem = '';
-    this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
-    this.getBiosampleByOrganism();
-  }
-
   removeFilter(filter: string) {
-    if (filter != undefined) {
+    if (filter !== undefined) {
       const filterIndex = this.activeFilters.indexOf(filter);
       if (this.activeFilters.length !== 0) {
         this.spliceFilterArray(filter);
