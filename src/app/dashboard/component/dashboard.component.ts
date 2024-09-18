@@ -163,8 +163,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private spinner: NgxSpinnerService,
-              private taxanomyService: TaxanomyService,
-              // private dialog: MatDialog,
               public filterService: FilterService) {
     this.searchUpdate.pipe(
         debounceTime(500),

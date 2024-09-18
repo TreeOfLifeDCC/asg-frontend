@@ -302,12 +302,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
     const from = pageIndex * pageSize;
     const size = pageSize;
-    // if ((from + pageSize) < this.statusesTotalCount) {
-    //   size = from + pageSize;
-    // }
-    // else {
-    //   size = this.statusesTotalCount;
-    // }
 
     if (this.activeFilters.length !== 0 || this.currentTaxonomyTree.length !== 0) {
       this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, from, size, taxonomy);
@@ -768,38 +762,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     }
   }
 
-  findBioSampleByOrganismName(name, from?, size?) {
-    this.spinner.show();
-    this.orgName = name;
-    this.statusesService.findBioSampleByOrganismName(this.orgName, this.sort.active, this.sort.direction, from, size)
-      .subscribe(
-        data => {
-          const unpackedData = [];
-          for (const item of data.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.orgTotalCount = data.hits.total.value;
-          if (this.orgTotalCount === 1) {
-            this.spinner.hide();
-            this.router.navigate(['/data/details/' + data.hits.hits[0]._source.accession], {});
-          }
-          else {
-            this.orgDataSource = new MatTableDataSource<any>(unpackedData);
-            this.orgDataSource.sort = this.sort;
-            this.showOrganismTable = true;
-            this.spinner.hide();
-            $('#org-table').show();
-            $('#overlay').css({ display: 'block' });
-            $(window).scrollTop(200);
-          }
-        },
-        err => {
-          this.spinner.hide();
-          console.log(err);
-        }
-      );
-  }
-
   parseFilterAggregation(data: any) {
     this.symbiontsFilters = [];
     this.metagenomesFilters = [];
@@ -961,10 +923,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       'forma'
     ];
     $('#myUL, #root-list, #Eukaryota-superkingdom').toggleClass('active');
-  }
-
-  toggleTaxanomy(rank, taxonomy) {
-    $('#' + rank).toggleClass('active');
   }
 
   showTaxonomyModal(event: any, rank: string, taxonomy: string, childRank: string) {
