@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 
-import { MatSort } from '@angular/material/sort';
+import {MatSort, MatSortHeader} from '@angular/material/sort';
 
 import { Title } from '@angular/platform-browser';
 import { StatusesService } from '../services/statuses.service';
@@ -13,7 +13,7 @@ import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
 import 'jquery';
 import {
   MatCell,
-  MatCellDef,
+  MatCellDef, MatColumnDef,
   MatHeaderCell,
   MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
   MatTable,
@@ -57,7 +57,9 @@ import { MatInputModule } from '@angular/material/input';
     MatRowDef,
     MatPaginator,
     UpperCasePipe,
-    MatInputModule
+    MatInputModule,
+    MatColumnDef,
+    MatSortHeader
   ],
   styleUrls: ['./tracking-system.component.css']
 })
@@ -67,7 +69,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     'annotation_complete', 'annotation_submitted_to_ena'];
   loading = true;
   dataSource = new MatTableDataSource<any>();
-  orgDataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -102,10 +103,8 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   AnnotationFilters = [];
   AnnotationCompleteFilters = [];
   statusesTotalCount = 0;
-  orgTotalCount = 0;
   unpackedData;
   showOrganismTable: boolean;
-  orgName = '';
 
   childTaxanomy: Taxonomy;
   selectedTaxonomy: any;
@@ -160,8 +159,10 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   // tslint:disable-next-line:typedef
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if (this.dataSource) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
   }
 
   getStatusesQueryParamonInit() {
@@ -175,8 +176,10 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
         this.getActiveFiltersAndResult();
       }, 80);
     }
-    else {
+    if (this.sort) {
       this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+    } else {
+      this.getAllStatuses(0, 15);
     }
   }
 
@@ -281,11 +284,15 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
           for (const item of data.biosampleStatus) {
             unpackedData.push(this.unpackData(item));
           }
+          this.statusesTotalCount = data.count;
           this.dataSource = new MatTableDataSource<any>(unpackedData);
           this.dataSource.sort = this.sort;
           this.dataSource.filterPredicate = this.filterPredicate;
           this.unpackedData = unpackedData;
           this.spinner.hide();
+          setTimeout(() => {
+            this.spinner.hide();
+          }, 100);
         },
         err => {
           console.log(err);
@@ -555,7 +562,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
         }
       }
       else if (this.currentTaxonomyTree.length > 1) {
-        if (this.activeFilters.length == 0) {
+        if (this.activeFilters.length === 0) {
           this.urlAppendFilterArray = [];
           this.dataSource.filter = undefined;
           this.router.navigate(['tracking'], {});
@@ -843,7 +850,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     }
 
   }
-
 
   // Ontology aware filter
   initTaxonomyObject() {
@@ -1164,9 +1170,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   removeRankFromTaxaTree(taxa) {
     const temp = this.currentTaxonomyTree;
     const index = temp.findIndex(x => x.rank === taxa.rank);
-    let itemsToremove = this.currentTaxonomyTree;
     this.currentTaxonomyTree = this.currentTaxonomyTree.slice(0, index);
-    itemsToremove = itemsToremove.splice(index);
     const taxaIndex = this.taxonomies.findIndex(x => x === taxa.rank);
     for (let i = taxaIndex; i < this.taxonomies.length; i++) {
       const taxRank = this.taxonomies[i];
@@ -1184,7 +1188,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       return {'background-color': 'gold'};
     }
   }
-
 
   displayActiveFilterName(filterName: string){
     if (filterName.includes('symbiontsBioSamplesStatus-')){

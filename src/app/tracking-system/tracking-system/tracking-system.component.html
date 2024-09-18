@@ -2,14 +2,6 @@
 <div id="dynamic">
     <ngx-spinner bdColor="rgba(0,0,0,0.9)" [fullScreen]="true" size="large" color="#fff" type="ball-clip-rotate-pulse">
     </ngx-spinner>
-    <!-- <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3">
-                </div>
-            </div>
-        </div>
-    </div> -->
 
     <div class="container" style="padding-top: 20px;">
         <div class="row main-table">
@@ -27,12 +19,6 @@
                                         <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                     </li>
                                 </ng-container>
-<!--                                <ng-container *ngFor="let filter of MappedReadsFilters; let i = index">-->
-<!--                                    <li class="list-group-item d-flex justify-content-between align-items-center mapped-reads-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'mapped-reads' , filter.key)" style="cursor: pointer" *ngIf="filter.key === 'Mapped reads - done' || filter.key === 'Mapped reads - Done'">-->
-<!--                                        <span>Mapped Reads - Submitted</span>-->
-<!--                                        <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>-->
-<!--                                    </li>-->
-<!--                                </ng-container>-->
 
                                 <ng-container *ngFor="let filter of RawDataFilters; let i = index">
                                     <li class="raw-data list-group-item d-flex justify-content-between align-items-center raw-data-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'raw-data' , filter.key)" style="cursor: pointer" *ngIf="filter.key === 'Raw data - done' || filter.key === 'Raw data - Done'">
@@ -119,10 +105,6 @@
                             <ul id="ontology-inactive" class="list-group">
                                 <li *ngIf="isFilterSelected" class="rank-heading"> {{currentTaxonomy.rank | uppercase}}
                                 </li>
-                                <!-- <li *ngIf="isFilterSelected" class="list-group-item d-flex justify-content-between align-items-center kingdom active-filter" style="cursor: pointer; padding: .75rem 0.25rem;" id="filterSelected" (click)="showTaxonomyModal($event, currentTaxonomy.rank, currentTaxonomy.taxonomy, 'subkingdom')">
-                                    {{selectedFilterValue.taxonomy}}
-                                    <span class="badge badge-pill badge-info">{{statusesTotalCount}}</span>
-                                </li> -->
                                 <li *ngIf="isFilterSelected" class="list-group-item d-flex justify-content-between align-items-center kingdom active-filter" style="cursor: pointer; padding: .75rem 0.25rem;" id="filterSelected" (click)="showTaxonomyModal($event, currentTaxonomy.rank, currentTaxonomy.taxonomy, 'subkingdom')">
                                     {{selectedFilterValue.taxonomy}} ({{selectedFilterValue.commonName}})
                                     <span class="badge badge-pill badge-info">{{statusesTotalCount}}</span>
@@ -143,12 +125,7 @@
                 </div>
             </div>
             <div class="col-md-10 status-table">
-                <!-- <div class="alert alert-danger alert-dismissible fade show">
-                    <strong>Error!</strong> A problem has been occurred and we are fixing it. Sorry for any inconvenience caused.
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div> -->
                 <h1 class="page-header">Statuses</h1>
-<!--                <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-statuses-metadata'})">Download metadata</button>-->
                 <h1 *ngIf="activeFilters.length !== 0">Filters:
                     <button type="button" class="btn btn-success" *ngFor="let filter of activeFilters">
                         {{displayActiveFilterName(filter)}}

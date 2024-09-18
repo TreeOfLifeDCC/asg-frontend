@@ -15,7 +15,7 @@ export class StatusesService {
 
   public getAllStatuses(offset, limit, sortColumn?, sortOrder?): Observable<any> {
     let requestParams = `?offset=${offset}&limit=${limit}`
-    if (sortColumn != undefined) {
+    if (sortColumn !== undefined) {
       requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
     }
     return this.http.get(`${this.API_BASE_URL}/statuses${requestParams}`);

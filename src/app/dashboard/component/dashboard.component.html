@@ -36,7 +36,7 @@
                     </mat-expansion-panel-header>
                     <div class="col-md-12">
                         <div class="row">
-                            <mat-checkbox *ngFor="let data of dataColumnsDefination" class="col-md-4" color="primary"
+                            <mat-checkbox *ngFor="let data of dataColumnsDefinition" class="col-md-4" color="primary"
                                           (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
                                           [checked]="data.selected" (change)="showSelectedColumn(data, $event.checked)">
                                 {{data.name}}
@@ -45,10 +45,6 @@
                     </div>
                 </mat-expansion-panel>
                 <br />
-
-<!--                <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-metadata'})">Download metadata</button>-->
-<!--                <button *ngIf="filterService.activeFilters.length > 0 || filterService.selectedFilterValue != '' && (this.filterService.AnnotationFilters.length > 0 || this.filterService.AnnotationCompleteFilters.length > 0 || this.filterService.AssembliesFilters.length > 0 || this.filterService.RawDataFilters.length > 0)" type="button" style="float: right;"-->
-<!--                        class="btn btn-primary" mat-raised-button (click)="openDialog()">Download</button>-->
 
                 <div *ngIf="hasActiveFilters()">
                     <app-active-filter true></app-active-filter>
@@ -59,7 +55,7 @@
                               (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
                             X</span>
                     </button>
-                </span>
+                    </span>
                     <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
 
                 </div>
@@ -87,7 +83,6 @@
                     <ng-container matColumnDef="currentStatus">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Current status </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-<!--                            <span [ngClass]="getStatusClass(element.currentStatus)">{{element.currentStatus}}</span>-->
                             <mat-chip-set>
                                 <mat-chip [ngStyle]="{'background-color': 'gold'}">{{element.currentStatus}}</mat-chip>
                             </mat-chip-set>

@@ -59,7 +59,6 @@ export class GisComponent implements AfterViewInit , OnDestroy {
   private tiles;
   private markers;
   toggleSpecimen = new UntypedFormControl();
-  selectedPhylogenyFilter;
   unpackedData;
 
   myControl = new UntypedFormControl('');

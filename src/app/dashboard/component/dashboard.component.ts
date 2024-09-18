@@ -6,9 +6,6 @@ import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 
-import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
-import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
-
 import 'jquery';
 import 'bootstrap';
 import {FilterService} from '../../services/filter-service';
@@ -136,16 +133,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   bioSampleTotalCount = 0;
   unpackedData;
 
-  childTaxanomy: Taxonomy;
-
-  currentTaxonomyTree: any;
-
   phylSelectedRank = '';
 
   itemLimitBiosampleFilter: number;
   itemLimitEnaFilter: number;
   pagesize = 15;
-  dataColumnsDefination = [
+  dataColumnsDefinition = [
     {name: 'Organism', column: 'organism', selected: true},
     {name: 'Common Name', column: 'commonName', selected: true},
     {name: 'Current Status', column: 'currentStatus', selected: true},
@@ -186,7 +179,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     const params = queryParamMap['params'];
     // tslint:disable-next-line:triple-equals
     if (Object.keys(params).length != 0) {
-
       this.resetFilter();
       // tslint:disable-next-line:forin
       for (const key in params) {
@@ -227,15 +219,13 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
   }
 
-  // tslint:disable-next-line:typedef
-  addToActiveFilters(filterArr, filterPrefix) {
+  addToActiveFilters(filterArr: string, filterPrefix: string) {
     const list = filterArr.split(',');
     list.forEach((value: any) => {
       this.filterService.activeFilters.push(filterPrefix + '-' + value);
     });
   }
 
-  // tslint:disable-next-line:typedef
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -243,9 +233,9 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   getDisplayedColumns() {
     this.displayedColumns = [];
-    this.dataColumnsDefination.forEach(obj => {
-      if(obj.selected) {
-        this.displayedColumns.push(obj.column)
+    this.dataColumnsDefinition.forEach(obj => {
+      if (obj.selected) {
+        this.displayedColumns.push(obj.column);
       }
     });
   }
@@ -254,14 +244,13 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   showSelectedColumn(selectedColumn, checked) {
-    let index = this.dataColumnsDefination.indexOf(selectedColumn);
-    let item = this.dataColumnsDefination[index];
+    const index = this.dataColumnsDefinition.indexOf(selectedColumn);
+    const item = this.dataColumnsDefinition[index];
     item.selected = checked;
-    this.dataColumnsDefination[index] = item;
+    this.dataColumnsDefinition[index] = item;
     this.getDisplayedColumns();
     this.getActiveFiltersAndResult();
   }
-
 
   getActiveFiltersAndResult(taxa?) {
     let taxonomy;
@@ -271,8 +260,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     else {
       taxonomy = [this.filterService.currentTaxonomyTree];
     }
-    this.dashboardService.getFilterResults(this.filterService.activeFilters.toString(), this.sort.active, this.sort.direction, 0, this.pagesize, taxonomy)
-        .subscribe(
+    this.dashboardService.getFilterResults(
+        this.filterService.activeFilters.toString(), this.sort.active,
+        this.sort.direction, 0, this.pagesize, taxonomy
+    ).subscribe(
             data => {
               const unpackedData = [];
               for (const item of data.hits.hits) {
@@ -284,18 +275,22 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               this.dataSource.filterPredicate = this.filterPredicate;
               this.unpackedData = unpackedData;
               this.filtersMap = data;
-              if (this.phylSelectedRank != '') {
-                let taxa = { 'rank': this.phylSelectedRank.split(' - ')[0], 'taxonomy': data.aggregations.childRank.scientificName.buckets[0].key, 'commonName': data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key, 'taxId': data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key };
+              if (this.phylSelectedRank !== '') {
+                let taxa = {
+                  rank: this.phylSelectedRank.split(' - ')[0],
+                  'taxonomy': data.aggregations.childRank.scientificName.buckets[0].key,
+                  'commonName': data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key,
+                  'taxId': data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key
+                };
                 this.filterService.selectedFilterValue = taxa;
               }
               for (let i = 0; i < this.filterService.urlAppendFilterArray.length; i++) {
                 setTimeout(() => {
-                  let inactiveClassName = '.' + this.filterService.urlAppendFilterArray[i].name + '-inactive';
-                  let element = "li:contains('" + this.filterService.urlAppendFilterArray[i].value + "')";
+                  const element = 'li:contains(\'' + this.filterService.urlAppendFilterArray[i].value + '\')';
                   $(element).addClass('active');
                 }, 1);
 
-                if (i == (this.filterService.urlAppendFilterArray.length - 1)) {
+                if (i === (this.filterService.urlAppendFilterArray.length - 1)) {
                   this.spinner.hide();
                 }
               }
@@ -311,8 +306,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
 
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText, this.filterService.activeFilters.join(','))
-        .subscribe(
+    this.dashboardService.getAllBiosample(
+        offset, limit, sortColumn, sortOrder, this.filterService.searchText,
+        this.filterService.activeFilters.join(',')
+    ).subscribe(
             data => {
               const unpackedData = [];
               this.filterService.getFilters(data.rootSamples);
@@ -326,7 +323,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               this.unpackedData = unpackedData;
               setTimeout(() => {
                 this.spinner.hide();
-              }, 100)
+              }, 100);
             },
             err => {
               console.log(err);
@@ -355,14 +352,13 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               console.log(err);
               this.spinner.hide();
             }
-        )
+        );
   }
 
   pageChanged(event) {
-    let taxonomy = [this.currentTaxonomyTree];
-    let pageIndex = event.pageIndex;
-    let pageSize = event.pageSize;
-    let previousSize = pageSize * pageIndex;
+    const pageIndex = event.pageIndex;
+    const pageSize = event.pageSize;
+    const previousSize = pageSize * pageIndex;
 
     const from = pageIndex * pageSize;
     const size = pageSize;
@@ -370,18 +366,9 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   customSort(event) {
-    let taxonomy = [this.currentTaxonomyTree];
     this.paginator.pageIndex = 0;
-    let pageIndex = this.paginator.pageIndex;
-    let pageSize = this.paginator.pageSize;
-    let from = pageIndex * pageSize;
-    let size = 0;
-    if ((from + pageSize) < this.bioSampleTotalCount) {
-      size = from + pageSize;
-    }
-    else {
-      size = this.bioSampleTotalCount;
-    }
+    const pageIndex = this.paginator.pageIndex;
+    const pageSize = this.paginator.pageSize;
     this.getAllBiosamples((pageIndex).toString(), pageSize.toString(), event.active, event.direction);
   }
 
@@ -415,12 +402,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       data = data._source;
     }
     for (const key of Object.keys(data)) {
-      if(key === 'tax_id') {
+      if (key === 'tax_id') {
         dataToReturn['goatInfo'] = "https://goat.genomehubs.org/records?record_id="+data[key]+"&result=taxon&taxonomy=ncbi#"+dataToReturn["organism"]
         dataToReturn[key] = data[key];
       }
       if (key === 'commonName' && data[key] == null) {
-        dataToReturn[key] = "-"
+        dataToReturn[key] = '-';
       }
       else {
         dataToReturn[key] = data[key];
@@ -429,38 +416,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     return dataToReturn;
   }
 
-  // tslint:disable-next-line:typedef
-  checkFilterIsActive(filter: string) {
-    if (this.filterService.activeFilters.indexOf(filter) !== -1) {
-      return 'active-filter';
-    }
-    if (this.filterService.selectedTaxonomy.indexOf(filter) !== -1) {
-      return 'active-filter';
-    }
-
-  }
-
-  updateActiveRouteParams() {
-    const params = {};
-    const paramArray = this.filterService.urlAppendFilterArray.map(x => Object.assign({}, x));
-    if (paramArray.length != 0) {
-      for (let i = 0; i < paramArray.length; i++) {
-        params[paramArray[i].name] = paramArray[i].value;
-      }
-      this.router.navigate(['data'], { queryParams: params });
-    } else {
-      this.router.navigate(['data']);
-    }
-  }
-  // tslint:disable-next-line:typedef
-  getSearchResults() {
-    this.spinner.show();
-    this.resetFilter();
-    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
-    this.filterService.updateActiveRouteParams();
-
-  }
-  // tslint:disable-next-line:typedef
   removeFilter() {
     this.resetFilter();
     const currentUrl = this.router.url;
@@ -472,6 +427,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       }, 800);
     });
   }
+
   resetFilter = () => {
     for (const key of Object.keys(this.filterService.activeFilters)) {
       this.filterService.activeFilters[key] = [];
@@ -487,18 +443,19 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   ngOnDestroy() {
     this.resetFilter();
   }
+
   // tslint:disable-next-line:typedef
   getStatusClass(status: string) {
     if (status === 'Annotation Complete') {
       return 'badge badge-pill badge-success';
     }
-    else if (status == 'Done') {
+    else if (status === 'Done') {
       return 'badge badge-pill badge-success';
     }
-    else if (status == 'Waiting') {
+    else if (status === 'Waiting') {
       return 'badge badge-pill badge-warning';
     }
-    else if (status == 'Submitted') {
+    else if (status === 'Submitted') {
       return 'badge badge-pill badge-success';
     }
     else {
@@ -507,11 +464,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
   // tslint:disable-next-line:typedef
   checkTolidExists(data) {
-    return data != undefined && data.tolid != undefined && data.tolid != null && data.tolid.length > 0;
-  }
-  // tslint:disable-next-line:typedef
-  checkGenomeExists(data) {
-    return data != undefined && data.genome_notes != undefined && data.genome_notes != null && data.genome_notes.length;
+    return data !== undefined && data.tolid !== undefined && data.tolid != null && data.tolid.length > 0;
   }
   // tslint:disable-next-line:typedef
   generateTolidLink(data) {
@@ -520,7 +473,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       const clade = this.codes[data.tolid.charAt(0)];
       return `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
 
-    }else {
+    } else {
       if (data.tolid.length > 0) {
         const clade = this.codes[data.tolid[0].charAt(0)];
         return `https://tolqc.cog.sanger.ac.uk/asg/${clade}/${organismName}`;
@@ -528,50 +481,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
   }
 
-  // tslint:disable-next-line:typedef
-  // downloadCSV() {
-  //   const taxonomy = [this.filterService.currentTaxonomyTree];
-  //   this.dashboardService.downloadCSV(this.filterService.activeFilters.toString(), this.sort.active, this.sort.direction, 0, 5000, taxonomy, this.filterService.searchText).subscribe(data => {
-  //     const blob = new Blob([data], { type: 'application/csv' });
-  //     const downloadURL = window.URL.createObjectURL(data);
-  //     const link = document.createElement('a');
-  //     link.href = downloadURL;
-  //     link.download = 'organism-metadata.csv';
-  //     link.click();
-  //   }), error => console.log('Error downloading the file'),
-  //       () => console.info('File downloaded successfully');
-  // }
-  // // tslint:disable-next-line:typedef
-  // checkElement(element: any) {
-  //   return element.commonName != '-';
-  // }
-  // // tslint:disable-next-line:typedef
-  // commonNameSourceStyle(element: any) {
-  //   if (element.commonNameSource === 'UKSI') {
-  //     return 'badge badge-pill badge-warning';
-  //   } else {
-  //     return 'badge badge-pill badge-primary-cns';
-  //   }
-  // }
-  // tslint:disable-next-line:typedef
-  // openDialog() {
-  //   const dialogRef = this.dialog.open(DownloadConfirmationDialogComponent, {
-  //     width: '550px',
-  //     autoFocus: false,
-  //     data: {
-  //       message: 'Are you sure want to donload?',
-  //       name: this.filterService.selectedFilterValue.taxonomy,
-  //       activeFilters: this.filterService.activeFilters.toString(),
-  //       sort: this.sort,
-  //       taxonomy: { rank: 'superkingdom', taxonomy: 'Eukaryota', childRank: 'kingdom' },
-  //       searchText: this.filterService.searchText,
-  //       selectedOptions: [0, 1, 2],
-  //       hideAnnotation: this.filterService.AnnotationFilters.length === 0 && this.filterService.AnnotationCompleteFilters.length === 0 ,
-  //       hideAssemblies: this.filterService.AssembliesFilters.length === 0 ,
-  //       hideRawData: this.filterService.RawDataFilters.length === 0
-  //     }
-  //   });
-  // }
   // tslint:disable-next-line:typedef
   hasActiveFilters() {
     if (typeof this.filterService.activeFilters === 'undefined') {
