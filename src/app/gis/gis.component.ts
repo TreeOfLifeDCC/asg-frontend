@@ -13,6 +13,7 @@ import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-fil
 import {FilterComponent} from '../shared/filter/filter.component';
 import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
 import {NgForOf, NgIf} from '@angular/common';
+import { MatInputModule } from '@angular/material/input';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -41,6 +42,7 @@ L.Marker.prototype.options.icon = iconDefault;
     MatOption,
     MatFormField,
     MatFormFieldModule,
+    MatInputModule,
     MatRadioGroup,
     MatRadioButton,
     MatAutocompleteTrigger,
