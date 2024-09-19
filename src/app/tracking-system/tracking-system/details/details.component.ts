@@ -18,7 +18,7 @@ import {MatFormField} from '@angular/material/form-field';
 
 @Component({
   standalone: true,
-  selector: 'app-details',
+  selector: 'app-tracking-system-details',
   templateUrl: './details.component.html',
   imports: [
     NgIf,
