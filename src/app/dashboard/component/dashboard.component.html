@@ -46,19 +46,17 @@
                 </mat-expansion-panel>
                 <br />
 
-                <div *ngIf="hasActiveFilters()">
+                @if (hasActiveFilters()) {
                     <app-active-filter true></app-active-filter>
-
-                    <span *ngIf="(filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '')">
-                    <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
-                        <span class="badge badge-light"
-                              (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
-                            X</span>
-                    </button>
-                    </span>
+                    @if (filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '') {
+                        <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
+                            <span class="badge badge-light"
+                                  (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
+                                X</span>
+                        </button>
+                    }
                     <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
-
-                </div>
+                }
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
@@ -101,12 +99,14 @@
                                             GoaT info
                                         </a>
                                     </mat-chip>
-                                <ng-container *ngIf="checkTolidExists(element)">
-                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
-                                            <a class="mat-standard-chip" target="_blank"
-                                               href="{{generateTolidLink(element)}}">ToL QC</a>
-                                        </mat-chip>
-                                </ng-container>
+                                @if (checkTolidExists(element)) {
+                                    <ng-container>
+                                            <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
+                                                <a class="mat-standard-chip" target="_blank"
+                                                   href="{{generateTolidLink(element)}}">ToL QC</a>
+                                            </mat-chip>
+                                    </ng-container>
+                                }
                             </span>
                         </mat-cell>
                     </ng-container>

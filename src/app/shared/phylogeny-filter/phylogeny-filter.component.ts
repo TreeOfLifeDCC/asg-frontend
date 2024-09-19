@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {TaxanomyService} from '../../taxanomy/taxanomy.service';
 import {Taxonomy} from '../../taxanomy/taxonomy.model';
-import {NgForOf, NgIf, UpperCasePipe} from "@angular/common";
+import {NgForOf, NgIf, UpperCasePipe} from '@angular/common';
 
 
 @Component({
@@ -28,14 +28,14 @@ export class PhylogenyFilterComponent implements OnInit {
   ) { }
   currentTaxonomyTree: any;
   currentTaxonomy: any;
-  isDoubleClick: Boolean;
+  isDoubleClick: boolean;
 
-  isFilterSelected: Boolean;
+  isFilterSelected: boolean;
 
   selectedFilterValue;
   currentTaxaOnExpand;
 
-  showElement: Boolean = true;
+  showElement: boolean = true;
   // Ontology aware filter
   // Ontology aware filter
   initTaxonomyObject() {

@@ -41,6 +41,7 @@ export class MapClusterComponent implements AfterViewInit {
       this.initMap();
     }, 400);
   }
+
   private initMap(): void {
     this.tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
@@ -48,10 +49,10 @@ export class MapClusterComponent implements AfterViewInit {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
 
-    let latCoo = this.orgGeoList[0].lat;
-    let lngCoo = this.orgGeoList[0].lng;
-    var latlng = L.latLng(53.4862, -1.8904);
-    if (latCoo != 'not collected' && latCoo != 'not provided') {
+    const latCoo = this.orgGeoList[0].lat;
+    const lngCoo = this.orgGeoList[0].lng;
+    let latlng = L.latLng(53.4862, -1.8904);
+    if (latCoo !== 'not collected' && latCoo !== 'not provided') {
       latlng = L.latLng(latCoo, lngCoo);
     }
 
