@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {TaxanomyService} from '../../taxanomy/taxanomy.service';
 import {Taxonomy} from '../../taxanomy/taxonomy.model';
-import {NgForOf, NgIf, UpperCasePipe} from '@angular/common';
+import {NgForOf, UpperCasePipe} from '@angular/common';
 
 
 @Component({
@@ -12,7 +12,6 @@ import {NgForOf, NgIf, UpperCasePipe} from '@angular/common';
   selector: 'app-phylogeny-filter',
   templateUrl: './phylogeny-filter.component.html',
   imports: [
-    NgIf,
     NgForOf,
     UpperCasePipe
   ],
@@ -120,7 +119,6 @@ export class PhylogenyFilterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.isFilterSelected = this.filterService.isFilterSelected;
     // this.childTaxanomy = this.filterService.childTaxanomy;
     this.selectedFilterValue = this.filterService.selectedFilterValue;
@@ -208,7 +206,7 @@ export class PhylogenyFilterComponent implements OnInit {
 
 
   getChildTaxonomyRank(rank: string, taxonomy: string, childRank: string) {
-    let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
+    const taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
     this.currentTaxonomy = taxa;
     this.createTaxaTree(rank, taxa);
     if (this.showElement) {
@@ -216,23 +214,29 @@ export class PhylogenyFilterComponent implements OnInit {
           data => {
             this.parseAndPushTaxaData(rank, data);
             setTimeout(() => {
-              let childRankIndex = this.filterService.taxonomies.findIndex(x => x === data[rank].rank);
-              let childData = data[rank].childData;
-              if (childData.length == 1 && childData[0].key === 'Other') {
-                if (this.filterService.taxonomies[childRankIndex + 1] != undefined) {
-                  let taxa = { 'rank': data[rank].rank, 'taxonomy': 'Other', 'childRank': this.filterService.taxonomies[childRankIndex + 1] };
+              const childRankIndex = this.filterService.taxonomies.findIndex(x => x === data[rank].rank);
+              const childData = data[rank].childData;
+              if (childData.length === 1 && childData[0].key === 'Other') {
+                if (this.filterService.taxonomies[childRankIndex + 1] !== undefined) {
+                  let taxa = {
+                    'rank': data[rank].rank, 'taxonomy': 'Other',
+                    'childRank': this.filterService.taxonomies[childRankIndex + 1]
+                  };
                   this.getChildTaxonomyRank(taxa.rank, taxa.taxonomy, taxa.childRank);
                 }
               }
               else {
                 this.currentTaxaOnExpand = this.currentTaxonomy;
-                if ((childData.length > 1 && childData.filter(function (e) { return e.key === 'Other'; }).length > 0) || (childData.length == 1 && this.currentTaxaOnExpand.taxonomy === 'Other')) {
-                  let childClass = 'Other-' + this.currentTaxaOnExpand.childRank;
+                if ((childData.length > 1 && childData.filter(
+                    function (e) { return e.key === 'Other'; }).length > 0) ||
+                    (childData.length === 1 && this.currentTaxaOnExpand.taxonomy === 'Other')
+                ) {
+                  const childClass = 'Other-' + this.currentTaxaOnExpand.childRank;
                   $('ul.' + childClass).css('padding-inline-start', '40px');
                 }
               }
               setTimeout(() => {
-                $('.' + taxonomy + '-' + childRank).addClass("active");
+                $('.' + taxonomy + '-' + childRank).addClass('active');
               }, 120);
             }, 100);
           },
@@ -244,9 +248,15 @@ export class PhylogenyFilterComponent implements OnInit {
 
   getChildTaxonomyRankEvent(event, rank: string, taxonomy: string, childRank: string) {
     this.spinner.show();
+
+    // tslint:disable-next-line:typedef
+    $('.fa-minus-circle').each(function() {
+      $(this).removeClass('fa-minus-circle').addClass('fa-plus-circle');
+    });
+
     $('#myUL').css('display', 'none');
     setTimeout(() => {
-      let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
+      const taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
       this.currentTaxaOnExpand = taxa;
       if ($(event.target).hasClass('fa-plus-circle')) {
         this.getChildTaxonomyRank(rank, taxonomy, childRank);
@@ -296,6 +306,7 @@ export class PhylogenyFilterComponent implements OnInit {
     }, 350);
 
   }
+
   resetTaxaTree() {
     $('.nested').removeClass('active');
     this.filterService.selectedTaxonomy = [];
@@ -305,27 +316,25 @@ export class PhylogenyFilterComponent implements OnInit {
     this.initTaxonomyObject();
   }
 
-
-
   createTaxaTree(rank, taxa) {
-    let temp = this.currentTaxonomyTree;
+    const temp = this.currentTaxonomyTree;
     if (temp.length > 0) {
       if (!(temp.filter(function (e) { return e.rank === taxa.rank; }).length > 0)) {
-        if (!(temp.filter(function (e) { return (e.taxonomy === taxa.taxonomy && e.rank === taxa.rank) }).length > 0)) {
+        if (!(temp.filter(function (e) { return (e.taxonomy === taxa.taxonomy && e.rank === taxa.rank); }).length > 0)) {
           this.currentTaxonomyTree.push(taxa);
         }
       }
       else {
-        if (!(temp.filter(function (e) { return (e.taxonomy === taxa.taxonomy && e.rank === taxa.rank) }).length > 0)) {
-          let index = temp.findIndex(x => x.rank === taxa.rank);
+        if (!(temp.filter(function (e) { return (e.taxonomy === taxa.taxonomy && e.rank === taxa.rank); }).length > 0)) {
+          const index = temp.findIndex(x => x.rank === taxa.rank);
           let itemsToremove = this.currentTaxonomyTree;
-          let prevTaxaToRemove = this.currentTaxonomyTree[this.currentTaxonomyTree.length - 1];
+          const prevTaxaToRemove = this.currentTaxonomyTree[this.currentTaxonomyTree.length - 1];
           this.currentTaxonomyTree = this.currentTaxonomyTree.slice(0, index);
           itemsToremove = itemsToremove.splice(index);
           itemsToremove.forEach(element => {
-            $('.' + element.taxonomy + '-' + element.childRank).removeClass("active");
+            $('.' + element.taxonomy + '-' + element.childRank).removeClass('active');
           });
-          let taxaIndex = this.filterService.taxonomies.findIndex(x => x === taxa.rank) + 1;
+          const taxaIndex = this.filterService.taxonomies.findIndex(x => x === taxa.rank) + 1;
 
           for (let i = taxaIndex; i < this.filterService.taxonomies.length; i++) {
             this.childTaxanomy[this.filterService.taxonomies[i]] = [];
@@ -375,30 +384,7 @@ export class PhylogenyFilterComponent implements OnInit {
       this.childTaxanomy[rank].push(data[rank]);
     }
   }
-  // filterTaxonomy = (rank: string, taxonomy: string, childRank: string, commonName, taxId) => {
-  //   const taxa = { rank, taxonomy, childRank, commonName, taxId };
-  //   this.filterService.selectedFilterValue = taxa;
-  //   this.selectedFilterValue = taxa;
-  //   const filterObj = rank + ' - ' + taxId;
-  //   this.filterService.phylSelectedRank = filterObj;
-  //   this.filterService.selectedFilterArray('phylogeny', filterObj);
-  //   this.filterService.updateActiveRouteParams();
-  //   this.isDoubleClick = true;
-  //   this.createTaxaTree(rank, taxa);
-  //   this.filterService.selectedTaxonomy.push(taxa);
-  //   $('#taxonomyModal').modal('hide');
-  //   $('.modal-backdrop').hide();
-  //   setTimeout(() => {
-  //     const treeLength = this.currentTaxonomyTree.length;
-  //     this.currentTaxonomy = this.currentTaxonomyTree[treeLength - 1];
-  //   }, 300);
-  //   setTimeout(() => {
-  //     this.isFilterSelected = true;
-  //     $('#' + taxonomy + '-kingdom').addClass('active-filter');
-  //     this.isDoubleClick = false;
-  //   }, 350);
-  //
-  // }
+
   removeRankFromTaxaTree(taxa) {
     const temp = this.currentTaxonomyTree;
     const index = temp.findIndex(x => x.rank === taxa.rank);
@@ -414,36 +400,5 @@ export class PhylogenyFilterComponent implements OnInit {
       this.filterService.currentTaxonomy = this.currentTaxonomyTree[this.currentTaxonomyTree.length - 1];
     }, 50);
   }
-
-  // getChildTaxonomyRankEvent(event, rank: string, taxonomy: string, childRank: string) {
-  //   this.spinner.show();
-  //   $('#myUL').css('display', 'none');
-  //   setTimeout(() => {
-  //     let taxa = { 'rank': rank, 'taxonomy': taxonomy, 'childRank': childRank };
-  //     this.currentTaxaOnExpand = taxa;
-  //     if ($(event.target).hasClass('fa-plus-circle')) {
-  //       this.getChildTaxonomyRank(rank, taxonomy, childRank);
-  //       setTimeout(() => {
-  //         $(event.target).removeClass('fa-plus-circle');
-  //         $(event.target).addClass('fa-minus-circle');
-  //         setTimeout(() => {
-  //           $('#myUL').css('display', 'block');
-  //           this.spinner.hide();
-  //         }, 850);
-  //       }, 100);
-  //     }
-  //     else if ($(event.target).hasClass('fa-minus-circle')) {
-  //       this.spinner.show();
-  //       $(event.target).removeClass('fa-minus-circle');
-  //       $(event.target).addClass('fa-plus-circle');
-  //       this.removeRankFromTaxaTree(taxa);
-  //       setTimeout(() => {
-  //         $('#myUL').css('display', 'block');
-  //         this.spinner.hide();
-  //       }, 200);
-  //     }
-  //   }, 250);
-  // }
-
 
 }

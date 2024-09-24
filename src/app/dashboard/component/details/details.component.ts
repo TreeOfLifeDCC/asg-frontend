@@ -15,7 +15,7 @@ import {
   MatTableDataSource
 } from '@angular/material/table';
 import { DashboardService } from '../../services/dashboard.service';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatFormField } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -41,8 +41,6 @@ interface Filter {
   selector: 'app-details',
   templateUrl: './details.component.html',
   imports: [
-    NgIf,
-    NgForOf,
     MatFormField,
     FormsModule,
     MatHeaderCell,

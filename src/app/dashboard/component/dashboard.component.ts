@@ -24,7 +24,7 @@ import {FilterComponent} from '../../shared/filter/filter.component';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 import {MatExpansionModule, MatExpansionPanel} from '@angular/material/expansion';
 import {MatCheckbox, MatCheckboxModule} from '@angular/material/checkbox';
-import {CommonModule, NgClass, NgIf, NgStyle} from '@angular/common';
+import {CommonModule, NgClass, NgStyle} from '@angular/common';
 import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
 import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
@@ -50,7 +50,6 @@ import {MatDialogModule} from '@angular/material/dialog';
     CommonModule,
     MatExpansionPanel,
     MatCheckbox,
-    NgIf,
     ActiveFilterComponent,
     MatFormField,
     MatTable,
@@ -299,7 +298,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               console.log(err);
               this.spinner.hide();
             }
-        )
+        );
   }
 
   // tslint:disable-next-line:typedef
@@ -397,13 +396,14 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   // tslint:disable-next-line:typedef
   unpackData(data: any) {
     const dataToReturn = {};
-    dataToReturn["id"] = data["_id"]
+    dataToReturn["id"] = data["_id"];
     if (data.hasOwnProperty('_source')) {
       data = data._source;
     }
     for (const key of Object.keys(data)) {
       if (key === 'tax_id') {
-        dataToReturn['goatInfo'] = "https://goat.genomehubs.org/records?record_id="+data[key]+"&result=taxon&taxonomy=ncbi#"+dataToReturn["organism"]
+        dataToReturn['goatInfo'] = 'https://goat.genomehubs.org/records?record_id=' + data[key] +
+            '&result=taxon&taxonomy=ncbi#' + dataToReturn["organism"];
         dataToReturn[key] = data[key];
       }
       if (key === 'commonName' && data[key] == null) {

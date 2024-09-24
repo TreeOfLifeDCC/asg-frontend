@@ -1,15 +1,11 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-
-import {MatSort, MatSortHeader} from '@angular/material/sort';
-
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { StatusesService } from '../services/statuses.service';
-import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
-
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
 import { TaxanomyService } from 'src/app/taxanomy/taxanomy.service';
-
 import 'jquery';
 import {
   MatCell,
@@ -19,13 +15,13 @@ import {
   MatTable,
   MatTableDataSource
 } from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {Subject} from 'rxjs';
-import {NgClass, NgForOf, NgIf, NgStyle, UpperCasePipe} from '@angular/common';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
-import {FormsModule} from '@angular/forms';
-import {MatChip, MatChipSet} from '@angular/material/chips';
+import { MatPaginator } from '@angular/material/paginator';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { NgClass, NgForOf, NgIf, NgStyle, UpperCasePipe } from '@angular/common';
+import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 
 

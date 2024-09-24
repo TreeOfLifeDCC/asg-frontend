@@ -1,15 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogClose, MatDialogRef } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { NgIf } from '@angular/common';
 
 @Component({
     standalone: true,
     selector: 'confirmation-dialog',
     templateUrl: './confirmation-dialog.component.html',
     imports: [
-        MatDialogClose,
-        NgIf
+        MatDialogClose
     ],
     styleUrls: ['./confirmation-dialog.component.scss']
 })

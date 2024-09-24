@@ -4,14 +4,14 @@ import { Sample } from '../../model/dashboard.model';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTab, MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { CommonModule, NgIf, NgStyle } from '@angular/common';
-import { MatChip, MatChipsModule } from '@angular/material/chips';
-import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
+import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
+import { CommonModule, NgStyle } from '@angular/common';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MapClusterComponent } from '../../map-cluster/map-cluster.component';
-import { MatList, MatListModule } from '@angular/material/list';
-import { MatExpansionPanel, MatExpansionModule } from '@angular/material/expansion';
-import { MatCheckbox, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatListModule } from '@angular/material/list';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
@@ -23,7 +23,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
   selector: 'dashboard-organism-details',
   templateUrl: './organism-details.component.html',
   imports: [
-    NgIf,
     MatChipsModule,
     NgStyle,
     MatTabsModule,

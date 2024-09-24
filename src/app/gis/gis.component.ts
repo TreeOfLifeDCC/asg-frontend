@@ -6,13 +6,13 @@ import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {FormsModule, UntypedFormControl} from '@angular/forms';
 import {MatRadioButton, MatRadioChange, MatRadioGroup} from '@angular/material/radio';
 import {FilterService} from '../services/filter-service';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
 import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-filter.component';
 import {FilterComponent} from '../shared/filter/filter.component';
 import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
-import {NgForOf, NgIf} from '@angular/common';
+import { NgForOf } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
@@ -49,7 +49,6 @@ L.Marker.prototype.options.icon = iconDefault;
     PhylogenyFilterComponent,
     FilterComponent,
     ActiveFilterComponent,
-    NgIf,
     NgForOf
   ],
   styleUrls: ['./gis.component.css']

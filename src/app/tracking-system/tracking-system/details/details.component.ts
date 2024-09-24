@@ -12,7 +12,7 @@ import {
   MatTableDataSource
 } from '@angular/material/table';
 import { StatusesService } from '../../services/statuses.service';
-import {NgForOf, NgIf} from '@angular/common';
+import { NgForOf } from '@angular/common';
 import {MatFormField} from '@angular/material/form-field';
 
 
@@ -21,7 +21,6 @@ import {MatFormField} from '@angular/material/form-field';
   selector: 'app-tracking-system-details',
   templateUrl: './details.component.html',
   imports: [
-    NgIf,
     NgForOf,
     MatFormField,
     MatTable,
