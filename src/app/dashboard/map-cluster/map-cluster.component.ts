@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 
@@ -31,10 +31,9 @@ export class MapClusterComponent implements AfterViewInit {
   @Input('orgGeoList') orgGeoList: any;
   @Input('specGeoList') specGeoList: any;
 
-  constructor() { }
+  @ViewChild('mapContainer', { static: false }) mapContainer: ElementRef;
 
-  ngOnInit(): void {
-  }
+  constructor() { }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -43,20 +42,25 @@ export class MapClusterComponent implements AfterViewInit {
   }
 
   private initMap(): void {
+    if (!this.mapContainer || !this.mapContainer.nativeElement) {
+      console.error('Map container not found!');
+      return;
+    }
+
     this.tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
 
-    const latCoo = this.orgGeoList[0].lat;
-    const lngCoo = this.orgGeoList[0].lng;
+    const latCoo = this.orgGeoList[0]?.lat;
+    const lngCoo = this.orgGeoList[0]?.lng;
     let latlng = L.latLng(53.4862, -1.8904);
     if (latCoo !== 'not collected' && latCoo !== 'not provided') {
       latlng = L.latLng(latCoo, lngCoo);
     }
 
-    this.map = L.map('map', {
+    this.map = L.map(this.mapContainer.nativeElement, {
       center: latlng,
       zoom: 5,
       layers: [this.tiles],

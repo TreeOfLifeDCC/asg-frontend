@@ -1,14 +1,16 @@
 .map-container {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 80%;
+    height: 100%;
+    width: 100%;
 }
 
-#map {
-    width: 800px;
-    height: 600px;
-    border: 1px solid #ccc;
+.map-frame {
+    height: 100%;
+    width: 100%;
+}
+
+#mapContainer {
+    height: 500px;
+    width: 100%;
 }
 
 .leaflet-popup-close-button {
