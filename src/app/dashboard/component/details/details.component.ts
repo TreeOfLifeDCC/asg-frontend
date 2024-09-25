@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {
   MatCell,
   MatCellDef,
@@ -12,13 +12,14 @@ import {
   MatRow,
   MatRowDef,
   MatTable,
-  MatTableDataSource
+  MatTableDataSource, MatTableModule
 } from '@angular/material/table';
 import { DashboardService } from '../../services/dashboard.service';
 import { NgClass } from '@angular/common';
 import { MatFormField } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 interface BioSample {
@@ -42,6 +43,9 @@ interface Filter {
   templateUrl: './details.component.html',
   imports: [
     MatFormField,
+    MatFormFieldModule,
+    MatTableModule,
+    MatPaginatorModule,
     FormsModule,
     MatHeaderCell,
     MatCell,
@@ -217,10 +221,10 @@ export class DetailsComponent implements OnInit {
     this.filters = filters;
     this.sexFilters = Object.entries(this.filters.sex)
         .map(([key, doc_count]) => ({ key, doc_count }))
-        .filter(filter => filter.key !== ''); // Filter out empty keys
+        .filter(filter => filter.key !== '');
     this.organismPartFilters = Object.entries(this.filters.organismPart)
         .map(([key, doc_count]) => ({ key, doc_count }))
-        .filter(filter => filter.key !== ''); // Filter out empty keys
+        .filter(filter => filter.key !== '');
   }
 
   removeAllFilters(): void {

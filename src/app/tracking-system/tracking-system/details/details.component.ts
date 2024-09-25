@@ -14,6 +14,7 @@ import {
 import { StatusesService } from '../../services/statuses.service';
 import { NgForOf } from '@angular/common';
 import {MatFormField} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 @Component({
@@ -23,6 +24,7 @@ import {MatFormField} from '@angular/material/form-field';
   imports: [
     NgForOf,
     MatFormField,
+    MatFormFieldModule,
     MatTable,
     MatHeaderCell,
     MatCell,

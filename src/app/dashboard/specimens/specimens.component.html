@@ -141,17 +141,18 @@
             <!-- Custom Fields Section -->
             <div class="col-sm-12">
                 <hr>
-                <div class="row" *ngFor="let sample of bioSampleObj?.customFields">
-                    <dt class="col-sm-3">{{sample?.name}}</dt>
-                    <dd class="col-sm-9">
-                        @if (sample.ontologyTerms?.length> 0) {
-                            <a href="{{sample.ontologyTerms[0]}}">{{sample?.value}}</a>
-                        }
-                        <ng-template #simple>
-                            {{sample?.value}}
-                        </ng-template>
-                    </dd>
-                </div>
+                @for (sample of bioSampleObj?.customFields; track sample.name) {
+                    <div class="row">
+                        <dt class="col-sm-3">{{ sample?.name }}</dt>
+                        <dd class="col-sm-9">
+                            @if (sample.ontologyTerms?.length > 0) {
+                                <a href="{{ sample.ontologyTerms[0] }}">{{ sample?.value }}</a>
+                            } @else {
+                                {{ sample?.value }}
+                            }
+                        </dd>
+                    </div>
+                }
             </div>
 
             @if (bioSampleObj?.annotation) {

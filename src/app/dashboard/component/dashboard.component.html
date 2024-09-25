@@ -25,7 +25,7 @@
                 </div>
 
                 <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>
-                <app-filter title="Experiment Type" isShowCount="true" filterSize="5"></app-filter>
+                <app-filter title="Experiment Type" isShowCount=true filterSize=5></app-filter>
             </div>
             <div class="col-md-10">
                 <h1 class="page-header">Organisms</h1>
@@ -36,11 +36,14 @@
                     </mat-expansion-panel-header>
                     <div class="col-md-12">
                         <div class="row">
-                            <mat-checkbox *ngFor="let data of dataColumnsDefinition" class="col-md-4" color="primary"
-                                          (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-                                          [checked]="data.selected" (change)="showSelectedColumn(data, $event.checked)">
-                                {{data.name}}
-                            </mat-checkbox>
+                            @for (data of dataColumnsDefinition; track data.name) {
+                                <mat-checkbox class="col-md-4" color="primary"
+                                              (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+                                              [checked]="data.selected"
+                                              (change)="showSelectedColumn(data, $event.checked)">
+                                    {{ data.name }}
+                                </mat-checkbox>
+                            }
                         </div>
                     </div>
                 </mat-expansion-panel>

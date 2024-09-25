@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {booleanAttribute, Component, Input, OnInit} from '@angular/core';
 import {FilterService} from '../../services/filter-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgxSpinnerService} from 'ngx-spinner';
@@ -19,7 +19,7 @@ import {NgForOf, UpperCasePipe} from '@angular/common';
 })
 export class PhylogenyFilterComponent implements OnInit {
    childTaxanomy: Taxonomy;
-   @Input() isShowCount: boolean;
+   @Input({transform: booleanAttribute}) isShowCount: boolean;
 
 
   constructor( private activatedRoute: ActivatedRoute, private router: Router, private spinner: NgxSpinnerService,

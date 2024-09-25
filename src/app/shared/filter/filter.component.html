@@ -18,7 +18,7 @@
                 id="{{filter.key}}-Experiment Type" [ngClass]="checkFilterIsActive('experimentType-'+filter.key)"
                 (click)="onFilterClick($event, 'experiment-type', filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
-                <span *ngIf="isShowCount === 'true'"
+                <span *ngIf="isShowCount === true"
                       class="badge badge-pill badge-info">{{filter.organism_count.doc_count}}</span>
             </li>
         </ng-container>
@@ -32,7 +32,7 @@
                 id="{{filter.key}}-Symbionts Status" [ngClass]="checkFilterIsActive(filter.filterPrefix+'-'+filter.key)"
                 (click)="onFilterClick($event, filter.label, filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
-                <span *ngIf="isShowCount === 'true'"
+                <span *ngIf="isShowCount === true"
                       class="badge badge-pill badge-info">{{filter.doc_count}}</span>
             </li>
         </ng-container>
@@ -45,7 +45,7 @@
                 id="{{filter.key}}-Metagenomes Status" [ngClass]="checkFilterIsActive(filter.filterPrefix+'-'+filter.key)"
                 (click)="onFilterClick($event, filter.label, filter.key)" style="cursor: pointer">
                 <span>{{filter.key}}</span>
-                <span *ngIf="isShowCount === 'true'"
+                <span *ngIf="isShowCount === true"
                       class="badge badge-pill badge-info">{{filter.doc_count}}</span>
             </li>
         </ng-container>
@@ -58,7 +58,7 @@
                 [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, filter.label, filter.key)"
                 style="cursor: pointer">
                 <span>{{filter.title}}</span>
-                <span *ngIf="isShowCount === 'true'" class="badge badge-pill badge-info">{{filter.count}}</span>
+                <span *ngIf="isShowCount === true" class="badge badge-pill badge-info">{{filter.count}}</span>
             </li>
         </ng-container>
     </ul>

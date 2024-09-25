@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
+import {AfterViewInit, booleanAttribute, Component, Input, numberAttribute, OnInit} from '@angular/core';
 
 import {FilterService} from '../../services/filter-service';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
@@ -16,8 +16,8 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @Input() title: string;
-  @Input() isShowCount: boolean;
-  @Input() filterSize: number;
+  @Input({transform: booleanAttribute}) isShowCount: boolean;
+  @Input({transform: numberAttribute}) filterSize: number;
 
   isCollapsed = true;
   itemLimit = 0;
