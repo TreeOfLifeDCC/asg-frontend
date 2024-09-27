@@ -1015,6 +1015,12 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   getChildTaxonomyRankEvent(event, rank: string, taxonomy: string, childRank: string) {
     this.spinner.show();
+
+    // tslint:disable-next-line:typedef
+    $('.fa-minus-circle').each(function() {
+      $(this).removeClass('fa-minus-circle').addClass('fa-plus-circle');
+    });
+
     $('#myUL').css('display', 'none');
     setTimeout(() => {
       const taxa = { rank, taxonomy, childRank };
