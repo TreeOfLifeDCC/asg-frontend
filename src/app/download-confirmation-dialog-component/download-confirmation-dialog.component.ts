@@ -3,7 +3,6 @@ import {MAT_DIALOG_DATA, MatDialogClose, MatDialogRef} from '@angular/material/d
 import {DashboardService} from '../dashboard/services/dashboard.service';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {FormsModule} from '@angular/forms';
-import {NgIf} from '@angular/common';
 import {RouterLink} from '@angular/router';
 
 @Component({

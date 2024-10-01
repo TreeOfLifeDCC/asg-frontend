@@ -11,10 +11,10 @@ import {
   MatTable,
   MatTableDataSource
 } from '@angular/material/table';
-import { StatusesService } from '../../services/statuses.service';
-import { NgForOf } from '@angular/common';
+import {StatusesService} from '../../services/statuses.service';
 import {MatFormField} from '@angular/material/form-field';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {sample} from 'rxjs';
 
 
 @Component({
@@ -22,7 +22,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   selector: 'app-tracking-system-details',
   templateUrl: './details.component.html',
   imports: [
-    NgForOf,
     MatFormField,
     MatFormFieldModule,
     MatTable,
@@ -81,4 +80,5 @@ export class TrackingDetailsComponent implements OnInit {
     this.dataSourceFiles.filter = filterValue.trim().toLowerCase();
   }
 
+    protected readonly sample = sample;
 }

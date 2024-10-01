@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
 import { FilterService } from '../../services/filter-service';
-import { NgForOf } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-active-filter',
   templateUrl: './active-filter.component.html',
-  imports: [
-    NgForOf
-  ],
+  imports: [],
   styleUrls: ['./active-filter.component.css']
 })
 export class ActiveFilterComponent {

@@ -1,15 +1,15 @@
 import {AfterViewInit, booleanAttribute, Component, Input, numberAttribute, OnInit} from '@angular/core';
 
 import {FilterService} from '../../services/filter-service';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgClass} from '@angular/common';
+import {filter, of} from 'rxjs';
+
 
 @Component({
   standalone: true,
   selector: 'app-filter',
   templateUrl: './filter.component.html',
   imports: [
-    NgIf,
-    NgForOf,
     NgClass
   ],
   styleUrls: ['./filter.component.css']
@@ -109,4 +109,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
 
+  protected readonly filter = filter;
+  protected readonly of = of;
 }

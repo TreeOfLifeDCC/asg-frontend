@@ -126,9 +126,12 @@
                                 <mat-expansion-panel-header class="page-header">Column Selection</mat-expansion-panel-header>
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <mat-checkbox *ngFor="let data of experimentColumnsDefination" class="col-md-4" color="primary" [checked]="data.selected" (change)="showSelectedColumn(data, $event.checked)">
-                                            {{ data.column }}
-                                        </mat-checkbox>
+                                        @for (data of experimentColumnsDefination; track data) {
+                                            <mat-checkbox class="col-md-4" color="primary" [checked]="data.selected"
+                                                          (change)="showSelectedColumn(data, $event.checked)">
+                                                {{ data.column }}
+                                            </mat-checkbox>
+                                        }
                                     </div>
                                 </div>
                             </mat-expansion-panel>
@@ -175,9 +178,11 @@
                                     <mat-header-cell *matHeaderCellDef> FASTQ FTP </mat-header-cell>
                                     <mat-cell *matCellDef="let element" class="assemblies-font">
                                         <mat-list class="list-group">
-                                            <mat-list-item role="listitem" *ngFor="let fastq of element.fastq_ftp">
-                                                <a href="ftp://{{fastq}}">{{ element.run_accession }}</a>
-                                            </mat-list-item>
+                                            @for (fastq of element.fastq_ftp; track fastq) {
+                                                <mat-list-item role="listitem">
+                                                    <a href="ftp://{{fastq}}">{{ element.run_accession }}</a>
+                                                </mat-list-item>
+                                            }
                                         </mat-list>
                                     </mat-cell>
                                 </ng-container>
@@ -185,9 +190,11 @@
                                     <mat-header-cell *matHeaderCellDef> Submitted FTP </mat-header-cell>
                                     <mat-cell *matCellDef="let element" class="assemblies-font">
                                         <mat-list class="list-group">
-                                            <mat-list-item role="listitem" *ngFor="let submitted_ftp of element.submitted_ftp">
-                                                <a href="ftp://{{submitted_ftp}}">{{ element.study_accession }}</a>
-                                            </mat-list-item>
+                                            @for (submitted_ftp of element.submitted_ftp; track submitted_ftp) {
+                                                <mat-list-item role="listitem">
+                                                    <a href="ftp://{{submitted_ftp}}">{{ element.study_accession }}</a>
+                                                </mat-list-item>
+                                            }
                                         </mat-list>
                                     </mat-cell>
                                 </ng-container>
@@ -195,9 +202,11 @@
                                     <mat-header-cell *matHeaderCellDef> SRA FTP </mat-header-cell>
                                     <mat-cell *matCellDef="let element" class="assemblies-font">
                                         <mat-list class="list-group">
-                                            <mat-list-item role="listitem" *ngFor="let sra_ftp of element.sra_ftp">
-                                                <a href="ftp://{{sra_ftp}}">{{ sra_ftp }}</a>
-                                            </mat-list-item>
+                                            @for (sra_ftp of element.sra_ftp; track sra_ftp) {
+                                                <mat-list-item role="listitem">
+                                                    <a href="ftp://{{sra_ftp}}">{{ sra_ftp }}</a>
+                                                </mat-list-item>
+                                            }
                                         </mat-list>
                                     </mat-cell>
                                 </ng-container>
@@ -446,7 +455,7 @@
                                 <mat-expansion-panel-header class="page-header">
                                     <h1>Published Genome Note</h1>
                                 </mat-expansion-panel-header>
-                                @for (gen of bioSampleObj?.genome_notes; track gen.id) {
+                                @for (gen of bioSampleObj?.genome_notes; track gen) {
                                     <div class="card figpanel">
                                         <div class="row">
                                             <h1 class="page-header">{{gen.title}}</h1>

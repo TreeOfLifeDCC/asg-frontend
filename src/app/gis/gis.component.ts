@@ -12,8 +12,7 @@ import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-filter.component';
 import {FilterComponent} from '../shared/filter/filter.component';
 import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
-import { NgForOf } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
+import {MatInputModule} from '@angular/material/input';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -48,8 +47,7 @@ L.Marker.prototype.options.icon = iconDefault;
     MatAutocompleteTrigger,
     PhylogenyFilterComponent,
     FilterComponent,
-    ActiveFilterComponent,
-    NgForOf
+    ActiveFilterComponent
   ],
   styleUrls: ['./gis.component.css']
 })

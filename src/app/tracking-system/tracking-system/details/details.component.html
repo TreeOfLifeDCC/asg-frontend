@@ -71,9 +71,11 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Raw Data </mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <ul class="list-group ">
-                                    <li *ngFor="let fastq of element.fastq_ftp">
-                                        <a href="ftp://{{fastq}}">{{element.run_accession}}</a>
-                                    </li>
+                                    @for (fastq of element.fastq_ftp; track fastq) {
+                                        <li>
+                                            <a href="ftp://{{fastq}}">{{element.run_accession}}</a>
+                                        </li>
+                                    }
                                 </ul>
                             </mat-cell>
                         </ng-container>
@@ -81,10 +83,12 @@
                         <ng-container matColumnDef="submitted_ftp">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Mapped Reads </mat-header-cell>
                             <mat-cell *matCellDef="let element">
-                                <ul class="list-group ">
-                                    <li *ngFor="let submitted_ftp of element.submitted_ftp">
-                                        <a href="ftp://{{submitted_ftp}}">{{element.study_accession}}</a>
-                                    </li>
+                                <ul class="list-group">
+                                    @for (submitted_ftp of element.submitted_ftp; track submitted_ftp) {
+                                        <li>
+                                            <a href="ftp://{{submitted_ftp}}">{{element.study_accession}}</a>
+                                        </li>
+                                    }
                                 </ul>
                             </mat-cell>
                         </ng-container>

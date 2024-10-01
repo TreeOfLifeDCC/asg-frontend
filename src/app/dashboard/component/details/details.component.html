@@ -208,7 +208,7 @@
                 <div class="col-sm-12">
                     <hr />
                     <div class="row">
-                        @for (sample of bioSampleObj.customFields; track sample.name) {
+                        @for (sample of bioSampleObj.customFields; track sample) {
                             <dt class="col-sm-3">{{ sample?.name }}</dt>
                             <dd class="col-sm-9">
                                 @if (sample.ontologyTerms?.length > 0) {

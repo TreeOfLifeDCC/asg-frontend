@@ -4,7 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NgxSpinnerService} from 'ngx-spinner';
 import {TaxanomyService} from '../../taxanomy/taxanomy.service';
 import {Taxonomy} from '../../taxanomy/taxonomy.model';
-import {NgForOf, UpperCasePipe} from '@angular/common';
+import {UpperCasePipe} from '@angular/common';
 
 
 @Component({
@@ -12,7 +12,6 @@ import {NgForOf, UpperCasePipe} from '@angular/common';
   selector: 'app-phylogeny-filter',
   templateUrl: './phylogeny-filter.component.html',
   imports: [
-    NgForOf,
     UpperCasePipe
   ],
   styleUrls: ['./phylogeny-filter.component.css']

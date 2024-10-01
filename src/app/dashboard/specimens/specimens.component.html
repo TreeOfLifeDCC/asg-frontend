@@ -141,7 +141,7 @@
             <!-- Custom Fields Section -->
             <div class="col-sm-12">
                 <hr>
-                @for (sample of bioSampleObj?.customFields; track sample.name) {
+                @for (sample of bioSampleObj?.customFields; track sample) {
                     <div class="row">
                         <dt class="col-sm-3">{{ sample?.name }}</dt>
                         <dd class="col-sm-9">

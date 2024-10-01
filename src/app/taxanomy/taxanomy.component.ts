@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TaxanomyService } from './taxanomy.service';
 import { Taxonomy } from './taxonomy.model';
-import { NgForOf } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-taxanomy',
   templateUrl: './taxanomy.component.html',
-  imports: [
-    NgForOf
-  ],
+  imports: [],
   styleUrls: ['./taxanomy.component.css']
 })
 export class TaxanomyComponent implements OnInit {

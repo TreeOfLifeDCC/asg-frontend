@@ -18,7 +18,7 @@ import {
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { NgClass, NgForOf, NgIf, NgStyle, UpperCasePipe } from '@angular/common';
+import {NgClass, NgStyle, UpperCasePipe} from '@angular/common';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatChip, MatChipSet } from '@angular/material/chips';
@@ -31,9 +31,7 @@ import { MatInputModule } from '@angular/material/input';
   templateUrl: './tracking-system.component.html',
   imports: [
     NgxSpinnerModule,
-    NgForOf,
     NgClass,
-    NgIf,
     MatFormField,
     MatFormFieldModule,
     FormsModule,
@@ -422,11 +420,8 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
     const filterIndex = this.activeFilters.indexOf(filter);
     if (filterIndex !== -1) {
-      $('.' + inactiveClassName).removeClass('non-disp');
       this.removeFilter(filter);
     } else {
-      $('.' + inactiveClassName).addClass('non-disp');
-      $(event.target).removeClass('non-disp');
       $(event.target).addClass('disp');
 
       this.selectedFilterArray(label, filter);

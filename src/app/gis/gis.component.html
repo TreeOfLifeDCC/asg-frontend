@@ -43,9 +43,11 @@
                         <input #searchInput matInput (keyup.enter)="searchGisData()" [(ngModel)]='filterService.searchText' (keyup)="filterSearchResults()" placeholder="Search for species"  #matInput [matAutocomplete]="auto">
                     </mat-form-field>
                 <mat-autocomplete #auto="matAutocomplete">
-                    <mat-option *ngFor="let option of filteredOptions" [value]="option" (click)="searchGisData()">
-                        {{option}}
-                    </mat-option>
+                    @for (option of filteredOptions; track option) {
+                        <mat-option [value]="option" (click)="searchGisData()">
+                            {{option}}
+                        </mat-option>
+                    }
                 </mat-autocomplete>
                 </div>
                 <br>
