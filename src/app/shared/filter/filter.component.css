@@ -209,14 +209,8 @@ ul[class*="other-"] {
 
 .biosample.list-group-item {
     color: black;
-    border: none;
 }
 
 .biosample.list-group-item:hover {
     color: black;
-    border: none;
-}
-
-.biosample.list-group-item.active {
-    border: none !important;
 }

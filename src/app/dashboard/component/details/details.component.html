@@ -2,205 +2,147 @@
     <div class="container" style="padding-top: 65px;">
         <h1 class="text-center page-header">{{bioSampleId}}</h1>
         <dl class="row">
-            @if (bioSampleObj) {
-                <ng-container>
-                    @if (bioSampleObj.commonName) {
-                        <ng-container>
-                            <dt class="col-sm-3">Name:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.commonName}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.commonName) {
+                <dt class="col-sm-3">Name:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.commonName}}</dd>
+            }
 
-                    @if (bioSampleObj.accession) {
-                        <ng-container>
-                            <dt class="col-sm-3">BioSample ID:</dt>
-                            <dd class="col-sm-9">
-                                <a href="http://www.ebi.ac.uk/biosamples/samples/{{bioSampleObj.accession}}" target="_blank">
-                                    {{bioSampleObj.accession}}
-                                </a>
-                            </dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.accession) {
+                <dt class="col-sm-3">BioSample ID:</dt>
+                <dd class="col-sm-9">
+                    <a href="http://www.ebi.ac.uk/biosamples/samples/{{bioSampleObj.accession}}" target="_blank">
+                        {{bioSampleObj.accession}}
+                    </a>
+                </dd>
+            }
 
-                    @if (bioSampleObj.organism) {
-                        <ng-container>
-                            <dt class="col-sm-3">Organism:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.organism}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.organism) {
+                <dt class="col-sm-3">Organism:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.organism}}</dd>
+            }
 
-                    @if (bioSampleObj.organismPart) {
-                        <ng-container>
-                            <dt class="col-sm-3">Organism Part:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.organismPart}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.organismPart) {
+                <dt class="col-sm-3">Organism Part:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.organismPart}}</dd>
+            }
 
-                    @if (bioSampleObj.sex) {
-                        <ng-container>
-                            <dt class="col-sm-3">Sex:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.sex}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.sex) {
+                <dt class="col-sm-3">Sex:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.sex}}</dd>
+            }
 
-                    @if (bioSampleObj.taxonId) {
-                        <ng-container>
-                            <dt class="col-sm-3">Tax ID:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.taxonId}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.taxonId) {
+                <dt class="col-sm-3">Tax ID:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.taxonId}}</dd>
+            }
 
-                    @if (bioSampleObj.specimenId) {
-                        <ng-container>
-                            <dt class="col-sm-3">Specimen ID:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.specimenId}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.specimenId) {
+                <dt class="col-sm-3">Specimen ID:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.specimenId}}</dd>
+            }
 
-                    @if (bioSampleObj.cultureOrStrainId) {
-                        <ng-container>
-                            <dt class="col-sm-3">Culture ID:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.cultureOrStrainId}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.cultureOrStrainId) {
+                <dt class="col-sm-3">Culture ID:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.cultureOrStrainId}}</dd>
+            }
 
-                    @if (bioSampleObj.lifestage) {
-                        <ng-container>
-                            <dt class="col-sm-3">Lifestage:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.lifestage}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.lifestage) {
+                <dt class="col-sm-3">Lifestage:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.lifestage}}</dd>
+            }
 
-                    @if (bioSampleObj.relationship) {
-                        <ng-container>
-                            <dt class="col-sm-3">Relationship:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.relationship}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.relationship) {
+                <dt class="col-sm-3">Relationship:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.relationship}}</dd>
+            }
 
-                    @if (bioSampleObj.gal) {
-                        <ng-container>
-                            <dt class="col-sm-3">Gal:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.gal}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.gal) {
+                <dt class="col-sm-3">Gal:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.gal}}</dd>
+            }
 
-                    @if (bioSampleObj.galSampleId) {
-                        <ng-container>
-                            <dt class="col-sm-3">Gal Sample ID:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.galSampleId}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.galSampleId) {
+                <dt class="col-sm-3">Gal Sample ID:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.galSampleId}}</dd>
+            }
 
-                    @if (bioSampleObj.collectedBy) {
-                        <ng-container>
-                            <dt class="col-sm-3">Collected By:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.collectedBy}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.collectedBy) {
+                <dt class="col-sm-3">Collected By:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.collectedBy}}</dd>
+            }
 
-                    @if (bioSampleObj.collectingInstitution) {
-                        <ng-container>
-                            <dt class="col-sm-3">Collecting Institution:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.collectingInstitution}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.collectingInstitution) {
+                <dt class="col-sm-3">Collecting Institution:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.collectingInstitution}}</dd>
+            }
 
-                    @if (bioSampleObj.collectionDate) {
-                        <ng-container>
-                            <dt class="col-sm-3">Collection Date:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.collectionDate}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.collectionDate) {
+                <dt class="col-sm-3">Collection Date:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.collectionDate}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationCountryAndOrSea) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location (Country and/or Sea):</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationCountryAndOrSea}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationCountryAndOrSea) {
+                <dt class="col-sm-3">Geographic Location (Country and/or Sea):</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationCountryAndOrSea}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationRegionAndLocality) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location (Region and Locality):</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationRegionAndLocality}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationRegionAndLocality) {
+                <dt class="col-sm-3">Geographic Location (Region and Locality):</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationRegionAndLocality}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationLatitude?.text) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location (Latitude):</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationLatitude.text}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationLatitude?.text) {
+                <dt class="col-sm-3">Geographic Location (Latitude):</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationLatitude.text}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationLongitude?.text) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location (Longitude):</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationLongitude.text}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationLongitude?.text) {
+                <dt class="col-sm-3">Geographic Location (Longitude):</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationLongitude.text}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationDepth?.text) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location (Depth):</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationDepth.text}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationDepth?.text) {
+                <dt class="col-sm-3">Geographic Location (Depth):</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationDepth.text}}</dd>
+            }
 
-                    @if (bioSampleObj.geographicLocationElevation?.text) {
-                        <ng-container>
-                            <dt class="col-sm-3">Geographic Location Elevation:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.geographicLocationElevation.text}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.geographicLocationElevation?.text) {
+                <dt class="col-sm-3">Geographic Location Elevation:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.geographicLocationElevation.text}}</dd>
+            }
 
-                    @if (bioSampleObj.habitat) {
-                        <ng-container>
-                            <dt class="col-sm-3">Habitat:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.habitat}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.habitat) {
+                <dt class="col-sm-3">Habitat:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.habitat}}</dd>
+            }
 
-                    @if (bioSampleObj.identifiedBy) {
-                        <ng-container>
-                            <dt class="col-sm-3">Identified By:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.identifiedBy}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.identifiedBy) {
+                <dt class="col-sm-3">Identified By:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.identifiedBy}}</dd>
+            }
 
-                    @if (bioSampleObj.identifierAffiliation) {
-                        <ng-container>
-                            <dt class="col-sm-3">Identifier Affiliation:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.identifierAffiliation}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.identifierAffiliation) {
+                <dt class="col-sm-3">Identifier Affiliation:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.identifierAffiliation}}</dd>
+            }
 
-                    @if (bioSampleObj.specimenVoucher) {
-                        <ng-container>
-                            <dt class="col-sm-3">Specimen Voucher:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.specimenVoucher}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.specimenVoucher) {
+                <dt class="col-sm-3">Specimen Voucher:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.specimenVoucher}}</dd>
+            }
 
-                    @if (bioSampleObj.projectName) {
-                        <ng-container>
-                            <dt class="col-sm-3">Project Name:</dt>
-                            <dd class="col-sm-9">{{bioSampleObj.projectName}}</dd>
-                        </ng-container>
-                    }
+            @if (bioSampleObj?.projectName) {
+                <dt class="col-sm-3">Project Name:</dt>
+                <dd class="col-sm-9">{{bioSampleObj.projectName}}</dd>
+            }
 
-                    @if (bioSampleObj.sampleDerivedFrom) {
-                        <ng-container>
-                            <dt class="col-sm-3">Sample Derived From:</dt>
-                            <dd class="col-sm-9">
-                                <a href="http://www.ebi.ac.uk/biosamples/samples/{{bioSampleObj.sampleDerivedFrom}}" target="_blank">
-                                    {{bioSampleObj.sampleDerivedFrom}}
-                                </a>
-                            </dd>
-                        </ng-container>
-                    }
-                </ng-container>
+            @if (bioSampleObj?.sampleDerivedFrom) {
+                <dt class="col-sm-3">Sample Derived From:</dt>
+                <dd class="col-sm-9">
+                    <a href="http://www.ebi.ac.uk/biosamples/samples/{{bioSampleObj.sampleDerivedFrom}}" target="_blank">
+                        {{bioSampleObj.sampleDerivedFrom}}
+                    </a>
+                </dd>
             }
 
             <!-- Custom Fields Section -->

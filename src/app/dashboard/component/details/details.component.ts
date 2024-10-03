@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
-import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import {
   MatCell,
   MatCellDef,
@@ -12,11 +12,10 @@ import {
   MatRow,
   MatRowDef,
   MatTable,
-  MatTableDataSource, MatTableModule
+  MatTableDataSource,
+  MatTableModule
 } from '@angular/material/table';
 import { DashboardService } from '../../services/dashboard.service';
-import { NgClass } from '@angular/common';
-import { MatFormField } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -42,7 +41,6 @@ interface Filter {
   selector: 'app-details',
   templateUrl: './details.component.html',
   imports: [
-    MatFormField,
     MatFormFieldModule,
     MatTableModule,
     MatPaginatorModule,
@@ -58,7 +56,6 @@ interface Filter {
     MatHeaderRowDef,
     MatRowDef,
     MatHeaderCellDef,
-    NgClass,
     MatInputModule
   ],
   styleUrls: ['./details.component.css']

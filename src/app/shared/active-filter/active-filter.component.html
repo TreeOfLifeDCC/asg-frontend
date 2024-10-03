@@ -3,15 +3,13 @@
     @if (aggs.length > 0) {
         <span>
             @for (field of aggs; track field) {
-                <ng-container>
-                    @if (phylSelectedRank != field) {
-                        <span>
-                             <button type="button" class="btn btn-success">
-                                {{displayActiveFilterName(field)}} <span class="badge badge-light" (click)="clearFilter(field)">X</span>
-                            </button>
-                        </span>
-                    }
-                </ng-container>
+                @if (phylSelectedRank != field) {
+                    <span>
+                         <button type="button" class="btn btn-success">
+                            {{displayActiveFilterName(field)}} <span class="badge badge-light" (click)="clearFilter(field)">X</span>
+                        </button>
+                    </span>
+                }
             }
         </span>
     }

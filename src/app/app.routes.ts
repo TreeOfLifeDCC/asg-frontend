@@ -15,35 +15,28 @@ import { TrackingSystemComponent } from './tracking-system/tracking-system/track
 import { TrackingDetailsComponent } from './tracking-system/tracking-system/details/details.component';
 
 export const routes: Routes = [
-  {
-    path: 'documentation',
-    component: ApiComponent
-  },
-  {
-    path: '',
-    component: HomeComponent,
-    pathMatch: 'full'
-  },
-  { path: 'about', component: AboutComponent },
-  { path: 'gis', component: GisComponent },
-  { path: 'help', component: HelpComponent },
-  { path: 'bulk-downloads' , component: BulkDownloadsComponent },
+  { path: 'documentation', component: ApiComponent, title: 'Documentation' },
+  { path: '', component: HomeComponent, pathMatch: 'full', title: '' },
+  { path: 'about', component: AboutComponent, title: 'About' },
+  { path: 'gis', component: GisComponent, title: 'Gis' },
+  { path: 'help', component: HelpComponent, title: 'Help' },
+  { path: 'bulk-downloads' , component: BulkDownloadsComponent, title: 'Bulk-downloads' },
 
-  { path: 'data/specimens/details/:id', component: SpecimensComponent },
-  { path: 'data/organism/details/:id', component: DetailsComponent },
-  { path: 'data/root/details/:id', component: OrganismDetailsComponent },
-  { path: 'data', component: DashboardComponent },
+  { path: 'data/specimens/details/:id', component: SpecimensComponent, title: 'Specimens' },
+  { path: 'data/organism/details/:id', component: DetailsComponent, title: 'Organism' },
+  { path: 'data/root/details/:id', component: OrganismDetailsComponent, title: 'Details' },
+  { path: 'data', component: DashboardComponent, title: 'Data' },
 
-  { path: 'tracking/:id', component: TrackingDetailsComponent },
-  { path: 'tracking/details/:organism', component: TrackingDetailsComponent },
-  { path: 'tracking', component: TrackingSystemComponent },
+  { path: 'tracking/:id', component: TrackingDetailsComponent, title: 'Tracking Id' },
+  { path: 'tracking/details/:organism', component: TrackingDetailsComponent, title: 'Tracking Details' },
+  { path: 'tracking', component: TrackingSystemComponent, title: 'Tracking' },
 
-  { path: 'tree', component: PhylogeneticsComponent},
+  { path: 'tree', component: PhylogeneticsComponent, title: 'Tree' },
   {
     path: '',
     children: [
-      { path: '404', component: NotFoundComponent },
-      { path: '**', component: NotFoundComponent }
+      { path: '404', component: NotFoundComponent, title: 'Not Found 404' },
+      { path: '**', component: NotFoundComponent, title: 'Not Found' }
     ]
   }
 ];

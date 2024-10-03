@@ -3,26 +3,24 @@
         <h1 class="text-center page-header">{{ bioSampleObj?.organism }}</h1>
         <dl class="row">
             @if (bioSampleObj) {
-                <ng-container>
-                    @if (bioSampleObj.commonName) {
-                        <dt class="col-md-3">Name:</dt>
-                        <dd class="col-md-9">{{ bioSampleObj.commonName }}</dd>
-                    }
-                    <dt class="col-md-3">Organism:</dt>
-                    <dd class="col-md-9">{{ bioSampleObj.organism }}</dd>
-                    @if (bioSampleObj.sex) {
-                        <dt class="col-md-3">Sex:</dt>
-                        <dd class="col-md-9">{{ bioSampleObj.sex }}</dd>
-                    }
-                    @if (bioSampleObj.trackingSystem) {
-                        <dt class="col-md-3">Tracking Status:</dt>
-                        <dd class="col-md-9">
-                            <mat-chip-set>
-                                <mat-chip [ngStyle]="{'background-color': 'gold'}">{{ bioSampleObj.currentStatus }}</mat-chip>
-                            </mat-chip-set>
-                        </dd>
-                    }
-                </ng-container>
+                @if (bioSampleObj.commonName) {
+                    <dt class="col-md-3">Name:</dt>
+                    <dd class="col-md-9">{{ bioSampleObj.commonName }}</dd>
+                }
+                <dt class="col-md-3">Organism:</dt>
+                <dd class="col-md-9">{{ bioSampleObj.organism }}</dd>
+                @if (bioSampleObj.sex) {
+                    <dt class="col-md-3">Sex:</dt>
+                    <dd class="col-md-9">{{ bioSampleObj.sex }}</dd>
+                }
+                @if (bioSampleObj.trackingSystem) {
+                    <dt class="col-md-3">Tracking Status:</dt>
+                    <dd class="col-md-9">
+                        <mat-chip-set>
+                            <mat-chip [ngStyle]="{'background-color': 'gold'}">{{ bioSampleObj.currentStatus }}</mat-chip>
+                        </mat-chip-set>
+                    </dd>
+                }
             }
         </dl>
 

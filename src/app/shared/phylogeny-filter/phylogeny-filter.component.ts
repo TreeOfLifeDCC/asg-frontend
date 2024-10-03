@@ -33,7 +33,7 @@ export class PhylogenyFilterComponent implements OnInit {
   selectedFilterValue;
   currentTaxaOnExpand;
 
-  showElement: boolean = true;
+  showElement = true;
   // Ontology aware filter
   // Ontology aware filter
   initTaxonomyObject() {
@@ -76,39 +76,39 @@ export class PhylogenyFilterComponent implements OnInit {
     };
     this.filterService.taxonomies = [
       'cellularorganism',
-      "superkingdom",
-      "kingdom",
-      "subkingdom",
-      "superphylum",
-      "phylum",
-      "subphylum",
-      "superclass",
-      "class",
-      "subclass",
-      "infraclass",
-      "cohort",
-      "subcohort",
-      "superorder",
-      "order",
-      "parvorder",
-      "suborder",
-      "infraorder",
-      "section",
-      "subsection",
-      "superfamily",
-      "family",
-      "subfamily",
-      "tribe",
-      "subtribe",
-      "genus",
-      "series",
-      "subgenus",
-      "species_group",
-      "species_subgroup",
-      "species",
-      "subspecies",
-      "varietas",
-      "forma"
+      'superkingdom',
+      'kingdom',
+      'subkingdom',
+      'superphylum',
+      'phylum',
+      'subphylum',
+      'superclass',
+      'class',
+      'subclass',
+      'infraclass',
+      'cohort',
+      'subcohort',
+      'superorder',
+      'order',
+      'parvorder',
+      'suborder',
+      'infraorder',
+      'section',
+      'subsection',
+      'superfamily',
+      'family',
+      'subfamily',
+      'tribe',
+      'subtribe',
+      'genus',
+      'series',
+      'subgenus',
+      'species_group',
+      'species_subgroup',
+      'species',
+      'subspecies',
+      'varietas',
+      'forma'
     ];
     $('#myUL, #root-list, #Eukaryota-superkingdom').toggleClass("active");
   }
@@ -285,6 +285,7 @@ export class PhylogenyFilterComponent implements OnInit {
     const taxa = { rank, taxonomy, childRank, commonName, taxId };
     this.filterService.selectedFilterValue = taxa;
     this.selectedFilterValue = taxa;
+    // const filterObj = rank + ' - ' + taxonomy;
     const filterObj = rank + ' - ' + taxId;
     this.filterService.phylSelectedRank = filterObj;
     this.filterService.selectedFilterArray('phylogeny', filterObj);

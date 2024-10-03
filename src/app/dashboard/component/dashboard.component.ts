@@ -4,39 +4,24 @@ import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
 import {MatSort, MatSortModule} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
-import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 
 import 'jquery';
 import 'bootstrap';
 import {FilterService} from '../../services/filter-service';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {
-  MatCell,
-  MatCellDef,
-  MatHeaderCell,
-  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
-  MatTable,
-  MatTableDataSource, MatTableModule
-} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {FilterComponent} from '../../shared/filter/filter.component';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
-import {MatExpansionModule, MatExpansionPanel} from '@angular/material/expansion';
-import {MatCheckbox, MatCheckboxModule} from '@angular/material/checkbox';
-import {CommonModule, NgClass, NgStyle} from '@angular/common';
+import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
-import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
-import {MatChip, MatChipSet, MatChipsModule} from '@angular/material/chips';
-import {MatButtonModule} from '@angular/material/button';
-import {MatIconModule} from '@angular/material/icon';
-import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatInputModule} from '@angular/material/input';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatBadgeModule} from '@angular/material/badge';
-import {MatListModule} from '@angular/material/list';
-import {MatDialogModule} from '@angular/material/dialog';
+import {NgClass, NgStyle} from '@angular/common';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
+import {MatChip, MatChipSet} from '@angular/material/chips';
 
 
 @Component({
@@ -44,46 +29,23 @@ import {MatDialogModule} from '@angular/material/dialog';
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   imports: [
+    MatPaginatorModule,
+    MatTableModule,
+    MatInputModule,
     NgxSpinnerModule,
     FilterComponent,
     PhylogenyFilterComponent,
-    CommonModule,
     MatExpansionPanel,
-    MatCheckbox,
+    MatExpansionPanelHeader,
+    FormsModule,
     ActiveFilterComponent,
-    MatFormField,
-    MatTable,
-    MatSort,
-    MatHeaderCell,
-    MatHeaderCellDef,
-    MatCell,
-    MatCellDef,
     RouterLink,
-    MatChipSet,
-    MatChip,
     NgStyle,
     NgClass,
-    MatHeaderRow,
-    MatHeaderRowDef,
-    MatRow,
-    MatRowDef,
-    MatPaginator,
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSortModule,
-    MatTableModule,
-    MatTooltipModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatExpansionModule,
-    MatCheckboxModule,
-    MatTabsModule,
-    MatBadgeModule,
-    MatChipsModule,
-    MatListModule,
-    MatDialogModule
+    MatSort,
+    MatCheckbox,
+    MatChip,
+    MatChipSet
   ],
   styleUrls: ['./dashboard.component.css']
 })

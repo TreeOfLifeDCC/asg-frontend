@@ -235,3 +235,8 @@ mat-chip-set {
     margin-bottom: 15px;
     font-size: 14px;
 }
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}

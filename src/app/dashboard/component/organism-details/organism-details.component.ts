@@ -1,21 +1,20 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Sample } from '../../model/dashboard.model';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { CommonModule, NgStyle } from '@angular/common';
-import { MatChipsModule } from '@angular/material/chips';
+import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MapClusterComponent } from '../../map-cluster/map-cluster.component';
 import { MatListModule } from '@angular/material/list';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
-import { NgxSpinnerService } from 'ngx-spinner';
+import {MatChip, MatChipSet} from '@angular/material/chips';
+import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
 
 
 @Component({
@@ -23,21 +22,20 @@ import { NgxSpinnerService } from 'ngx-spinner';
   selector: 'dashboard-organism-details',
   templateUrl: './organism-details.component.html',
   imports: [
-    MatChipsModule,
-    NgStyle,
     MatTabsModule,
     MatFormFieldModule,
     MatPaginatorModule,
     MatTableModule,
-    MatSortModule,
-    MapClusterComponent,
     MatListModule,
     RouterLink,
     MatExpansionModule,
     MatCheckboxModule,
     FormsModule,
     MatInputModule,
-    CommonModule
+    CommonModule,
+    MatChip,
+    MatChipSet,
+    MapClusterComponent
   ],
   styleUrls: ['./organism-details.component.css']
 })
@@ -167,10 +165,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('assembliesMetagenomesTable') asMetPaginator: MatPaginator;
   dataSourceGoatInfo;
   displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
+  private dataTabInitialized = false;
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService,
-              private spinner: NgxSpinnerService,
               private router: Router) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
@@ -214,6 +212,21 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
   }
 
+  ngAfterViewChecked() {
+    const tabs = this.tabgroup._tabs.toArray();
+    const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === "Data");
+
+    if (
+        !this.dataTabInitialized &&
+        (this.dataSourceAnnotation?.data?.length ||
+            this.dataSourceAssemblies?.data?.length ||
+            this.dataSourceFiles?.data?.length)
+    ) {
+      this.tabgroup.selectedIndex = dataTabIndex;
+      this.dataTabInitialized = true;
+    }
+  }
+
   getBiosampleByOrganism() {
     this.dashboardService.getRootOrganismById(this.bioSampleId)
         .subscribe(
@@ -226,14 +239,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               this.specGeoList = data.specGeoList;
               if (this.orgGeoList !== undefined && this.orgGeoList.length !== 0) {
                 this.geoLocation = true;
+                const tabGroup = this.tabgroup;
+                const selected = this.tabgroup.selectedIndex;
+                tabGroup.selectedIndex = 4;
                 setTimeout(() => {
-                  const tabGroup = this.tabgroup;
-                  const selected = this.tabgroup.selectedIndex;
-                  tabGroup.selectedIndex = 4;
-                  setTimeout(() => {
-                    tabGroup.selectedIndex = selected;
-                  }, 1);
-                }, 400);
+                  tabGroup.selectedIndex = selected;
+                }, 100);
               }
               for (const item of data.records) {
                 unpackedData.push(this.unpackData(item));

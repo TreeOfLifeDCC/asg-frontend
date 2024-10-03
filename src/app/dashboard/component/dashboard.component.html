@@ -103,12 +103,10 @@
                                         </a>
                                     </mat-chip>
                                 @if (checkTolidExists(element)) {
-                                    <ng-container>
-                                            <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
-                                                <a class="mat-standard-chip" target="_blank"
-                                                   href="{{generateTolidLink(element)}}">ToL QC</a>
-                                            </mat-chip>
-                                    </ng-container>
+                                    <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
+                                        <a class="mat-standard-chip" target="_blank"
+                                           href="{{generateTolidLink(element)}}">ToL QC</a>
+                                    </mat-chip>
                                 }
                             </span>
                         </mat-cell>

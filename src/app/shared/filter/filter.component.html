@@ -4,7 +4,7 @@
         {{title}}
         @if (title === 'Experiment Type' && filterService.experimentTypeFilters?.length > filterSize) {
             <span>
-                @if (filterService.filterArray?.length > filterSize) {
+                @if (filterService.experimentTypeFilters?.length > filterSize || filterService.filterArray?.length > filterSize) {
                     @if (isCollapsed) {
                         <i class="material-icons float-right" (click)="toggleCollapse()">add</i>
                     } @else {
