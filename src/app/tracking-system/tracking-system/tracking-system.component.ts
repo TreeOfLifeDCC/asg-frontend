@@ -23,6 +23,7 @@ import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
+import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 
 
 @Component({
@@ -53,7 +54,8 @@ import { MatInputModule } from '@angular/material/input';
     UpperCasePipe,
     MatInputModule,
     MatColumnDef,
-    MatSortHeader
+    MatSortHeader,
+    PhylogenyFilterComponent
   ],
   styleUrls: ['./tracking-system.component.css']
 })
