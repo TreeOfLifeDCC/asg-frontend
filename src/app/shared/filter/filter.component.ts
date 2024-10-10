@@ -1,19 +1,23 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, booleanAttribute, Component, Input, numberAttribute, OnInit} from '@angular/core';
 
-import {Title} from '@angular/platform-browser';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {FilterService} from '../../services/filter-service';
+import {NgClass} from '@angular/common';
+import {filter, of} from 'rxjs';
+
 
 @Component({
+  standalone: true,
   selector: 'app-filter',
   templateUrl: './filter.component.html',
+  imports: [
+    NgClass
+  ],
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @Input() title: string;
-  @Input() isShowCount: boolean;
-  @Input() filterSize: number;
+  @Input({transform: booleanAttribute}) isShowCount: boolean;
+  @Input({transform: numberAttribute}) filterSize: number;
 
   isCollapsed = true;
   itemLimit = 0;
@@ -105,4 +109,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
 
+  protected readonly filter = filter;
+  protected readonly of = of;
 }

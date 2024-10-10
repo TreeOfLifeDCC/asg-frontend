@@ -1,7 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {NgcCookieConsentService, NgcCookieConsentConfig} from 'ngx-cookieconsent';
+import { Component, OnInit } from '@angular/core';
+import { NgcCookieConsentService, NgcCookieConsentConfig } from 'ngx-cookieconsent';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './shared/header/header.component';
 
-export const cookieConfig: NgcCookieConsentConfig =   {
+export const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
     domain: 'portal.aquaticsymbiosisgenomics.org'
   },
@@ -31,7 +33,9 @@ export const cookieConfig: NgcCookieConsentConfig =   {
 };
 
 @Component({
+  standalone: true,
   selector: 'app-root',
+  imports: [RouterOutlet, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

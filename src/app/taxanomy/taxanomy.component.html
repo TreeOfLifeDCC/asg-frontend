@@ -27,116 +27,124 @@
                                     Organisms</span>
                                 <!-- Root level -->
                                 <ul class="nested" id="superkingdom">
-                                    <li *ngFor="let element of childTaxanomy.cellularorganism[0].childData">
-                                        <span class="caret" id="Eukaryota"
-                                            (click)="getChildTaxonomyRank(childTaxanomy.cellularorganism[0].rank, element.key, 'kingdom')">
-                                            {{element.key}}
-                                        </span>
-                                        <!-- Super kingdom level -->
-                                        <ul class="nested {{element.key}}"
-                                            *ngIf="childTaxanomy.superkingdom.length > 0">
-                                            <ng-container *ngFor="let super of childTaxanomy.superkingdom">
-                                                <ng-container *ngIf="element.key == super.parent">
-                                                    <li *ngFor="let superchild of super.childData">
-                                                        <span class="caret" id="{{superchild.key}}"
-                                                            (click)="getChildTaxonomyRank(super.rank, superchild.key, 'subkingdom')">
-                                                            {{superchild.key}}
-                                                        </span>
-                                                        <!-- kingdom level -->
-                                                        <ul class="nested {{superchild.key}}"
-                                                            *ngIf="childTaxanomy.kingdom.length > 0">
-                                                            <ng-container *ngFor="let king of childTaxanomy.kingdom">
-                                                                <ng-container *ngIf="superchild.key === king.parent">
-                                                                    <li *ngFor="let kingchild of king.childData">
-                                                                        <span class="caret" id="{{kingchild.key}}"
-                                                                            (click)="getChildTaxonomyRank(king.rank, kingchild.key, 'phylum')">
-                                                                            {{kingchild.key}}
-                                                                        </span>
-                                                                        <!-- subkingdom level -->
-                                                                        <ul class="nested {{kingchild.key}}"
-                                                                            *ngIf="childTaxanomy.subkingdom.length > 0">
-                                                                            <ng-container
-                                                                                *ngFor="let subking of childTaxanomy.subkingdom">
-                                                                                <ng-container
-                                                                                    *ngIf="kingchild.key === subking.parent">
-                                                                                    <li
-                                                                                        *ngFor="let subchild of subking.childData">
-                                                                                        <span class="caret"
-                                                                                            id="{{subchild.key}}"
-                                                                                            (click)="getChildTaxonomyRank(subking.rank, subchild.key, 'subphylum')">
-                                                                                            {{subchild.key}}
-                                                                                        </span>
-                                                                                        <!-- phylum level -->
-                                                                                        <ul class="nested {{subchild.key}}"
-                                                                                            *ngIf="childTaxanomy.phylum.length > 0">
-                                                                                            <ng-container
-                                                                                                *ngFor="let phylum of childTaxanomy.phylum">
-                                                                                                <ng-container
-                                                                                                    *ngIf="subchild.key === phylum.parent">
-                                                                                                    <li
-                                                                                                        *ngFor="let phylChild of phylum.childData">
-                                                                                                        <span
-                                                                                                            class="caret"
-                                                                                                            id="{{phylChild.key}}"
-                                                                                                            (click)="getChildTaxonomyRank(phylum.rank, phylChild.key, 'superclass')">
-                                                                                                            {{phylChild.key}}
-                                                                                                        </span>
-                                                                                                        <!-- subphylum level -->
-                                                                                                        <ul class="nested {{phylChild.key}}"
-                                                                                                            *ngIf="childTaxanomy.subphylum.length > 0">
-                                                                                                            <ng-container
-                                                                                                                *ngFor="let subphylum of childTaxanomy.subphylum">
-                                                                                                                <ng-container
-                                                                                                                    *ngIf="phylChild.key === subphylum.parent">
-                                                                                                                    <li
-                                                                                                                        *ngFor="let subphylumchild of subphylum.childData">
-                                                                                                                        <span
-                                                                                                                            class="caret"
-                                                                                                                            id="{{subphylumchild.key}}"
-                                                                                                                            (click)="getChildTaxonomyRank(subphylum.rank, subphylumchild.key, 'class')">
-                                                                                                                            {{subphylumchild.key}}
-                                                                                                                        </span>
-                                                                                                                        <!-- superclass level -->
-                                                                                                                        <ul class="nested {{subphylumchild.key}}"
-                                                                                                                            *ngIf="childTaxanomy.superclass.length > 0">
-                                                                                                                            <ng-container
-                                                                                                                                *ngFor="let superclass of childTaxanomy.superclass">
-                                                                                                                                <ng-container
-                                                                                                                                    *ngIf="subphylumchild.key === superclass.parent">
-                                                                                                                                    <li
-                                                                                                                                        *ngFor="let superclasschild of superclass.childData">
-                                                                                                                                        <span
-                                                                                                                                            class="caret"
-                                                                                                                                            id="{{superclasschild.key}}"
-                                                                                                                                            (click)="getChildTaxonomyRank(superclass.rank, superclasschild.key, 'subclass')">
-                                                                                                                                            {{superclasschild.key}}
-                                                                                                                                        </span>
-                                                                                                                                        <!-- class level -->
-                                                                                                                                    </li>
-                                                                                                                                </ng-container>
-                                                                                                                            </ng-container>
+                                    @for (element of childTaxanomy.cellularorganism[0].childData; track element) {
+                                        <li>
+                                            <span class="caret" id="Eukaryota"
+                                                (click)="getChildTaxonomyRank(childTaxanomy.cellularorganism[0].rank, element.key, 'kingdom')">
+                                                {{element.key}}
+                                            </span>
+                                            <!-- Super kingdom level -->
+                                            @if (childTaxanomy.superkingdom.length > 0) {
+                                                <ul class="nested {{element.key}}">
+                                                    @for (super of childTaxanomy.superkingdom; track super) {
+                                                        @if (element.key == super.parent) {
+                                                            @for (superchild of super.childData; track superchild) {
+                                                                <li>
+                                                                    <span class="caret" id="{{superchild.key}}"
+                                                                        (click)="getChildTaxonomyRank(super.rank, superchild.key, 'subkingdom')">
+                                                                        {{superchild.key}}
+                                                                    </span>
+                                                                    <!-- kingdom level -->
+                                                                    @if (childTaxanomy.kingdom.length > 0) {
+                                                                        <ul class="nested {{superchild.key}}">
+                                                                            @for (king of childTaxanomy.kingdom; track king) {
+                                                                                @if (superchild.key === king.parent) {
+                                                                                    @for (kingchild of king.childData; track kingchild) {
+                                                                                        <li>
+                                                                                            <span class="caret" id="{{kingchild.key}}"
+                                                                                                (click)="getChildTaxonomyRank(king.rank, kingchild.key, 'phylum')">
+                                                                                                {{kingchild.key}}
+                                                                                            </span>
+                                                                                            <!-- subkingdom level -->
+                                                                                            @if (childTaxanomy.subkingdom.length > 0) {
+                                                                                                <ul class="nested {{kingchild.key}}">
+                                                                                                    @for (subking of childTaxanomy.subkingdom; track subking) {
+                                                                                                        @if (kingchild.key === subking.parent) {
+                                                                                                            @for (subchild of subking.childData; track subchild) {
+                                                                                                                <li>
+                                                                                                                    <span class="caret"
+                                                                                                                        id="{{subchild.key}}"
+                                                                                                                        (click)="getChildTaxonomyRank(subking.rank, subchild.key, 'subphylum')">
+                                                                                                                        {{subchild.key}}
+                                                                                                                    </span>
+                                                                                                                    <!-- phylum level -->
+                                                                                                                    @if (childTaxanomy.phylum.length > 0) {
+                                                                                                                        <ul class="nested {{subchild.key}}">
+                                                                                                                            @for (phylum of childTaxanomy.phylum; track phylum) {
+                                                                                                                                @if (subchild.key === phylum.parent) {
+                                                                                                                                    @for (phylChild of phylum.childData; track phylChild) {
+                                                                                                                                        <li>
+                                                                                                                                            <span
+                                                                                                                                                class="caret"
+                                                                                                                                                id="{{phylChild.key}}"
+                                                                                                                                                (click)="getChildTaxonomyRank(phylum.rank, phylChild.key, 'superclass')">
+                                                                                                                                                {{phylChild.key}}
+                                                                                                                                            </span>
+                                                                                                                                            <!-- subphylum level -->
+                                                                                                                                            @if (childTaxanomy.subphylum.length > 0) {
+                                                                                                                                                <ul class="nested {{phylChild.key}}">
+                                                                                                                                                    @for (subphylum of childTaxanomy.subphylum; track subphylum) {
+                                                                                                                                                        @if (phylChild.key === subphylum.parent) {
+                                                                                                                                                            @for (subphylumchild of subphylum.childData; track subphylumchild) {
+                                                                                                                                                                <li>
+                                                                                                                                                                    <span
+                                                                                                                                                                        class="caret"
+                                                                                                                                                                        id="{{subphylumchild.key}}"
+                                                                                                                                                                        (click)="getChildTaxonomyRank(subphylum.rank, subphylumchild.key, 'class')">
+                                                                                                                                                                        {{subphylumchild.key}}
+                                                                                                                                                                    </span>
+                                                                                                                                                                    <!-- superclass level -->
+                                                                                                                                                                    @if (childTaxanomy.superclass.length > 0) {
+                                                                                                                                                                        <ul class="nested {{subphylumchild.key}}">
+                                                                                                                                                                            @for (superclass of childTaxanomy.superclass; track superclass) {
+                                                                                                                                                                                @if (subphylumchild.key === superclass.parent) {
+                                                                                                                                                                                    @for (superclasschild of superclass.childData; track superclasschild) {
+                                                                                                                                                                                        <li>
+                                                                                                                                                                                            <span
+                                                                                                                                                                                                class="caret"
+                                                                                                                                                                                                id="{{superclasschild.key}}"
+                                                                                                                                                                                                (click)="getChildTaxonomyRank(superclass.rank, superclasschild.key, 'subclass')">
+                                                                                                                                                                                                {{superclasschild.key}}
+                                                                                                                                                                                            </span>
+                                                                                                                                                                                            <!-- class level -->
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                    }
+                                                                                                                                                                                }
+                                                                                                                                                                            }
+                                                                                                                                                                        </ul>
+                                                                                                                                                                    }
+                                                                                                                                                                </li>
+                                                                                                                                                            }
+                                                                                                                                                        }
+                                                                                                                                                    }
+                                                                                                                                                </ul>
+                                                                                                                                            }
+                                                                                                                                        </li>
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            }
                                                                                                                         </ul>
-                                                                                                                    </li>
-                                                                                                                </ng-container>
-                                                                                                            </ng-container>
-                                                                                                        </ul>
-                                                                                                    </li>
-                                                                                                </ng-container>
-                                                                                            </ng-container>
-                                                                                        </ul>
-                                                                                    </li>
-                                                                                </ng-container>
-                                                                            </ng-container>
+                                                                                                                    }
+                                                                                                                </li>
+                                                                                                            }
+                                                                                                        }
+                                                                                                    }
+                                                                                                </ul>
+                                                                                            }
+                                                                                        </li>
+                                                                                    }
+                                                                                }
+                                                                            }
                                                                         </ul>
-                                                                    </li>
-                                                                </ng-container>
-                                                            </ng-container>
-                                                        </ul>
-                                                    </li>
-                                                </ng-container>
-                                            </ng-container>
-                                        </ul>
-                                    </li>
+                                                                    }
+                                                                </li>
+                                                            }
+                                                        }
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
                                 </ul>
                             </li>
                         </ul>

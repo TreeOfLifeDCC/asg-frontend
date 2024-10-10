@@ -1,9 +1,11 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {FilterService} from '../../services/filter-service';
+import { Component } from '@angular/core';
+import { FilterService } from '../../services/filter-service';
 
 @Component({
+  standalone: true,
   selector: 'app-active-filter',
   templateUrl: './active-filter.component.html',
+  imports: [],
   styleUrls: ['./active-filter.component.css']
 })
 export class ActiveFilterComponent {

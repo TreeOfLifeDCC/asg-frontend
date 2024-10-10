@@ -3,14 +3,16 @@ import { TaxanomyService } from './taxanomy.service';
 import { Taxonomy } from './taxonomy.model';
 
 @Component({
+  standalone: true,
   selector: 'app-taxanomy',
   templateUrl: './taxanomy.component.html',
+  imports: [],
   styleUrls: ['./taxanomy.component.css']
 })
 export class TaxanomyComponent implements OnInit {
 
   taxonomies: any;
-  
+
   childTaxanomy: Taxonomy;
   selectedTaxonomy: any;
 
@@ -19,45 +21,6 @@ export class TaxanomyComponent implements OnInit {
   ngOnInit(): void {
     this.selectedTaxonomy = [];
     // this.initTaxonomyObject();
-  }
-
-  initTaxonomyObject() {
-    this.childTaxanomy = {
-      cellularorganism: [{ parent: 'Root', rank: 'superkingdom', expanded: false, childData: [{ key: 'Eukaryota', doc_count: '1', commonName: {buckets:[]}, taxId: {buckets:[]} }] }],
-      superkingdom: [],
-      kingdom: [],
-      subkingdom: [],
-      superphylum: [],
-      phylum: [],
-      subphylum: [],
-      superclass: [],
-      class: [],
-      subclass: [],
-      infraclass: [],
-      cohort: [],
-      subcohort: [],
-      superorder: [],
-      order: [],
-      parvorder: [],
-      suborder: [],
-      infraorder: [],
-      section: [],
-      subsection: [],
-      superfamily: [],
-      family: [],
-      subfamily: [],
-      tribe: [],
-      subtribe: [],
-      genus: [],
-      series: [],
-      subgenus: [],
-      species_group: [],
-      species_subgroup: [],
-      species: [],
-      subspecies: [],
-      varietas: [],
-      forma: []
-    };
   }
 
   toggleTaxanomy(rank, taxonomy) {
@@ -81,8 +44,8 @@ export class TaxanomyComponent implements OnInit {
   }
 
   parseAndPushTaxaData(rank, data) {
-    let temp = this.childTaxanomy[rank];
-    if(temp.length > 0) {
+    const temp = this.childTaxanomy[rank];
+    if (temp.length > 0) {
       if (!(temp.filter(function(e) { return e.parent === data[rank].parent; }).length > 0)) {
         this.childTaxanomy[rank].push(data[rank]);
       }
@@ -90,16 +53,6 @@ export class TaxanomyComponent implements OnInit {
     else {
       this.childTaxanomy[rank].push(data[rank]);
     }
-  }
-
-  getTaxanomyFilters(taxonomy?: String) {
-    this.taxanomyService.getTaxonomyFilters(taxonomy).subscribe(
-      data => {
-        this.taxonomies = data;
-      },
-      err => {
-        console.log(err);
-      })
   }
 
 }

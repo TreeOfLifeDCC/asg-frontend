@@ -25,7 +25,7 @@
                 </div>
 
                 <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>
-                <app-filter title="Experiment Type" isShowCount="true" filterSize="5"></app-filter>
+                <app-filter title="Experiment Type" isShowCount=true filterSize=5></app-filter>
             </div>
             <div class="col-md-10">
                 <h1 class="page-header">Organisms</h1>
@@ -36,42 +36,38 @@
                     </mat-expansion-panel-header>
                     <div class="col-md-12">
                         <div class="row">
-                            <mat-checkbox *ngFor="let data of dataColumnsDefination" class="col-md-4" color="primary"
-                                          (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
-                                          [checked]="data.selected" (change)="showSelectedColumn(data, $event.checked)">
-                                {{data.name}}
-                            </mat-checkbox>
+                            @for (data of dataColumnsDefinition; track data) {
+                                <mat-checkbox class="col-md-4" color="primary"
+                                              (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()"
+                                              [checked]="data.selected"
+                                              (change)="showSelectedColumn(data, $event.checked)">
+                                    {{ data.name }}
+                                </mat-checkbox>
+                            }
                         </div>
                     </div>
                 </mat-expansion-panel>
                 <br />
 
-
-<!--                <button type="button" style="float: right;" class="btn btn-primary" mat-raised-button (click)="exporter.exportTable('csv', {fileName:'organisms-metadata'})">Download metadata</button>-->
-<!--                <button *ngIf="filterService.activeFilters.length > 0 || filterService.selectedFilterValue != '' && (this.filterService.AnnotationFilters.length > 0 || this.filterService.AnnotationCompleteFilters.length > 0 || this.filterService.AssembliesFilters.length > 0 || this.filterService.RawDataFilters.length > 0)" type="button" style="float: right;"-->
-<!--                        class="btn btn-primary" mat-raised-button (click)="openDialog()">Download</button>-->
-
-                <div *ngIf="hasActiveFilters()">
+                @if (hasActiveFilters()) {
                     <app-active-filter true></app-active-filter>
-
-                    <span *ngIf="(filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '')">
-                    <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
-                        <span class="badge badge-light"
-                              (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
-                            X</span>
-                    </button>
-                </span>
+                    @if (filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '') {
+                        <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
+                            <span class="badge badge-light"
+                                  (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
+                                X</span>
+                        </button>
+                    }
                     <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
-
-                </div>
+                }
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
-                    <input  #searchInput matInput [(ngModel)]='filterService.searchText'
-                            (ngModelChange)="this.searchUpdate.next($event)"
-                            placeholder="Ex. lutra" #input>
+                    <input #searchInput matInput [(ngModel)]='filterService.searchText'
+                           (ngModelChange)="this.searchUpdate.next($event)"
+                           placeholder="Ex. lutra" #input>
                 </mat-form-field>
-                <table mat-table  #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
+                <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
                     <ng-container matColumnDef="organism">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -88,7 +84,6 @@
                     <ng-container matColumnDef="currentStatus">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Current status </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-<!--                            <span [ngClass]="getStatusClass(element.currentStatus)">{{element.currentStatus}}</span>-->
                             <mat-chip-set>
                                 <mat-chip [ngStyle]="{'background-color': 'gold'}">{{element.currentStatus}}</mat-chip>
                             </mat-chip-set>
@@ -107,12 +102,12 @@
                                             GoaT info
                                         </a>
                                     </mat-chip>
-                                <ng-container *ngIf="checkTolidExists(element)">
-                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
-                                            <a class="mat-standard-chip" target="_blank"
-                                               href="{{generateTolidLink(element)}}">ToL QC</a>
-                                        </mat-chip>
-                                </ng-container>
+                                @if (checkTolidExists(element)) {
+                                    <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
+                                        <a class="mat-standard-chip" target="_blank"
+                                           href="{{generateTolidLink(element)}}">ToL QC</a>
+                                    </mat-chip>
+                                }
                             </span>
                         </mat-cell>
                     </ng-container>
@@ -175,6 +170,4 @@
         </div>
     </div>
 
-
 </div>
-

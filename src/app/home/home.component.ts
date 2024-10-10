@@ -1,10 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Title} from "@angular/platform-browser";
-import {NavigationEnd, Router} from "@angular/router";
+import {Title} from '@angular/platform-browser';
+import {NavigationEnd, Router, RouterLink} from '@angular/router';
 
 @Component({
+  standalone: true,
   selector: 'app-home',
   templateUrl: './home.component.html',
+  imports: [
+    RouterLink
+  ],
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -22,10 +26,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   initTwitterWidget() {
     this.twitter = this.router.events.subscribe(val => {
       if (val instanceof NavigationEnd) {
-        (<any>window).twttr = (function (d, s, id) {
+        (<any> window).twttr = (function (d, s, id) {
           let js: any;
           const fjs = d.getElementsByTagName(s)[0],
-            t = (<any>window).twttr || {};
+            t = (<any> window).twttr || {};
           if (d.getElementById(id)) {
             return t;
           }
@@ -42,8 +46,8 @@ export class HomeComponent implements OnInit, OnDestroy {
           return t;
         }(document, 'script', 'twitter-wjs'));
 
-        if ((<any>window).twttr.ready()) {
-          (<any>window).twttr.widgets.load();
+        if ((<any> window).twttr.ready()) {
+          (<any> window).twttr.widgets.load();
         }
 
       }

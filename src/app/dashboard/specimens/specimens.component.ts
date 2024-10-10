@@ -8,6 +8,7 @@ import { DashboardService } from '../../dashboard/services/dashboard.service';
 
 
 @Component({
+  standalone: true,
   selector: 'app-specimens',
   templateUrl: './specimens.component.html',
   styleUrls: ['./specimens.component.css']
@@ -16,7 +17,7 @@ export class SpecimensComponent implements OnInit {
 
   bioSampleId;
   bioSampleObj;
-  
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSourceRecords;

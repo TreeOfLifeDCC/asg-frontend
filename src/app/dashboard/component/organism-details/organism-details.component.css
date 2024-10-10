@@ -35,13 +35,7 @@
 
 .txt-center {
     text-align: center;
-    /* justify-content: center; */
 }
-
-
-/* .mat-header-cell {
-    text-align: center;
-} */
 
 .inactiveFilter {
     pointer-events: none;
@@ -68,7 +62,7 @@
 }
 
 table {
-    width: 110%;
+    width: 100%;
 }
 .table-container {
     overflow: auto;
@@ -81,8 +75,6 @@ table {
     padding: 8px 8px 8px 0;
     word-break: break-word;
 }
-
-
 
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 
@@ -18,6 +18,7 @@ const iconDefault = L.icon({
 L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
+  standalone: true,
   selector: 'app-mapcluster',
   templateUrl: './map-cluster.component.html',
   styleUrls: ['./map-cluster.component.css']
@@ -30,31 +31,36 @@ export class MapClusterComponent implements AfterViewInit {
   @Input('orgGeoList') orgGeoList: any;
   @Input('specGeoList') specGeoList: any;
 
-  constructor() { }
+  @ViewChild('mapContainer', { static: false }) mapContainer: ElementRef;
 
-  ngOnInit(): void {
-  }
+  constructor() { }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.initMap();
     }, 400);
   }
+
   private initMap(): void {
+    if (!this.mapContainer || !this.mapContainer.nativeElement) {
+      console.error('Map container not found!');
+      return;
+    }
+
     this.tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
 
-    let latCoo = this.orgGeoList[0].lat;
-    let lngCoo = this.orgGeoList[0].lng;
-    var latlng = L.latLng(53.4862, -1.8904);
-    if (latCoo != 'not collected' && latCoo != 'not provided') {
+    const latCoo = this.orgGeoList[0]?.lat;
+    const lngCoo = this.orgGeoList[0]?.lng;
+    let latlng = L.latLng(53.4862, -1.8904);
+    if (latCoo !== 'not collected' && latCoo !== 'not provided') {
       latlng = L.latLng(latCoo, lngCoo);
     }
 
-    this.map = L.map('map', {
+    this.map = L.map(this.mapContainer.nativeElement, {
       center: latlng,
       zoom: 5,
       layers: [this.tiles],
@@ -77,9 +83,10 @@ export class MapClusterComponent implements AfterViewInit {
   }
 
   getLatLong(): any {
-    let orgGeoSize = this.orgGeoList.length
-    for (var i = 0; i < orgGeoSize; i++) {
-      if (this.orgGeoList[i].lat != 'not collected' && this.orgGeoList[i].lat != 'not provided') {
+    let i;
+    const orgGeoSize = this.orgGeoList.length;
+    for (i = 0; i < orgGeoSize; i++) {
+      if (this.orgGeoList[i].lat !== 'not collected' && this.orgGeoList[i].lat !== 'not provided') {
         const latlng = L.latLng(this.orgGeoList[i].lat, this.orgGeoList[i].lng);
         const m = L.marker(latlng);
         const accession = `<div><a target="_blank" href=/data/organism/details/${this.orgGeoList[i].accession}>${this.orgGeoList[i].accession}</a></div>`;
@@ -98,9 +105,9 @@ export class MapClusterComponent implements AfterViewInit {
       }
     }
 
-    let specGeoSize = this.specGeoList.length
-    for (var i = 0; i < specGeoSize; i++) {
-      if (this.specGeoList[i].lat != 'not collected' && this.specGeoList[i].lat != 'not provided') {
+    const specGeoSize = this.specGeoList.length
+    for (i = 0; i < specGeoSize; i++) {
+      if (this.specGeoList[i].lat !== 'not collected' && this.specGeoList[i].lat !== 'not provided') {
         const latlng = L.latLng(this.specGeoList[i].lat, this.specGeoList[i].lng);
         const m = L.marker(latlng);
         const accession = `<div><a target="_blank" href=/data/specimens/details/${this.specGeoList[i].accession}>${this.specGeoList[i].accession}</a></div>`;
@@ -122,15 +129,15 @@ export class MapClusterComponent implements AfterViewInit {
   showCursorCoordinates() {
     const Coordinates = L.Control.extend({
       onAdd: map => {
-        const container = L.DomUtil.create("div");
-        container.style.backgroundColor = "rgba(255,255,255,.8)";
-        map.addEventListener("mousemove", e => {
+        const container = L.DomUtil.create('div');
+        container.style.backgroundColor = 'rgba(255,255,255,.8)';
+        map.addEventListener('mousemove', e => {
           container.innerHTML = `Lat: ${e.latlng.lat.toFixed(4)} Lng: ${e.latlng.lng.toFixed(4)}`;
         });
         return container;
       }
     });
-    this.map.addControl(new Coordinates({ position: "bottomright" }));
+    this.map.addControl(new Coordinates({ position: 'bottomright' }));
   }
 
 }
