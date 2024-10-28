@@ -71,14 +71,10 @@ export class DashboardService {
 
 
 
-    let requestParams = `?offset=${offset}&limit=${limit}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if (searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`;
-    }
-    return this.http.post(`${this.API_BASE_URL}/root_organisms${requestParams}`, filterValue);
+
+
+
+    return this.http.get<any>(url);
   }
 
   public getDistinctOrganisms(size, sortColumn?, sortOrder?, afterKey?): Observable<any> {

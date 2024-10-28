@@ -327,6 +327,7 @@ export class FilterService {
     }
 
     parseFilterAggregation = (data: any) => {
+        console.log(data)
         this.filterArray = [] ;
         this.symbiontsFilters = [];
         this.metagenomesFilters = [];
@@ -365,7 +366,7 @@ export class FilterService {
         });
 
         let assembliesFiltersCount = 0;
-        this.AssembliesFilters = this.filtersMap.aggregations.assemblies.buckets.filter(i => {
+        this.AssembliesFilters = this.filtersMap.aggregations.assemblies_status.buckets.filter(i => {
             if (i !== '' && i.key.toLowerCase() === 'done') {
                 const obj = i;
                 obj.key = 'Assemblies - ' + obj.key;
@@ -395,7 +396,7 @@ export class FilterService {
             count: annotationCompleteFiltersCount
         });
         let annotationFiltersCount = 0;
-        this.AnnotationFilters = this.filtersMap.aggregations.annotation.buckets.filter(i => {
+        this.AnnotationFilters = this.filtersMap.aggregations.annotation_complete.buckets.filter(i => {
             if (i !== '' && i.key.toLowerCase() === 'done') {
                 const obj = i;
                 obj.key = 'Annotation - ' + obj.key;

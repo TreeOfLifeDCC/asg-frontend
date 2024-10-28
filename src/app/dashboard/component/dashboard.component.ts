@@ -143,6 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       this.resetFilter();
       // tslint:disable-next-line:forin
       for (const key in params) {
+        console.log(key)
         this.filterService.urlAppendFilterArray.push({name: key, value: params[key]});
 
         switch (key) {
@@ -150,7 +151,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
             this.addToActiveFilters(params[key], 'experimentType');
             break;
           case 'symbionts_biosamples_status':
-            this.addToActiveFilters(params[key], 'symbiontsBioSamplesStatus');
+            // this.addToActiveFilters(params[key], 'symbiontsBioSamplesStatus');
+            this.filterService.activeFilters.push(params[key]);
             break;
           case 'symbionts_raw_data_status':
             this.addToActiveFilters(params[key], 'symbiontsRawDataStatus');
@@ -273,8 +275,13 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     ).subscribe(
             data => {
               const unpackedData = [];
-              this.filterService.getFilters(data.rootSamples);
-              for (const item of data.rootSamples.hits.hits) {
+              console.log(data)
+
+              if (data === null || !data.results?.length) {
+                return [];
+              }
+              this.filterService.getFilters(data);
+              for (const item of data.results) {
                 unpackedData.push(this.unpackData(item));
               }
               this.bioSampleTotalCount = data.count;
@@ -300,7 +307,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         .subscribe(
             data => {
               const unpackedData = [];
-              for (const item of data.rootSamples.hits.hits) {
+              for (const item of data.results) {
                 unpackedData.push(this.unpackData(item));
               }
               this.dataSource = new MatTableDataSource<any>(unpackedData);

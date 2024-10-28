@@ -36,6 +36,7 @@
     @if (title === 'Symbionts') {
         <ul class="list-group">
             @for (filter of filterService.symbiontsFilters; track filter; let i = $index) {
+                Koosum: {{filter|json}}
                 @if (i < itemLimit) {
                     <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
                         id="{{filter.key}}-Symbionts Status"
@@ -45,6 +46,8 @@
                         @if (isShowCount === true) {
                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                         }
+
+
                     </li>
                 }
             }

@@ -1,7 +1,7 @@
 import {AfterViewInit, booleanAttribute, Component, Input, numberAttribute, OnInit} from '@angular/core';
 
 import {FilterService} from '../../services/filter-service';
-import {NgClass} from '@angular/common';
+import {JsonPipe, NgClass} from '@angular/common';
 import {filter, of} from 'rxjs';
 
 
@@ -10,7 +10,8 @@ import {filter, of} from 'rxjs';
   selector: 'app-filter',
   templateUrl: './filter.component.html',
   imports: [
-    NgClass
+    NgClass,
+    JsonPipe
   ],
   styleUrls: ['./filter.component.css']
 })
@@ -39,7 +40,7 @@ export class FilterComponent implements OnInit, AfterViewInit {
 
   onFilterClick = (event, label: string, filter: string) => {
     if (label === 'symbionts_biosamples_status'){
-      filter = 'symbiontsBioSamplesStatus-' + filter;
+      filter = 'symbionts_biosamples_status-' + filter;
     } else if (label === 'symbionts_raw_data_status'){
       filter = 'symbiontsRawDataStatus-' + filter;
     } else if (label === 'symbionts_assemblies_status'){
