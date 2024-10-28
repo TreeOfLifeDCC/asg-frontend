@@ -461,7 +461,7 @@ export class FilterService {
                 'metagenomesAssembliesStatus');
         }
 
-        this.bioSampleTotalCount = data.hits.total.value;
+        this.bioSampleTotalCount = data.count;
         if (data.aggregations.childRank !== undefined) {
             this.selectedTaxonomy.push(data.aggregations.childRank.scientificName.buckets[0]);
         }

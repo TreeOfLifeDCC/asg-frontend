@@ -25,7 +25,7 @@
                         (click)="onFilterClick($event, 'experiment-type', filter.key)" style="cursor: pointer">
                         <span>{{filter.key}}</span>
                         @if (isShowCount === true) {
-                            <span class="badge badge-pill badge-info">{{filter.organism_count.doc_count}}</span>
+                            <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                         }
                     </li>
                 }
