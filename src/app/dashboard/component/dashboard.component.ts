@@ -268,8 +268,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        offset, limit, sortColumn, sortOrder, this.filterService.searchText,
-        this.filterService.activeFilters.join(',')
+        'data_portal', offset, limit, sortColumn, sortOrder, this.filterService.searchText,
+        this.filterService.activeFilters
     ).subscribe(
             data => {
               const unpackedData = [];
@@ -295,8 +295,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.dashboardService.getAllBiosample(offset, limit, sortColumn, sortOrder, this.filterService.searchText,
-        this.filterService.activeFilters.join(','))
+    this.dashboardService.getAllBiosample('data_portal', offset, limit, sortColumn, sortOrder, this.filterService.searchText,
+        this.filterService.activeFilters)
         .subscribe(
             data => {
               const unpackedData = [];

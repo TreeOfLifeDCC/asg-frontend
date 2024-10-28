@@ -15,12 +15,62 @@ export class DashboardService {
 
   private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  // private API_BASE_URL = 'http://localhost:8080';
+  // private API_BASE_URL = 'http://localhost:8000';
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(offset, limit, sortColumn?, sortOrder? , searchText?, filter?): Observable<any> {
+  public getAllBiosample(indexName, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
+
+    let url = `http://localhost:8000/${indexName}?limit=${limit}&offset=${offset}`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    if (searchText) {
+      url += `&search=${searchText}`;
+    }
+    if (sortColumn && sortOrder) {
+      url += `&sort=${sortColumn}:${sortOrder}`;
+    }
+    console.log("sortColumn: ", sortColumn)
+    console.log("sortOrder: ", sortOrder)
+    console.log("filter: ", filterValue)
+
+    if (filterValue.length !== 0) {
+      let filterStr = '&filter=';
+      let filterItem;
+      for (let i = 0; i < filterValue.length; i++) {
+        if (projectNames.indexOf(filterValue[i]) !== -1) {
+          filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
+        } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
+          if (filterValue[i].startsWith('symbionts')) {
+            filterItem = filterValue[i].replace('-', ':');
+          } else {
+            filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
+            if (filterItem === 'assemblies') {
+              filterItem = 'assemblies_status:Done';
+            }else if (filterItem === 'genome_notes') {
+              filterItem = 'genome_notes:Submitted';
+            } else {
+              filterItem = `${filterItem}:Done`;
+            }
+          }
+        }else if (filterValue[i].includes('_') && filterValue[i].startsWith('experimentType')) {
+          filterItem = filterValue[i].replace('_', ':');
+
+        }
+        else {
+          // filterItem = `${currentClass}:${filterValue[i]}`;
+        }
+
+        filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
+
+      }
+      url += filterStr;
+    }
+    console.log(url);
+
+
+
     let requestParams = `?offset=${offset}&limit=${limit}`;
     if (sortColumn !== undefined) {
       requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
@@ -28,7 +78,7 @@ export class DashboardService {
     if (searchText) {
       requestParams = requestParams + `&searchText=${searchText}`;
     }
-    return this.http.post(`${this.API_BASE_URL}/root_organisms${requestParams}`, filter);
+    return this.http.post(`${this.API_BASE_URL}/root_organisms${requestParams}`, filterValue);
   }
 
   public getDistinctOrganisms(size, sortColumn?, sortOrder?, afterKey?): Observable<any> {
