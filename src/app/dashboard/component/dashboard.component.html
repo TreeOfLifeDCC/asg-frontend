@@ -180,12 +180,6 @@
                     </div>
                 </div>
 
-
-<!--                <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>-->
-
-
-
-
                 <div class="card bg-lite mb-3 filter-top">
                     <h3 class="card-header filter-heading">
                         Experiment Type
@@ -200,7 +194,6 @@
                     </h3>
                     <ul role="list"  class="list-group" >
                         @for (filter of experimentTypeFilters; track $index) {
-                            {{filter|json}}
                             @if($index<itemLimit){
                                 <li role="listitem" class="list-group-item d-flex justify-content-between
                                     align-items-center"
@@ -240,21 +233,57 @@
                 </mat-expansion-panel>
                 <br />
 
-                @if (hasActiveFilters()) {
-                    <app-active-filter true></app-active-filter>
-                    @if (filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '') {
-                        <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}
-                            <span class="badge badge-light"
-                                  (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">
-                                X</span>
+                <div>
+                    @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
+                        <h1 >Filters: </h1>
+                    }
+                    @if(activeFilters.length > 0){
+                        @for(field of activeFilters;track $index){
+                            <button type="button" class="btn btn-success">
+                                {{displayActiveFilterName(field)}} <span class="badge badge-light" (click)="onFilterClick(field)">X</span>
+                            </button>
+                        }
+                    }
+                    @if(phylogenyFilters.length > 0){
+                        <button type="button" class="btn btn-success">
+                            {{displayActiveFilterName(lastPhylogenyVal)}} <span class="badge badge-light" (click)="removePhylogenyFilters()">X</span>
                         </button>
                     }
-                    <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>
-                }
+                    @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
+                        <button class="btn btn-primary" type="button" (click)="removeFilter()"> Remove all filters </button>
+                    }
+                    <br>
+
+                    <button  class="btn btn-primary" style="float: right;
+                    background-color: #4BBEFD; color: #ffffff;" mat-raised-button
+                             (click)="downloadFile('metadata', false)">
+                        Download metadata
+                    </button>
+                    @if (this.activeFilters.length > 0 || this.phylogenyFilters.length > 0) {
+                        <button type="button"
+                                style="float: right; background-color: #4BBEFD; color: #ffffff;"
+                                class="btn btn-primary" mat-raised-button
+                                (click)="openDownloadDialog(this.activeFilters[0])">Download
+                        </button>
+                    }
+                </div>
+
+
+                <!--                @if (hasActiveFilters()) {-->
+<!--                    <app-active-filter true></app-active-filter>-->
+<!--                    @if (filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '') {-->
+<!--                        <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}-->
+<!--                            <span class="badge badge-light"-->
+<!--                                  (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">-->
+<!--                                X</span>-->
+<!--                        </button>-->
+<!--                    }-->
+<!--                    <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>-->
+<!--                }-->
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
-                    <input #searchInput matInput [(ngModel)]='filterService.searchText'
+                    <input #searchInput matInput [(ngModel)]='searchValue'
                            (ngModelChange)="this.searchUpdate.next($event)"
                            placeholder="Ex. lutra" #input>
                 </mat-form-field>
@@ -360,5 +389,46 @@
             </div>
         </div>
     </div>
+
+    <!-- Download Dialog Box -->
+    <ng-template let-data #downloadTemplate>
+        <div mat-dialog-content class="centerContents">
+            <p class="mat-dialog-title-font">{{downloadDialogTitle}}</p>
+            <form [formGroup]="downloadForm" novalidate>
+                <p>
+                    <mat-radio-group aria-label="Select an option" formControlName="downloadOption">
+                        <div><mat-radio-button value="assemblies" color="primary">All Assemblies</mat-radio-button></div>
+                        <div><mat-radio-button value="annotation" color="primary" class="radio">Annotation</mat-radio-button></div>
+                    </mat-radio-group>
+                    @if (displayError('downloadOption', 'required') && displayErrorMsg) {
+                        <mat-error class="errorMsg">
+                            <div>
+                                Please select an option!
+                            </div>
+                        </mat-error>
+                    }
+                </p>
+                <div>
+                    To download data outside of the web interface, please see
+                    <a target="_blank" [routerLink]="['/bulk-downloads/']">Bulk Downloads</a>
+                </div>
+            </form>
+
+            <div mat-dialog-actions class="buttonContainer">
+                <button mat-button (click)="onCancelDialog()" class="flex-item cancel-button">Cancel</button>
+                <button mat-button (click)="onDownload()"
+                        [disabled]="downloadForm.get('downloadOption')?.invalid || displayProgressBar"
+                        class="flex-item download-button">
+                    Download
+                </button>
+            </div>
+            @if (displayProgressBar) {
+                <div style="padding: 15px">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            }
+
+        </div>
+    </ng-template>
 
 </div>

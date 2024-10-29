@@ -226,4 +226,52 @@ export class DashboardService {
     return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});
   }
 
+
+  downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
+               sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
+               indexName: string) {
+
+    const url = `http://127.0.0.1:8000/data-download`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    // phylogeny
+    const phylogenyStr = phylogenyFilters.length ? phylogenyFilters.join('-') : '';
+
+    // filter string
+    let filterStr = '';
+
+    if (filterValue.length > 0) {
+      filterStr = filterValue.map(value => {
+        if (projectNames.includes(value)) {
+          return value === 'DToL' ? 'project_name:dtol' : `project_name:${value}`;
+        } else if (value.includes('-')) {
+          if (value.startsWith('symbionts')) {
+            return value.replace('-', ':');
+          } else {
+            const status = value.split(' - ')[0].toLowerCase().replace(/\s/g, '_');
+            return status === 'assemblies' ? 'assemblies_status:Done' : `${status}:Done`;
+          }
+        } else {
+          return `${currentClass}:${value}`;
+        }
+      }).join(',');
+    }
+
+    const payload = {
+      pageIndex,
+      pageSize,
+      searchValue,
+      sortValue: `${sortActive}:${sortDirection}`,
+      filterValue: filterStr || '',
+      currentClass,
+      phylogenyFilters: phylogenyStr,
+      indexName,
+      downloadOption
+    };
+
+    console.log(payload);
+
+    return this.http.post(url, payload, { responseType: 'blob' });
+  }
+
 }
