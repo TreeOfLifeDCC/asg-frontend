@@ -18,10 +18,11 @@ import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expa
 import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
-import {NgClass, NgStyle} from '@angular/common';
+import {NgClass, NgStyle, UpperCasePipe} from '@angular/common';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {MatChip, MatChipSet} from '@angular/material/chips';
+import {MatIcon} from "@angular/material/icon";
 
 
 @Component({
@@ -45,7 +46,9 @@ import {MatChip, MatChipSet} from '@angular/material/chips';
     MatSort,
     MatCheckbox,
     MatChip,
-    MatChipSet
+    MatChipSet,
+    UpperCasePipe,
+    MatIcon
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -84,6 +87,15 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   filterSize: number;
+  aggregations: any;
+  currentClass = 'kingdom';
+  isPhylogenyFilterProcessing = false; // Flag to prevent double-clicking
+  phylogenyFilters: string[] = [];
+  classes = ['superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class',
+    'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
+    'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
+    'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
+
 
   filtersMap;
   filters = {
@@ -149,25 +161,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         switch (key) {
           case 'experiment-type':
             this.addToActiveFilters(params[key], 'experimentType');
-            break;
-          case 'symbionts_biosamples_status':
-            // this.addToActiveFilters(params[key], 'symbiontsBioSamplesStatus');
-            this.filterService.activeFilters.push(params[key]);
-            break;
-          case 'symbionts_raw_data_status':
-            this.addToActiveFilters(params[key], 'symbiontsRawDataStatus');
-            break;
-          case 'symbionts_assemblies_status':
-            this.addToActiveFilters(params[key], 'symbiontsAssembliesStatus');
-            break;
-          case 'metagenomes_biosamples_status':
-            this.addToActiveFilters(params[key], 'metagenomesBioSamplesStatus');
-            break;
-          case 'metagenomes_raw_data_status':
-            this.addToActiveFilters(params[key], 'metagenomesRawDataStatus');
-            break;
-          case 'metagenomes_assemblies_status':
-            this.addToActiveFilters(params[key], 'metagenomesAssembliesStatus');
             break;
           case 'phylogeny':
             this.filterService.isFilterSelected = true;
@@ -265,17 +258,79 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         );
   }
 
-  // tslint:disable-next-line:typedef
+  checkStyle(filterValue: string) {
+    if (this.filterService.activeFilters.includes(filterValue)) {
+      return 'background-color: #4BBEFD;';
+    } else {
+      return '';
+    }
+  }
+
+  onFilterClick(filterValue: string, phylogenyFilter: boolean = false) {
+    console.log(filterValue)
+    if (phylogenyFilter) {
+      if (this.isPhylogenyFilterProcessing) {
+        return;
+      }
+      // Set flag to prevent further clicks
+      this.isPhylogenyFilterProcessing = true;
+
+      this.phylogenyFilters.push(`${this.currentClass}:${filterValue}`);
+      const index = this.classes.indexOf(this.currentClass) + 1;
+      this.currentClass = this.classes[index];
+
+      // update url with the value of the phylogeny current class
+      // this.updateQueryParams('phylogenyCurrentClass');
+
+      // Replace current parameters with new parameters.
+      // this.replaceUrlQueryParams();
+      // this.filterChanged.emit();
+
+      this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+
+      // Reset isPhylogenyFilterProcessing flag
+      setTimeout(() => {
+        this.isPhylogenyFilterProcessing = false;
+      }, 500);
+    } else{
+      // clearTimeout(this.timer);
+      // const index = this.activeFilters.indexOf(filterValue);
+      // index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
+      // this.filterChanged.emit();
+    }
+  }
+
+  onHistoryClick() {
+    this.phylogenyFilters.splice(this.phylogenyFilters.length - 1, 1);
+    const previousClassIndex = this.classes.indexOf(this.currentClass) - 1;
+    this.currentClass = this.classes[previousClassIndex];
+    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+  }
+
+  onRefreshClick() {
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    // // remove phylogenyFilters param from url
+    // const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+    // if (index > -1) {
+    //   this.queryParams.splice(index, 1);
+    //   // Replace current parameters with new parameters.
+    //   this.replaceUrlQueryParams();
+    // }
+    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+  }
+
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        'data_portal', offset, limit, sortColumn, sortOrder, this.filterService.searchText,
+        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.filterService.searchText,
         this.filterService.activeFilters
     ).subscribe(
             data => {
               const unpackedData = [];
               console.log(data)
+              this.aggregations = data.aggregations;
 
               if (data === null || !data.results?.length) {
                 return [];

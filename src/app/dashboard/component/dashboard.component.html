@@ -24,7 +24,51 @@
                     </div>
                 </div>
 
-                <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>
+
+                <!-- phylogeny new version -->
+                <div class="row">
+                    <div class="col-md-12 col-sm-6">
+                        <div class="card bg-lite mb-3 filter-top">
+                            <h3 class="card-header filter-heading">
+                                <span>Phylogeny/{{ currentClass }}</span>
+                                @if (phylogenyFilters.length !== 0) {
+                                    <mat-icon (click)="onRefreshClick()"
+                                              style="cursor: pointer">
+                                        refresh
+                                    </mat-icon>
+                                }
+                                @if (phylogenyFilters.length !== 0) {
+                                    <mat-icon (click)="onHistoryClick()"
+                                              style="cursor: pointer">
+                                        arrow_circle_left
+                                    </mat-icon>
+                                }
+
+                            </h3>
+
+                            <ul role="list" class="list-group">
+                                @for (phylogeny_name of aggregations?.taxonomies[currentClass]?.buckets; track $index) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        style="cursor: pointer"
+                                        [style]="checkStyle(phylogeny_name.key)"
+                                        (click)="onFilterClick(phylogeny_name.key, true)">
+                                        <span> {{ phylogeny_name.key }}</span>
+
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ phylogeny_name.doc_count }}
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+<!--                <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>-->
+
                 <app-filter title="Experiment Type" isShowCount=true filterSize=5></app-filter>
             </div>
             <div class="col-md-10">

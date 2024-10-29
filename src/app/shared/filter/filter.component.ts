@@ -31,35 +31,26 @@ export class FilterComponent implements OnInit, AfterViewInit {
     this.itemLimit = this.filterSize;
   }
 
-  checkFilterIsActive = (filter: string) => {
-    if (this.filterService.activeFilters.indexOf(filter) !== -1) {
+  checkFilterIsActive = (filterVal: string) => {
+    console.log(filterVal)
+    console.log(this.filterService.activeFilters)
+    if (this.filterService.activeFilters.indexOf(filterVal) !== -1) {
       return 'active-filter';
     }
-
   }
 
-  onFilterClick = (event, label: string, filter: string) => {
-    if (label === 'symbionts_biosamples_status'){
-      filter = 'symbionts_biosamples_status-' + filter;
-    } else if (label === 'symbionts_raw_data_status'){
-      filter = 'symbiontsRawDataStatus-' + filter;
-    } else if (label === 'symbionts_assemblies_status'){
-      filter = 'symbiontsAssembliesStatus-' + filter;
-    } else if (label === 'metagenomes_biosamples_status'){
-      filter = 'metagenomesBioSamplesStatus-' + filter;
-    } else if (label === 'metagenomes_raw_data_status'){
-      filter = 'metagenomesRawDataStatus-' + filter;
-    } else if (label === 'metagenomes_assemblies_status'){
-      filter = 'metagenomesAssembliesStatus-' + filter;
+  onFilterClick = (event, label: string, filterVal: string) => {
+    if (label.includes('symbionts_') || label.includes('metagenomes_')){
+      filterVal = `${label}-` + filterVal;
     } else if (label === 'experiment-type') {
-      filter = 'experimentType-' + filter;
+      filterVal = 'experimentType-' + filterVal;
     }
-    const filterIndex = this.filterService.activeFilters.indexOf(filter);
+    const filterIndex = this.filterService.activeFilters.indexOf(filterVal);
     if (filterIndex !== -1) {
-      this.removeFilter(label, filter);
+      this.removeFilter(label, filterVal);
     } else {
-      this.filterService.selectedFilterArray(label, filter);
-      this.filterService.activeFilters.push(filter);
+      this.filterService.selectedFilterArray(label, filterVal);
+      this.filterService.activeFilters.push(filterVal);
       this.filterService.updateActiveRouteParams();
 
       }

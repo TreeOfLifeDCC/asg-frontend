@@ -62,23 +62,25 @@ export class ActiveFilterComponent {
 
   // tslint:disable-next-line:typedef
   displayActiveFilterName(filterName: string){
-    if (filterName.includes('symbiontsBioSamplesStatus-')){
-      return filterName.replace(/^symbiontsBioSamplesStatus-/, 'Symbionts-');
+    console.log(filterName)
+
+    if (filterName.includes('symbionts_biosamples_status-')){
+      return filterName.replace(/^symbionts_biosamples_status-/, 'Symbionts-');
     }
-    if (filterName.includes('symbiontsRawDataStatus-')){
-      return filterName.replace(/^symbiontsRawDataStatus-/, 'Symbionts-');
+    if (filterName.includes('symbionts_raw_data_status-')){
+      return filterName.replace(/^symbionts_raw_data_status-/, 'Symbionts-');
     }
-    if (filterName.includes('symbiontsAssembliesStatus-')){
-      return filterName.replace(/^symbiontsAssembliesStatus-/, 'Symbionts-');
+    if (filterName.includes('symbionts_assemblies_status-')){
+      return filterName.replace(/^symbionts_assemblies_status-/, 'Symbionts-');
     }
-    if (filterName.includes('metagenomesBioSamplesStatus-')){
-      return filterName.replace(/^metagenomesBioSamplesStatus-/, 'Metagenomes-');
+    if (filterName.includes('metagenomes_biosamples_status-')){
+      return filterName.replace(/^metagenomes_biosamples_status-/, 'Metagenomes-');
     }
-    if (filterName.includes('metagenomesRawDataStatus-')){
-      return filterName.replace(/^metagenomesRawDataStatus-/, 'Metagenomes-');
+    if (filterName.includes('metagenomes_raw_data_status-')){
+      return filterName.replace(/^metagenomes_raw_data_status-/, 'Metagenomes-');
     }
-    if (filterName.includes('metagenomesAssembliesStatus-')){
-      return filterName.replace(/^metagenomesAssembliesStatus-/, 'Metagenomes-');
+    if (filterName.includes('metagenomes_assemblies_status-')){
+      return filterName.replace(/^metagenomes_assemblies_status-/, 'Metagenomes-');
     }
     if (filterName.includes('experimentType-')){
       return filterName.replace(/^experimentType-/, '');

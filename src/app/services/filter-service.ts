@@ -313,7 +313,6 @@ export class FilterService {
         }
     }
 
-    // tslint:disable-next-line:typedef
     getFilters(data) {
         this.parseFilterAggregation(data);
         if (this.phylSelectedRank !== '') {

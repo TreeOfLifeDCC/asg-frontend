@@ -20,7 +20,7 @@ export class DashboardService {
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(indexName, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
+  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
 
     let url = `http://localhost:8000/${indexName}?limit=${limit}&offset=${offset}`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
@@ -42,7 +42,7 @@ export class DashboardService {
         if (projectNames.indexOf(filterValue[i]) !== -1) {
           filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
         } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
-          if (filterValue[i].startsWith('symbionts')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
             filterItem = filterValue[i].replace('-', ':');
           } else {
             filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
@@ -59,7 +59,7 @@ export class DashboardService {
 
         }
         else {
-          // filterItem = `${currentClass}:${filterValue[i]}`;
+          filterItem = `${currentClass}:${filterValue[i]}`;
         }
 
         filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
@@ -67,6 +67,16 @@ export class DashboardService {
       }
       url += filterStr;
     }
+
+    if (phylogenyFilters.length !== 0) {
+      let filterStr = '&phylogeny_filters=';
+      for (let i = 0; i < phylogenyFilters.length; i++) {
+        filterStr === '&phylogeny_filters=' ? filterStr += `${phylogenyFilters[i]}` : filterStr += `-${phylogenyFilters[i]}`;
+      }
+
+      url += filterStr;
+    }
+    url += `&current_class=${currentClass}`;
     console.log(url);
 
 
@@ -136,6 +146,22 @@ export class DashboardService {
     }
     let requestURL = `${this.API_BASE_URL}/root_organisms/search${requestParams}`;
     return this.http.get(`${requestURL}`);
+  }
+
+  public getFilterResultsOLD(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
+    let requestParams = `?from=${from}&size=${size}`;
+    if (sortColumn !== undefined) {
+      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
+    }
+    if (taxonomyFilter !== undefined) {
+      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
+      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
+    }
+    if(searchText) {
+      requestParams = requestParams + `&searchText=${searchText}`;
+    }
+    const requestURL = `${this.API_BASE_URL}/root_organisms/root/filter/results${requestParams}`;
+    return this.http.post(`${requestURL}`, filter);
   }
 
   public getFilterResults(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
