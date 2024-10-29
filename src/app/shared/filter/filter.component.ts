@@ -32,8 +32,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
   checkFilterIsActive = (filterVal: string) => {
-    console.log(filterVal)
-    console.log(this.filterService.activeFilters)
     if (this.filterService.activeFilters.indexOf(filterVal) !== -1) {
       return 'active-filter';
     }
@@ -45,6 +43,9 @@ export class FilterComponent implements OnInit, AfterViewInit {
     } else if (label === 'experiment-type') {
       filterVal = 'experimentType-' + filterVal;
     }
+
+    console.log("onFilterClick: ", this.filterService.activeFilters)
+
     const filterIndex = this.filterService.activeFilters.indexOf(filterVal);
     if (filterIndex !== -1) {
       this.removeFilter(label, filterVal);

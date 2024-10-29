@@ -132,7 +132,10 @@ export class FilterService {
         }
 
     }
+
+
     selectedFilterArray = (key: string, filterValue: string) => {
+        console.log(key, filterValue)
         let jsonObj: {};
 
         switch (key.toLowerCase()) {
@@ -169,27 +172,21 @@ export class FilterService {
                 this.addSimpleFilter(filterValue, 'experiment-type', jsonObj);
                 break;
             case 'symbionts_biosamples_status':
-                filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'symbionts_raw_data_status':
-                filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'symbionts_assemblies_status':
-                filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_biosamples_status':
-                filterValue = filterValue.replace(/^metagenomesBioSamplesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_raw_data_status':
-                filterValue = filterValue.replace(/^metagenomesRawDataStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_assemblies_status':
-                filterValue = filterValue.replace(/^metagenomesAssembliesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             default:

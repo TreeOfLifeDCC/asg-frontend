@@ -8,19 +8,133 @@
             <div class="col-md-2">
                 <div class="row">
                     <div class="col-md-12 col-sm-6">
-                        <app-filter title="Data Status" isShowCount=true></app-filter>
+
+                        <div class="card bg-lite mb-3 filter-top">
+                            <h3 class="card-header filter-heading">
+                                Data Status
+                            </h3>
+                            <ul role="list"  class="list-group">
+                                @if (getStatusCount(aggregations?.biosamples.buckets)) {
+                                    <li role="listitem" class="biosample
+                                           list-group-item d-flex justify-content-between
+                                           align-items-center biosamples-inactive"
+                                        [style]="checkStyle('BioSamples - Submitted')"
+                                        (click)="onFilterClick('BioSamples - Submitted')"
+                                        style="cursor: pointer">
+                                        <span>BioSamples - Submitted</span>
+                                        <span class="badge badge-pill badge-space badge-info">
+                                         {{getStatusCount(aggregations?.biosamples.buckets)}}
+                                        </span>
+                                    </li>
+                                }
+                                @if (getStatusCount(aggregations?.raw_data.buckets)) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle('Raw Data - Submitted')"
+                                        (click)="onFilterClick('Raw Data - Submitted')"
+                                        style="cursor: pointer">
+
+                                        <span>Raw Data - Submitted</span>
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ getStatusCount(aggregations?.raw_data.buckets) }}
+                                        </span>
+                                    </li>
+                                }
+                                @if (getStatusCount(aggregations?.assemblies_status.buckets)) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle('Assemblies - Submitted')"
+                                        (click)="onFilterClick('Assemblies - Submitted')"
+                                        style="cursor: pointer">
+                                        <span> Assemblies - Submitted</span>
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ getStatusCount(aggregations?.assemblies_status.buckets) }}
+                                       </span>
+                                    </li>
+                                }
+                                @if (getStatusCount(aggregations?.annotation_complete.buckets)) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle('Annotation Complete - Done')"
+                                        (click)="onFilterClick('Annotation Complete - Done')"
+                                        style="cursor: pointer">
+
+                                    <span> Annotation Complete - Done  </span>
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ getStatusCount(aggregations?.annotation_complete.buckets) }}
+                                        </span>
+                                    </li>
+                                }
+
+                                @if (aggregations?.genome.doc_count) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle('Genome Notes - Submitted')"
+                                        (click)="onFilterClick('Genome Notes - Submitted')"
+                                        style="cursor: pointer">
+
+                                    <span> Genome Notes - Submitted</span>
+                                    <span class="badge badge-pill badge-info badge-space">
+                                        {{ aggregations?.genome.doc_count }}
+                                    </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 col-sm-6">
-                        <app-filter title="Symbionts" isShowCount=true filterSize="5"></app-filter>
+                        <div class="card bg-lite mb-3 filter-top">
+                            <h3 class="card-header filter-heading">
+                                Symbionts
+                            </h3>
+                            <ul class="list-group">
+                                @for (filter of symbiontsFilters; track $index) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle(filter.label + '-' + filter.key)"
+                                        (click)="onFilterClick(filter.label + '-' + filter.key)"
+                                        style="cursor: pointer">
+                                        <span >{{ filter.key }}</span>
+                                        <span
+                                                class="badge badge-pill badge-info badge-space">{{ filter.doc_count }}
+                                    </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 col-sm-6">
-                        <app-filter title="Metagenomes" isShowCount=true filterSize="5"></app-filter>
+                        <div class="card bg-lite mb-3 filter-top">
+                            <h3 class="card-header filter-heading">
+                                Metagenomes
+                            </h3>
+                            <ul class="list-group">
+                                @for (filter of metagenomesFilters; track $index) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle(filter.label + '-' + filter.key)"
+                                        (click)="onFilterClick(filter.label + '-' + filter.key)"
+                                        style="cursor: pointer">
+                                        <span >{{ filter.key }}</span>
+                                        <span
+                                                class="badge badge-pill badge-info badge-space">{{ filter.doc_count }}
+                                    </span>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -69,7 +183,40 @@
 
 <!--                <app-phylogeny-filter isShowCount=true></app-phylogeny-filter>-->
 
-                <app-filter title="Experiment Type" isShowCount=true filterSize=5></app-filter>
+
+
+
+                <div class="card bg-lite mb-3 filter-top">
+                    <h3 class="card-header filter-heading">
+                        Experiment Type
+                        @if
+                        (experimentTypeFilters.length > itemLimit && isCollapsed) {
+                            <i class="material-icons float-right"
+                               (click)="toggleCollapse()">add</i>
+                        }
+                        @if(experimentTypeFilters.length < itemLimit && !isCollapsed) {
+                            <i class="material-icons float-right" (click)="toggleCollapse()">remove</i>
+                        }
+                    </h3>
+                    <ul role="list"  class="list-group" >
+                        @for (filter of experimentTypeFilters; track $index) {
+                            {{filter|json}}
+                            @if($index<itemLimit){
+                                <li role="listitem" class="list-group-item d-flex justify-content-between
+                                    align-items-center"
+                                    [style]="checkStyle(filter.label + '_' + filter.key)"
+                                    (click)="onFilterClick(filter.label + '_' + filter.key)"
+                                    style="cursor: pointer">
+                                    <span >{{ filter.key }}</span>
+                                    <span class="badge badge-pill badge-info badge-space">
+                                        {{filter.doc_count }}
+                                    </span>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+
             </div>
             <div class="col-md-10">
                 <h1 class="page-header">Organisms</h1>

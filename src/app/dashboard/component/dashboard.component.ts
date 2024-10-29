@@ -10,7 +10,7 @@ import 'bootstrap';
 import {FilterService} from '../../services/filter-service';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {Subject} from 'rxjs';
+import {filter, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {FilterComponent} from '../../shared/filter/filter.component';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
@@ -18,7 +18,7 @@ import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expa
 import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
 import {FormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
-import {NgClass, NgStyle, UpperCasePipe} from '@angular/common';
+import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {MatChip, MatChipSet} from '@angular/material/chips';
@@ -48,7 +48,8 @@ import {MatIcon} from "@angular/material/icon";
     MatChip,
     MatChipSet,
     UpperCasePipe,
-    MatIcon
+    MatIcon,
+    JsonPipe
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -95,7 +96,11 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
     'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
     'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
-
+  symbiontsFilters: any[] = [];
+  metagenomesFilters: any[] = [];
+  experimentTypeFilters: any[] = [];
+  itemLimit = 5;
+  isCollapsed = true;
 
   filtersMap;
   filters = {
@@ -150,8 +155,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.titleService.setTitle('Data portal');
     const queryParamMap = this.activatedRoute.snapshot['queryParamMap'];
     const params = queryParamMap['params'];
-    // tslint:disable-next-line:triple-equals
-    if (Object.keys(params).length != 0) {
+
+    if (Object.keys(params).length !== 0) {
       this.resetFilter();
       // tslint:disable-next-line:forin
       for (const key in params) {
@@ -258,6 +263,16 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         );
   }
 
+  toggleCollapse = () => {
+    if (this.isCollapsed) {
+      this.itemLimit = 10000;
+      this.isCollapsed = false;
+    } else {
+      this.itemLimit = 5;
+      this.isCollapsed = true;
+    }
+  }
+
   checkStyle(filterValue: string) {
     if (this.filterService.activeFilters.includes(filterValue)) {
       return 'background-color: #4BBEFD;';
@@ -293,10 +308,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         this.isPhylogenyFilterProcessing = false;
       }, 500);
     } else{
-      // clearTimeout(this.timer);
-      // const index = this.activeFilters.indexOf(filterValue);
-      // index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
-      // this.filterChanged.emit();
+      const index = this.filterService.activeFilters.indexOf(filterValue);
+      index !== -1 ? this.filterService.activeFilters.splice(index, 1) :
+          this.filterService.activeFilters.push(filterValue);
+      this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
     }
   }
 
@@ -320,7 +335,20 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
   }
 
+  getStatusCount(data: any) {
+    if (data) {
+      for (const item of data) {
+        if (item.key.includes('Done')) {
+          return item.doc_count;
+        }
+      }
+    }
+  }
+
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
+    console.log(this.currentClass)
+    console.log(this.phylogenyFilters)
+    console.log(this.filterService.activeFilters)
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
@@ -328,9 +356,53 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         this.filterService.activeFilters
     ).subscribe(
             data => {
-              const unpackedData = [];
               console.log(data)
+              const unpackedData = [];
               this.aggregations = data.aggregations;
+
+              // symbionts
+              this.symbiontsFilters = [];
+              if (this.aggregations.symbionts_biosamples_status.buckets.length > 0) {
+                this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                    this.aggregations.symbionts_biosamples_status.buckets,
+                    'symbionts_biosamples_status');
+              }
+              if (this.aggregations.symbionts_raw_data_status.buckets.length > 0) {
+                this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                    this.aggregations.symbionts_raw_data_status.buckets,
+                    'symbionts_raw_data_status');
+              }
+              if (this.aggregations.symbionts_assemblies_status.buckets.length > 0) {
+                this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                    this.aggregations.symbionts_assemblies_status.buckets,
+                    'symbionts_assemblies_status');
+              }
+
+              // metagenomes
+              this.metagenomesFilters = [];
+              if (this.aggregations.metagenomes_biosamples_status.buckets.length > 0) {
+                this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                    this.aggregations.metagenomes_biosamples_status.buckets,
+                    'symbionts_biosamples_status');
+              }
+              if (this.aggregations.metagenomes_raw_data_status.buckets.length > 0) {
+                this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                    this.aggregations.metagenomes_raw_data_status.buckets,
+                    'symbionts_raw_data_status');
+              }
+              if (this.aggregations.metagenomes_assemblies_status.buckets.length > 0) {
+                this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                    this.aggregations.metagenomes_assemblies_status.buckets,
+                    'symbionts_assemblies_status');
+              }
+
+              // experiment type
+              this.experimentTypeFilters = [];
+              if (this.aggregations?.experiment.library_construction_protocol.buckets.length > 0) {
+                this.experimentTypeFilters = this.merge(this.experimentTypeFilters,
+                    this.aggregations?.experiment.library_construction_protocol.buckets,
+                    'experimentType');
+              }
 
               if (data === null || !data.results?.length) {
                 return [];
@@ -353,6 +425,15 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               this.spinner.hide();
             }
         );
+  }
+
+  merge = (first: any[], second: any[], filterLabel: string) => {
+    for (const item of second) {
+      item.label = filterLabel;
+      first.push(item);
+    }
+
+    return first;
   }
 
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
@@ -517,5 +598,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
     return false;
   }
+
+  protected readonly filter = filter;
 }
 
