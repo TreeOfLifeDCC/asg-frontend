@@ -283,9 +283,9 @@
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
-                    <input #searchInput matInput [(ngModel)]='searchValue'
-                           (ngModelChange)="this.searchUpdate.next($event)"
-                           placeholder="Ex. lutra" #input>
+                    <input matInput (keyup)="applyFilter($event)"
+                           placeholder="ex. Salmo trutta">
+
                 </mat-form-field>
                 <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
                     <ng-container matColumnDef="organism">

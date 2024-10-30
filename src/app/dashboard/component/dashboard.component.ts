@@ -16,7 +16,7 @@ import {FilterComponent} from '../../shared/filter/filter.component';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
 import {MatCheckbox} from '@angular/material/checkbox';
@@ -164,6 +164,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   protected readonly filter = filter;
 
   ngOnInit(): void {
+    this.downloadForm = new FormGroup({
+      downloadOption: new FormControl('', [Validators.required]),
+    });
+
     this.getDisplayedColumns();
     this.filterSize = 4;
     this.itemLimitBiosampleFilter = this.filterSize;
@@ -192,13 +196,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
 
     this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
-  }
-
-  addToActiveFilters(filterArr: string, filterPrefix: string) {
-    const list = filterArr.split(',');
-    list.forEach((value: any) => {
-      this.activeFilters.push(filterPrefix + '-' + value);
-    });
   }
 
   ngAfterViewInit() {
@@ -718,6 +715,11 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.downloadDialogTitle = `Download data`;
     this.dialogRef = this.dialog.open(this.downloadTemplate,
         { data: value, height: '260px', width: '400px' });
+  }
+
+  applyFilter(event: Event) {
+    this.searchValue = (event.target as HTMLInputElement).value;
+    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
   }
 
   public displayError = (controlName: string, errorName: string) => {

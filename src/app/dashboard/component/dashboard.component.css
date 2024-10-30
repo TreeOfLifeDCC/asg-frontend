@@ -263,3 +263,72 @@ mat-chip-set {
 .searchField{
     margin-top: 10px;
 }
+
+.mat-dialog-title-font {
+    font-size: larger;
+    font-weight: bold;
+}
+
+/* mat-error css */
+.errorMsg {
+    color: #d32f2f;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.centerContents {
+    text-align: left;
+    padding: 10px;
+}
+
+
+/* mat-dialog buttons css*/
+.flex-item {
+    margin: 0 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Cancel Button Styles */
+.cancel-button {
+    background-color: #f5f5f5;  /* Neutral background */
+    color: #333;  /* Dark text */
+    border: 1px solid #ddd;  /* Light border */
+}
+
+.cancel-button:hover {
+    background-color: #e0e0e0;  /* Slightly darker on hover */
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+}
+
+.cancel-button:active {
+    background-color: #d6d6d6;  /* Darker on click */
+}
+
+/* Download Button Styles */
+.download-button {
+    background-color: #4caf50;  /* Green primary button */
+    color: white;  /* White text */
+    border: none;
+}
+
+.download-button:hover {
+    background-color: #45a049;  /* Darker green on hover */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);  /* Soft shadow */
+}
+
+.download-button:active {
+    background-color: #388e3c;  /* Darkest green on click */
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.download-button:disabled {
+    background-color: #cccccc;
+    color: #777777;
+    box-shadow: none;
+    cursor: not-allowed;  /* Change cursor to not-allowed */
+}

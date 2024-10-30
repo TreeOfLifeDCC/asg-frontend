@@ -222,7 +222,7 @@ export class DashboardService {
     if (searchText) {
       requestParams = requestParams + `&searchText=${searchText}`;
     }
-    let requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
+    const requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
     return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});
   }
 
@@ -237,24 +237,36 @@ export class DashboardService {
     // phylogeny
     const phylogenyStr = phylogenyFilters.length ? phylogenyFilters.join('-') : '';
 
-    // filter string
+    // Filter string
     let filterStr = '';
 
-    if (filterValue.length > 0) {
-      filterStr = filterValue.map(value => {
-        if (projectNames.includes(value)) {
-          return value === 'DToL' ? 'project_name:dtol' : `project_name:${value}`;
-        } else if (value.includes('-')) {
-          if (value.startsWith('symbionts')) {
-            return value.replace('-', ':');
+    if (filterValue.length !== 0) {
+      const filterItems = [];
+
+      for (const item of filterValue) {
+        let filterItem = '';
+
+        if (projectNames.includes(item)) {
+          filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
+        } else if (item.includes('-') && !item.startsWith('experimentType')) {
+          if (item.startsWith('symbionts') || item.startsWith('metagenomes')) {
+            filterItem = item.replace('-', ':');
           } else {
-            const status = value.split(' - ')[0].toLowerCase().replace(/\s/g, '_');
-            return status === 'assemblies' ? 'assemblies_status:Done' : `${status}:Done`;
+            filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');
+            filterItem = (filterItem === 'assemblies') ? 'assemblies_status:Done' :
+                (filterItem === 'genome_notes') ? 'genome_notes:Submitted' :
+                    `${filterItem}:Done`;
           }
+        } else if (item.includes('_') && item.startsWith('experimentType')) {
+          filterItem = item.replace('_', ':');
         } else {
-          return `${currentClass}:${value}`;
+          filterItem = `${currentClass}:${item}`;
         }
-      }).join(',');
+
+        filterItems.push(filterItem);
+      }
+
+      filterStr = filterItems.join(',');
     }
 
     const payload = {
