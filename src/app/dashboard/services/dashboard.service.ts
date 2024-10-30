@@ -110,8 +110,9 @@ export class DashboardService {
     return this.http.get(`${this.API_BASE_URL}/root_organisms/${organism}`);
   }
 
-  public getRootOrganismById(organism: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root?id=${organism}`);
+  public getRootOrganismById(organism: string, indexName: string): Observable<any> {
+    const url = `http://localhost:8000/${indexName}/${organism}`;
+    return this.http.get(url);
   }
 
   public getRootOrganismByAccession(accession: string): Observable<any> {
@@ -133,11 +134,6 @@ export class DashboardService {
   public getSpecimenFilters(accession): Observable<any> {
     return this.http.get(`${this.API_BASE_URL}/organisms/filters?accession=${accession}`);
   }
-
-  // public getSearchResults(search: any, from?, size?): Observable<any> {
-  //   let requestURL = `${this.API_BASE_URL}/root_organisms/search?filter=${search}&from=${from}&size=${size}`;
-  //   return this.http.get(`${requestURL}`);
-  // }
 
   public getRootSearchResults(search: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
     let requestParams = `?filter=${search}&from=${from}&size=${size}`;

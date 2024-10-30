@@ -228,9 +228,11 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getBiosampleByOrganism() {
-    this.dashboardService.getRootOrganismById(this.bioSampleId)
+    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal')
         .subscribe(
             data => {
+              console.log(data)
+              data = data['results'][0]['_source'];
               const unpackedData = [];
               const unpackedSymbiontsData = [];
               const unpackedMetagenomesData = [];

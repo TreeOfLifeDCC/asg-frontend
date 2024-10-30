@@ -254,6 +254,7 @@
                     }
                     <br>
 
+                    <!-- Download buttons -->
                     <button  class="btn btn-primary" style="float: right;
                     background-color: #4BBEFD; color: #ffffff;" mat-raised-button
                              (click)="downloadFile('metadata', false)">
@@ -268,18 +269,6 @@
                     }
                 </div>
 
-
-                <!--                @if (hasActiveFilters()) {-->
-<!--                    <app-active-filter true></app-active-filter>-->
-<!--                    @if (filterService.selectedFilterValue!= undefined && filterService.selectedFilterValue != '') {-->
-<!--                        <button type="button" class="btn btn-success">{{filterService.selectedFilterValue.taxonomy}}-->
-<!--                            <span class="badge badge-light"-->
-<!--                                  (click)="filterService.removeTaxaFilter(filterService.selectedFilterValue.taxonomy)">-->
-<!--                                X</span>-->
-<!--                        </button>-->
-<!--                    }-->
-<!--                    <button class="btn btn-primary" type = "button" (click)="removeFilter()">Remove all filters</button>-->
-<!--                }-->
 
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
