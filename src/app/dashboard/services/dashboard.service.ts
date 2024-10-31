@@ -78,24 +78,7 @@ export class DashboardService {
     }
     url += `&current_class=${currentClass}`;
     console.log(url);
-
-
-
-
-
-
     return this.http.get<any>(url);
-  }
-
-  public getDistinctOrganisms(size, sortColumn?, sortOrder?, afterKey?): Observable<any> {
-    let requestParams = `?size=${size}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if (afterKey !== undefined) {
-      requestParams = requestParams + `&afterKey=${afterKey}`;
-    }
-    return this.http.get(`${this.API_BASE_URL}/root_organisms${requestParams}`);
   }
 
   public getBiosampleByAccession(accession: string): Observable<any> {
@@ -106,29 +89,9 @@ export class DashboardService {
     return this.http.get(`${this.API_BASE_URL}/organisms/specimen/${accession}`);
   }
 
-  public getRootOrganismByOrganism(organism: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/${organism}`);
-  }
-
   public getRootOrganismById(organism: string, indexName: string): Observable<any> {
     const url = `http://localhost:8000/${indexName}/${organism}`;
     return this.http.get(url);
-  }
-
-  public getRootOrganismByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/accession/${accession}`);
-  }
-
-  public getOrganismFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root/filters`);
-  }
-
-  public getRootOrganismFilters(organism): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/filters?organism=${organism}`);
-  }
-
-  public getDetailTableOrganismFilters(organism): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/secondary/filters?organism=${organism}`);
   }
 
   public getSpecimenFilters(accession): Observable<any> {

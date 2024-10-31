@@ -7,7 +7,6 @@ import { DashboardService } from '../services/dashboard.service';
 
 import 'jquery';
 import 'bootstrap';
-import {FilterService} from '../../services/filter-service';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {filter, Subject} from 'rxjs';
@@ -65,16 +64,13 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               private activatedRoute: ActivatedRoute,
               private router: Router,
               private dialog: MatDialog,
-              private spinner: NgxSpinnerService,
-              public filterService: FilterService) {
+              private spinner: NgxSpinnerService) {
     this.searchUpdate.pipe(
         debounceTime(500),
         distinctUntilChanged()).subscribe(
         value => {
           this.spinner.show();
-          this.resetFilter();
           this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
-          this.filterService.updateActiveRouteParams();
         }
     );
   }
@@ -221,57 +217,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     item.selected = checked;
     this.dataColumnsDefinition[index] = item;
     this.getDisplayedColumns();
-    this.getActiveFiltersAndResult();
-  }
-
-  getActiveFiltersAndResult(taxa?) {
-    let taxonomy;
-    if (taxa) {
-      taxonomy = [taxa];
-    }
-    else {
-      taxonomy = [this.filterService.currentTaxonomyTree];
-    }
-    this.dashboardService.getFilterResults(
-        this.activeFilters.toString(), this.sort.active,
-        this.sort.direction, 0, this.pagesize, taxonomy
-    ).subscribe(
-            data => {
-              const unpackedData = [];
-              for (const item of data.hits.hits) {
-                unpackedData.push(this.unpackData(item));
-              }
-              this.bioSampleTotalCount = data.hits.total.value;
-              this.dataSource = new MatTableDataSource<any>(unpackedData);
-              this.dataSource.sort = this.sort;
-              this.dataSource.filterPredicate = this.filterPredicate;
-              this.unpackedData = unpackedData;
-              this.filtersMap = data;
-              if (this.phylSelectedRank !== '') {
-                const taxa = {
-                  rank: this.phylSelectedRank.split(' - ')[0],
-                  taxonomy: data.aggregations.childRank.scientificName.buckets[0].key,
-                  commonName: data.aggregations.childRank.scientificName.buckets[0].commonName.buckets[0].key,
-                  taxId: data.aggregations.childRank.scientificName.buckets[0].taxId.buckets[0].key
-                };
-                this.filterService.selectedFilterValue = taxa;
-              }
-              for (let i = 0; i < this.filterService.urlAppendFilterArray.length; i++) {
-                setTimeout(() => {
-                  const element = 'li:contains(\'' + this.filterService.urlAppendFilterArray[i].value + '\')';
-                  $(element).addClass('active');
-                }, 1);
-
-                if (i === (this.filterService.urlAppendFilterArray.length - 1)) {
-                  this.spinner.hide();
-                }
-              }
-            },
-            err => {
-              console.log(err);
-              this.spinner.hide();
-            }
-        );
+    // this.getActiveFiltersAndResult();
+    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
   }
 
   toggleCollapse = () => {
@@ -393,17 +340,17 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               if (this.aggregations.metagenomes_biosamples_status.buckets.length > 0) {
                 this.metagenomesFilters = this.merge(this.metagenomesFilters,
                     this.aggregations.metagenomes_biosamples_status.buckets,
-                    'symbionts_biosamples_status');
+                    'metagenomes_biosamples_status');
               }
               if (this.aggregations.metagenomes_raw_data_status.buckets.length > 0) {
                 this.metagenomesFilters = this.merge(this.metagenomesFilters,
                     this.aggregations.metagenomes_raw_data_status.buckets,
-                    'symbionts_raw_data_status');
+                    'metagenomes_raw_data_status');
               }
               if (this.aggregations.metagenomes_assemblies_status.buckets.length > 0) {
                 this.metagenomesFilters = this.merge(this.metagenomesFilters,
                     this.aggregations.metagenomes_assemblies_status.buckets,
-                    'symbionts_assemblies_status');
+                    'metagenomes_assemblies_status');
               }
 
               // experiment type
@@ -437,7 +384,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
               if (data === null || !data.results?.length) {
                 return [];
               }
-              this.filterService.getFilters(data);
               for (const item of data.results) {
                 unpackedData.push(this.unpackData(item));
               }
@@ -570,18 +516,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     return dataToReturn;
   }
 
-  // removeFilter() {
-  //   this.resetFilter();
-  //   const currentUrl = this.router.url;
-  //   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-  //     this.router.navigate([currentUrl.split('?')[0]] );
-  //     this.spinner.show();
-  //     setTimeout(() => {
-  //       this.spinner.hide();
-  //     }, 800);
-  //   });
-  // }
-
   removeFilter() {
     this.activeFilters = [];
     this.phylogenyFilters = [];
@@ -590,20 +524,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.router.navigate([]);
   }
 
-  resetFilter = () => {
-    for (const key of Object.keys(this.activeFilters)) {
-      this.activeFilters[key] = [];
-    }
-    this.activeFilters = [];
-    this.filterService.urlAppendFilterArray = [];
-    this.filterService.isFilterSelected = false;
-    this.filterService.phylSelectedRank = '';
-    this.filterService.selectedFilterValue = '';
-  }
-
-  // tslint:disable-next-line:typedef
   ngOnDestroy() {
-    this.resetFilter();
+    this.activeFilters = [];
+    this.phylogenyFilters = [];
+    this.symbiontsFilters = [];
+    this.metagenomesFilters = [];
+    this.experimentTypeFilters = [];
   }
 
   // tslint:disable-next-line:typedef

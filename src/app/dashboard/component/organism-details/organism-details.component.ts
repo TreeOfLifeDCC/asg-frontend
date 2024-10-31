@@ -15,6 +15,8 @@ import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
+import {NgxSpinnerService} from "ngx-spinner";
+import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 
 @Component({
@@ -166,10 +168,18 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   dataSourceGoatInfo;
   displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
   private dataTabInitialized = false;
+  aggregations;
+  nbnatlasMapUrl: string;
+  url: SafeResourceUrl;
+  genomeNotes = [];
+  dataSourceRelatedAnnotation;
+  dataSourceRelatedAnnotationCount;
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService,
-              private router: Router) {
+              private router: Router,
+              private spinner: NgxSpinnerService,
+              private sanitizer: DomSanitizer) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
 
@@ -232,6 +242,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         .subscribe(
             data => {
               console.log(data)
+              this.aggregations = data.aggregations;
               data = data['results'][0]['_source'];
               const unpackedData = [];
               const unpackedSymbiontsData = [];
@@ -443,15 +454,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getFilters(organism) {
-    this.dashboardService.getDetailTableOrganismFilters(organism).subscribe(
-        data => {
-          this.filtersMap = data;
-          this.sexFilters = this.filtersMap.sex.filter(i => i !== '');
-          this.trackingSystemFilters = this.filtersMap.trackingSystem.filter(i => i !== '');
-          this.organismPartFilters = this.filtersMap.organismPart.filter(i => i !== '');
-        },
-        err => console.log(err)
-    );
+    this.sexFilters = this.aggregations.filters.sex_filter.buckets;
+    this.trackingSystemFilters = this.aggregations.filters.tracking_status_filter.buckets;
+    this.organismPartFilters = this.aggregations.filters.
+        organism_part_filter.buckets;
   }
 
   getStatusClass(status: string) {
