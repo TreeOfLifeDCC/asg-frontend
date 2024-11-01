@@ -17,13 +17,14 @@ import {
 } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import {NgClass, NgStyle, UpperCasePipe} from '@angular/common';
+import {filter, Subject} from 'rxjs';
+import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
 import { PhylogenyFilterComponent } from '../../shared/phylogeny-filter/phylogeny-filter.component';
+import {MatIcon} from "@angular/material/icon";
 
 
 @Component({
@@ -55,7 +56,9 @@ import { PhylogenyFilterComponent } from '../../shared/phylogeny-filter/phylogen
     MatInputModule,
     MatColumnDef,
     MatSortHeader,
-    PhylogenyFilterComponent
+    PhylogenyFilterComponent,
+    JsonPipe,
+    MatIcon
   ],
   styleUrls: ['./tracking-system.component.css']
 })
@@ -83,6 +86,18 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       metagenomes_assemblies_status: { buckets: any[]; };
     };
   };
+  aggregations: any;
+  isPhylogenyFilterProcessing = false; // Flag to prevent double-clicking
+  phylogenyFilters: string[] = [];
+  lastPhylogenyVal = '';
+  queryParams: any = {};
+  currentClass = 'kingdom';
+  classes = ['superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class',
+    'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
+    'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
+    'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
+  searchValue: string;
+
   itemLimitBiosampleFilter: number;
   itemLimitEnaFilter: number;
   filterSize: number;
@@ -173,9 +188,9 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       }, 80);
     }
     if (this.sort) {
-      this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+      this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
     } else {
-      this.getAllStatuses(0, 15);
+      this.getTrackingData(0, 15);
     }
   }
 
@@ -245,14 +260,73 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line:typedef
-  getAllStatuses(offset, limit, sortColumn?, sortOrder?) {
+  getTrackingData(offset, limit, sortColumn?, sortOrder?) {
     this.getFilters();
     this.spinner.show();
-    this.statusesService.getAllStatuses(offset, limit, sortColumn, sortOrder)
+    this.statusesService.getTrackingData('data_portal', this.currentClass, this.phylogenyFilters, offset, limit,
+        sortColumn, sortOrder, this.searchValue, this.activeFilters)
       .subscribe(
         data => {
+          console.log(data)
+          this.aggregations = data.aggregations;
+
+          // symbionts
+          this.symbiontsFilters = [];
+          if (this.aggregations.symbionts_biosamples_status.buckets.length > 0) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.aggregations.symbionts_biosamples_status.buckets,
+                'symbionts_biosamples_status');
+          }
+          if (this.aggregations.symbionts_raw_data_status.buckets.length > 0) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.aggregations.symbionts_raw_data_status.buckets,
+                'symbionts_raw_data_status');
+          }
+          if (this.aggregations.symbionts_assemblies_status.buckets.length > 0) {
+            this.symbiontsFilters = this.merge(this.symbiontsFilters,
+                this.aggregations.symbionts_assemblies_status.buckets,
+                'symbionts_assemblies_status');
+          }
+
+          // metagenomes
+          this.metagenomesFilters = [];
+          if (this.aggregations.metagenomes_biosamples_status.buckets.length > 0) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.aggregations.metagenomes_biosamples_status.buckets,
+                'metagenomes_biosamples_status');
+          }
+          if (this.aggregations.metagenomes_raw_data_status.buckets.length > 0) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.aggregations.metagenomes_raw_data_status.buckets,
+                'metagenomes_raw_data_status');
+          }
+          if (this.aggregations.metagenomes_assemblies_status.buckets.length > 0) {
+            this.metagenomesFilters = this.merge(this.metagenomesFilters,
+                this.aggregations.metagenomes_assemblies_status.buckets,
+                'metagenomes_assemblies_status');
+          }
+
+          // get last phylogeny element for filter button
+          this.lastPhylogenyVal = this.phylogenyFilters.slice(-1)[0];
+
+          // add filters to URL query parameters
+          this.queryParams = [...this.activeFilters];
+          if (this.phylogenyFilters && this.phylogenyFilters.length) {
+            const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+            if (index > -1) {
+              this.queryParams[index] = `phylogenyFilters - [${this.phylogenyFilters}]`;
+            } else {
+              this.queryParams.push(`phylogenyFilters - [${this.phylogenyFilters}]`);
+            }
+          }
+
+          // update url with the value of the phylogeny current class
+          this.updateQueryParams('phylogenyCurrentClass');
+
+          this.replaceUrlQueryParams();
+
           const unpackedData = [];
-          for (const item of data.biosampleStatus) {
+          for (const item of data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.statusesTotalCount = data.count;
@@ -271,13 +345,54 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       );
   }
 
+  onRefreshClick() {
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    // remove phylogenyFilters param from url
+    const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+    if (index > -1) {
+      this.queryParams.splice(index, 1);
+      // Replace current parameters with new parameters.
+      this.replaceUrlQueryParams();
+    }
+    this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
+  }
+
+  onHistoryClick() {
+    this.phylogenyFilters.splice(this.phylogenyFilters.length - 1, 1);
+    const previousClassIndex = this.classes.indexOf(this.currentClass) - 1;
+    this.currentClass = this.classes[previousClassIndex];
+    this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
+  }
+
+  updateQueryParams(urlParam: string){
+    if (urlParam === 'phylogenyCurrentClass'){
+      const queryParamIndex = this.queryParams.findIndex((element: any) => element.includes('phylogenyCurrentClass - '));
+      if (queryParamIndex > -1) {
+        this.queryParams[queryParamIndex] = `phylogenyCurrentClass - ${this.currentClass}`;
+      } else {
+        this.queryParams.push(`phylogenyCurrentClass - ${this.currentClass}`);
+      }
+    }
+  }
+
+  replaceUrlQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: this.queryParams,
+      replaceUrl: true,
+      skipLocationChange: false
+    });
+  }
+
   getNextStatuses(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.statusesService.getAllStatuses(offset, limit, sortColumn, sortOrder)
+    this.statusesService.getTrackingData('data_portal', this.currentClass, this.phylogenyFilters, offset,
+        limit, sortColumn, sortOrder, this.searchValue, this.activeFilters)
       .subscribe(
         data => {
           const unpackedData = [];
-          for (const item of data.biosampleStatus) {
+          for (const item of data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.statusesTotalCount = data.count;
@@ -347,7 +462,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
       this.getSearchResults(from, size);
     }
     else {
-      this.getAllStatuses((pageIndex).toString(), pageSize.toString(), event.active, event.direction);
+      this.getTrackingData((pageIndex).toString(), pageSize.toString(), event.active, event.direction);
     }
 
   }
@@ -390,114 +505,58 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line:typedef
-  checkFilterIsActive(filter: string) {
-    if (this.activeFilters.indexOf(filter) !== -1) {
+  checkFilterIsActive(filterValue: string) {
+    if (this.activeFilters.indexOf(filterValue) !== -1) {
       return 'active-filter';
     }
-    if (this.selectedTaxonomy.indexOf(filter) !== -1) {
+    if (this.selectedTaxonomy.indexOf(filterValue) !== -1) {
       return 'active-filter';
     }
 
   }
 
-  // tslint:disable-next-line:typedef
-  onFilterClick(event, label: string, filter: string) {
-    if (label === 'symbionts_biosamples_status'){
-      filter = 'symbiontsBioSamplesStatus-' + filter;
-    } else if (label === 'symbionts_raw_data_status'){
-      filter = 'symbiontsRawDataStatus-' + filter;
-    } else if (label === 'symbionts_assemblies_status'){
-      filter = 'symbiontsAssembliesStatus-' + filter;
-    } else if (label === 'metagenomes_biosamples_status'){
-      filter = 'metagenomesBioSamplesStatus-' + filter;
-    } else if (label === 'metagenomes_raw_data_status'){
-      filter = 'metagenomesRawDataStatus-' + filter;
-    } else if (label === 'metagenomes_assemblies_status'){
-      filter = 'metagenomesAssembliesStatus-' + filter;
-    }
 
-    this.paginator.pageIndex = 0;
-    const taxonomy = [this.currentTaxonomyTree];
-    this.searchText = '';
-    const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
-    const filterIndex = this.activeFilters.indexOf(filter);
-    if (filterIndex !== -1) {
-      this.removeFilter(filter);
-    } else {
-      $(event.target).addClass('disp');
-
-      this.selectedFilterArray(label, filter);
-      this.activeFilters.push(filter);
-      this.dataSource.filter = `${filter.trim().toLowerCase()}|${label}`;
-      this.getFilterResults(this.activeFilters.toString(), this.sort.active, this.sort.direction, 0, 15, taxonomy);
-      this.updateActiveRouteParams();
-      if (this.currentTaxonomyTree.length > 1) {
-        setTimeout(() => {
-          $('#' + this.modalTaxa + '-kingdom').addClass('active-filter');
-        }, 250);
+  onFilterClick(filterValue: string, phylogenyFilter: boolean = false) {
+    console.log(filterValue);
+    if (phylogenyFilter) {
+      if (this.isPhylogenyFilterProcessing) {
+        return;
       }
+      // Set flag to prevent further clicks
+      this.isPhylogenyFilterProcessing = true;
+
+      this.phylogenyFilters.push(`${this.currentClass}:${filterValue}`);
+      const index = this.classes.indexOf(this.currentClass) + 1;
+      this.currentClass = this.classes[index];
+
+      // update url with the value of the phylogeny current class
+      this.updateQueryParams('phylogenyCurrentClass');
+
+      // Replace current parameters with new parameters.
+      this.replaceUrlQueryParams();
+
+      this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
+
+      // Reset isPhylogenyFilterProcessing flag
+      setTimeout(() => {
+        this.isPhylogenyFilterProcessing = false;
+      }, 500);
+    } else{
+      const index = this.activeFilters.indexOf(filterValue);
+      index !== -1 ? this.activeFilters.splice(index, 1) :
+          this.activeFilters.push(filterValue);
+      this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
     }
   }
 
-  selectedFilterArray(key: string, filterValue: string) {
-    let jsonObj: {};
-
-    switch (key.toLowerCase()) {
-      case 'biosamples':
-        jsonObj = { name: 'biosamples', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'raw-data':
-        jsonObj = { name: 'raw_data', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'assemblies':
-        jsonObj = { name: 'assemblies', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'annotation-complete':
-        jsonObj = { name: 'annotation_complete', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'annotation':
-        jsonObj = { name: 'annotation', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'symbionts_biosamples_status':
-        filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
-        jsonObj = { name: 'symbionts_biosamples_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'symbionts_raw_data_status':
-        filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
-        jsonObj = { name: 'symbionts_raw_data_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'symbionts_assemblies_status':
-        filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
-        jsonObj = { name: 'symbionts_assemblies_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'metagenomes_biosamples_status':
-        filterValue = filterValue.replace(/^metagenomesBioSamplesStatus-/, '');
-        jsonObj = { name: 'metagenomes_biosamples_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'metagenomes_raw_data_status':
-        filterValue = filterValue.replace(/^metagenomesRawDataStatus-/, '');
-        jsonObj = { name: 'metagenomes_raw_data_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      case 'metagenomes_assemblies_status':
-        filterValue = filterValue.replace(/^metagenomesAssembliesStatus-/, '');
-        jsonObj = { name: 'metagenomes_assemblies_status', value: filterValue };
-        this.urlAppendFilterArray.push(jsonObj);
-        break;
-      default:
-        console.log(`Sorry, filter ${key} does not exist.`);
+  checkStyle(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      return 'background-color: #4BBEFD;';
+    } else {
+      return '';
     }
-
   }
+
 
   updateActiveRouteParams() {
     const params = {};
@@ -528,7 +587,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     this.activeFilters = [];
     this.urlAppendFilterArray = [];
     this.dataSource.filter = undefined;
-    this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+    this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
     this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     this.router.navigate(['tracking'], {});
     this.spinner.show();
@@ -573,7 +632,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
         this.router.navigate(['tracking'], {});
         this.dataSource.filter = undefined;
-        this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+        this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
       }
     }
   }
@@ -632,38 +691,38 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
         // symbionts
         if (this.filtersMap.symbionts_biosamples_status) {
-          this.symbiontsFilters = this.merge(this.symbiontsFilters,
+          this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
               this.filtersMap.symbionts_biosamples_status,
               'symbionts_biosamples_status',
               'symbiontsBioSamplesStatus');
         }
         if (this.filtersMap.symbionts_raw_data_status) {
-          this.symbiontsFilters = this.merge(this.symbiontsFilters,
+          this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
               this.filtersMap.symbionts_raw_data_status,
               'symbionts_raw_data_status',
               'symbiontsRawDataStatus');
         }
         if (this.filtersMap.symbionts_assemblies_status) {
-          this.symbiontsFilters = this.merge(this.symbiontsFilters,
+          this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
               this.filtersMap.symbionts_assemblies_status,
               'symbionts_assemblies_status',
               'symbiontsAssembliesStatus');
         }
         // metagenomes
         if (this.filtersMap.metagenomes_biosamples_status) {
-          this.metagenomesFilters = this.merge(this.metagenomesFilters,
+          this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
               this.filtersMap.metagenomes_biosamples_status,
               'metagenomes_biosamples_status',
               'metagenomesBioSamplesStatus');
         }
         if (this.filtersMap.metagenomes_raw_data_status) {
-          this.metagenomesFilters = this.merge(this.metagenomesFilters,
+          this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
               this.filtersMap.metagenomes_raw_data_status,
               'metagenomes_raw_data_status',
               'metagenomesRawDataStatus');
         }
         if (this.filtersMap.metagenomes_assemblies_status) {
-          this.metagenomesFilters = this.merge(this.metagenomesFilters,
+          this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
               this.filtersMap.metagenomes_assemblies_status,
               'metagenomes_assemblies_status',
               'metagenomesAssembliesStatus');
@@ -674,7 +733,16 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   }
 
-  merge = (first: any[], second: any[], filterLabel, filterPrefix) => {
+  merge = (first: any[], second: any[], filterLabel: string) => {
+    for (const item of second) {
+      item.label = filterLabel;
+      first.push(item);
+    }
+
+    return first;
+  }
+
+  mergeOLD = (first: any[], second: any[], filterLabel, filterPrefix) => {
     for (let i = 0; i < second.length; i++) {
       second[i].label = filterLabel;
       second[i].filterPrefix = filterPrefix;
@@ -727,7 +795,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
     // this.spinner.show();
     if (this.searchText.length === 0) {
-      this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+      this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
       this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
     }
     else {
@@ -805,38 +873,38 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
     // symbionts
     if (this.filtersMap.aggregations.symbionts_biosamples_status) {
-      this.symbiontsFilters = this.merge(this.symbiontsFilters,
+      this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
           this.filtersMap.aggregations.symbionts_biosamples_status.buckets,
           'symbionts_biosamples_status',
           'symbiontsBioSamplesStatus');
     }
     if (this.filtersMap.aggregations.symbionts_raw_data_status) {
-      this.symbiontsFilters = this.merge(this.symbiontsFilters,
+      this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
           this.filtersMap.aggregations.symbionts_raw_data_status.buckets,
           'symbionts_raw_data_status',
           'symbiontsRawDataStatus');
     }
     if (this.filtersMap.aggregations.symbionts_assemblies_status) {
-      this.symbiontsFilters = this.merge(this.symbiontsFilters,
+      this.symbiontsFilters = this.mergeOLD(this.symbiontsFilters,
           this.filtersMap.aggregations.symbionts_assemblies_status.buckets,
           'symbionts_assemblies_status',
           'symbiontsAssembliesStatus');
     }
     // metagenomes
     if (this.filtersMap.aggregations.metagenomes_biosamples_status) {
-      this.metagenomesFilters = this.merge(this.metagenomesFilters,
+      this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
           this.filtersMap.aggregations.metagenomes_biosamples_status.buckets,
           'metagenomes_biosamples_status',
           'metagenomesBioSamplesStatus');
     }
     if (this.filtersMap.aggregations.metagenomes_raw_data_status) {
-      this.metagenomesFilters = this.merge(this.metagenomesFilters,
+      this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
           this.filtersMap.aggregations.metagenomes_raw_data_status.buckets,
           'metagenomes_raw_data_status',
           'metagenomesRawDataStatus');
     }
     if (this.filtersMap.aggregations.metagenomes_assemblies_status) {
-      this.metagenomesFilters = this.merge(this.metagenomesFilters,
+      this.metagenomesFilters = this.mergeOLD(this.metagenomesFilters,
           this.filtersMap.aggregations.metagenomes_assemblies_status.buckets,
           'metagenomes_assemblies_status',
           'metagenomesAssembliesStatus');
@@ -1159,7 +1227,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
         this.router.navigate(['data'], {});
         this.dataSource.filter = undefined;
         this.getFilters();
-        this.getAllStatuses(0, 15, this.sort.active, this.sort.direction);
+        this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
         this.getChildTaxonomyRank('superkingdom', 'Eukaryota', 'kingdom');
       }
       this.spinner.hide();
@@ -1210,4 +1278,5 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     return filterName;
   }
 
+  protected readonly filter = filter;
 }

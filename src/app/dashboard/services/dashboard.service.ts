@@ -70,10 +70,9 @@ export class DashboardService {
 
     if (phylogenyFilters.length !== 0) {
       let filterStr = '&phylogeny_filters=';
-      for (let i = 0; i < phylogenyFilters.length; i++) {
-        filterStr === '&phylogeny_filters=' ? filterStr += `${phylogenyFilters[i]}` : filterStr += `-${phylogenyFilters[i]}`;
+      for (const filter of phylogenyFilters) {
+        filterStr = filterStr === '&phylogeny_filters=' ? `${filterStr}${filter}` : `${filterStr}-${filter}`;
       }
-
       url += filterStr;
     }
     url += `&current_class=${currentClass}`;

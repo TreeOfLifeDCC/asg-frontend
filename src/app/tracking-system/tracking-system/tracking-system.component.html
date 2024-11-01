@@ -14,9 +14,13 @@
                             </h3>
                             <ul class="list-group">
                                 @for (filter of BiosamplesFilters; track filter) {
+                                    {{filter|json}}
 
                                     @if (filter.key === 'Biosamples - done' || filter.key === 'Biosamples - Done') {
-                                        <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'biosamples', filter.key)" style="cursor: pointer">
+                                        <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
+                                            [ngClass]="checkFilterIsActive('BioSamples - Submitted')"
+                                            (click)="onFilterClick('BioSamples - Submitted')"
+                                            style="cursor: pointer">
                                             <span>Biosamples - Submitted</span>
                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                         </li>
@@ -27,7 +31,10 @@
                                 @for (filter of RawDataFilters; track filter) {
 
                                     @if (filter.key === 'Raw data - done' || filter.key === 'Raw data - Done') {
-                                        <li class="raw-data list-group-item d-flex justify-content-between align-items-center raw-data-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'raw-data' , filter.key)" style="cursor: pointer">
+                                        <li class="raw-data list-group-item d-flex justify-content-between align-items-center raw-data-inactive"
+                                            [ngClass]="checkFilterIsActive('Raw Data - Submitted')"
+                                            (click)="onFilterClick('Raw Data - Submitted')"
+                                            style="cursor: pointer">
                                             <span>Raw Data - Submitted</span>
                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                         </li>
@@ -38,7 +45,10 @@
                                 @for (filter of AssembliesFilters; track filter) {
 
                                     @if (filter.key === 'Assemblies - done' || filter.key === 'Assemblies - Done') {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center assemblies-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'assemblies' , filter.key)" style="cursor: pointer">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center assemblies-inactive"
+                                            [ngClass]="checkFilterIsActive('Assemblies - Submitted')"
+                                            (click)="onFilterClick('Assemblies - Submitted')"
+                                            style="cursor: pointer">
                                             <span>Assemblies - Submitted</span>
                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                         </li>
@@ -47,9 +57,11 @@
                                 }
 
                                 @for (filter of AnnotationFilters; track filter) {
-
                                     @if (filter.key === 'Annotation - done' || filter.key === 'Annotation - Done') {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center annotation-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'annotation' , filter.key)" style="cursor: pointer">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center annotation-inactive"
+                                            [ngClass]="checkFilterIsActive('Annotation - Submitted')"
+                                            (click)="onFilterClick('Annotation - Submitted')"
+                                            style="cursor: pointer">
                                             <span>Annotation - Submitted</span>
                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                         </li>
@@ -58,9 +70,11 @@
                                 }
 
                                 @for (filter of AnnotationCompleteFilters; track filter) {
-
                                     @if (filter.key === 'Annotation complete - done' || filter.key === 'Annotation complete - Done') {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center annotation-complete-inactive" [ngClass]="checkFilterIsActive(filter.key)" (click)="onFilterClick($event, 'annotation-complete' , filter.key)" style="cursor: pointer">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center annotation-complete-inactive"
+                                            [ngClass]="checkFilterIsActive('Annotation Complete - Done')"
+                                            (click)="onFilterClick('Annotation Complete - Done')"
+                                            style="cursor: pointer">
                                             <span>Annotation Complete - Done</span>
                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                         </li>
@@ -80,15 +94,13 @@
                             </h3>
                             <ul class="list-group">
                                 @for (filter of symbiontsFilters; track filter) {
-
                                     <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
-                                        [ngClass]="checkFilterIsActive(filter.filterPrefix+'-'+filter.key)"
-                                        (click)="onFilterClick($event, filter.label, filter.key)"
+                                        [ngClass]="checkFilterIsActive(filter.label + '-' + filter.key)"
+                                        (click)="onFilterClick(filter.label + '-' + filter.key)"
                                         style="cursor: pointer">
                                         <span>{{filter.key}}</span>
                                         <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                     </li>
-
                                 }
 
                             </ul>
@@ -106,8 +118,8 @@
                                 @for (filter of metagenomesFilters; track filter) {
 
                                     <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
-                                        [ngClass]="checkFilterIsActive(filter.filterPrefix+'-'+filter.key)"
-                                        (click)="onFilterClick($event, filter.label, filter.key)"
+                                        [ngClass]="checkFilterIsActive(filter.label + '-' + filter.key)"
+                                        (click)="onFilterClick(filter.label + '-' + filter.key)"
                                         style="cursor: pointer">
                                         <span>{{filter.key}}</span>
                                         <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -124,33 +136,34 @@
                     <div class="col-md-12 col-sm-6">
                         <div class="card bg-lite mb-3 filter-top">
                             <h3 class="card-header filter-heading">
-                                <span>Phylogeny</span>
+                                <span>Phylogeny/{{ currentClass }}</span>
+                                @if (phylogenyFilters.length !== 0) {
+                                    <mat-icon (click)="onRefreshClick()"
+                                              style="cursor: pointer">
+                                        refresh
+                                    </mat-icon>
+                                }
+                                @if (phylogenyFilters.length !== 0) {
+                                    <mat-icon (click)="onHistoryClick()"
+                                              style="cursor: pointer">
+                                        arrow_circle_left
+                                    </mat-icon>
+                                }
                             </h3>
-                            <ul id="ontology-inactive" class="list-group">
-                                @if (isFilterSelected) {
-                                    <li class="rank-heading"> {{currentTaxonomy.rank | uppercase}}</li>
-                                }
-                                @if (isFilterSelected) {
-                                    <li class="list-group-item d-flex justify-content-between align-items-center kingdom active-filter" style="cursor: pointer; padding: .75rem 0.25rem;" id="filterSelected" (click)="showTaxonomyModal($event, currentTaxonomy.rank, currentTaxonomy.taxonomy, 'subkingdom')">
-                                        {{selectedFilterValue.taxonomy}} ({{selectedFilterValue.commonName}})
-                                        <span class="badge badge-pill badge-info">{{statusesTotalCount}}</span>
+                            <ul role="list" class="list-group">
+                                @for (phylogeny_name of aggregations?.taxonomies[currentClass]?.buckets; track $index) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        style="cursor: pointer"
+                                        [style]="checkStyle(phylogeny_name.key)"
+                                        (click)="onFilterClick(phylogeny_name.key, true)">
+                                        <span> {{ phylogeny_name.key }}</span>
+
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ phylogeny_name.doc_count }}
+                                        </span>
                                     </li>
-                                }
-                                @if (!isFilterSelected) {
-                                    <li class="rank-heading"> KINGDOM </li>
-
-                                    @for (super of childTaxanomy.superkingdom; track super) {
-
-                                        @for (superchild of super.childData; track superchild) {
-                                            <li class="list-group-item d-flex justify-content-between align-items-center kingdom" style="cursor: pointer; padding: .75rem 0.25rem;" id="{{superchild.key}}-kingdom" (click)="showTaxonomyModal($event, super.rank, superchild.key, 'subkingdom')"
-                                                (dblclick)="filterTaxonomy(super.rank, superchild.key, 'subkingdom',superchild.commonName.buckets[0].key)">
-                                                {{superchild.key}} ({{superchild.commonName.buckets[0].key}})
-                                                <span class="badge badge-pill badge-info">{{superchild.doc_count}}</span>
-                                            </li>
-                                        }
-
-                                    }
-
                                 }
                             </ul>
                         </div>
