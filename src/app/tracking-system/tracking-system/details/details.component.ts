@@ -56,7 +56,6 @@ export class TrackingDetailsComponent implements OnInit {
     this.getBiosamples();
   }
 
-  // tslint:disable-next-line:typedef
   getBiosamples() {
     this.statusesService.getBiosampleByOrganism(this.bioSampleId)
       .subscribe(

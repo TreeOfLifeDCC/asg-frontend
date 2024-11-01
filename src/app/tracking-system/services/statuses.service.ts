@@ -75,38 +75,6 @@ export class StatusesService {
     return this.http.get(`${this.API_BASE_URL}/statuses/detail/${organism}`);
   }
 
-  public getStatusesFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/statuses/filters`);
-  }
-
-  public getSearchResults(search: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/search?filter=${search}&from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    return this.http.get(`${requestURL}`);
-  }
-
-  public getFilterResults(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/filter/results?from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if(taxonomyFilter != undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestURL = requestURL + `&taxonomyFilter=${taxa}`
-    }
-    return this.http.post(`${requestURL}`, filter);
-  }
-
-  public findBioSampleByOrganismName(name: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/organism?name=${name}&from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    return this.http.get(`${requestURL}`);
-  }
-
   downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
                sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
                indexName: string) {

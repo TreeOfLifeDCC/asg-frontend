@@ -81,11 +81,13 @@ export class DashboardService {
   }
 
   public getBiosampleByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/${accession}`);
+    const url = `http://localhost:8000/organisms_test/${accession}`;
+    return this.http.get(url);
   }
 
   public getSpecimenByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/specimen/${accession}`);
+    const url = `http://localhost:8000/specimens_test/${accession}`;
+    return this.http.get(url);
   }
 
   public getRootOrganismById(organism: string, indexName: string): Observable<any> {
@@ -93,54 +95,6 @@ export class DashboardService {
     return this.http.get(url);
   }
 
-  public getSpecimenFilters(accession): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/filters?accession=${accession}`);
-  }
-
-  public getRootSearchResults(search: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestParams = `?filter=${search}&from=${from}&size=${size}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    let requestURL = `${this.API_BASE_URL}/root_organisms/search${requestParams}`;
-    return this.http.get(`${requestURL}`);
-  }
-
-  public getFilterResultsOLD(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
-    let requestParams = `?from=${from}&size=${size}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if (taxonomyFilter !== undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
-    }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`;
-    }
-    const requestURL = `${this.API_BASE_URL}/root_organisms/root/filter/results${requestParams}`;
-    return this.http.post(`${requestURL}`, filter);
-  }
-
-  public getFilterResults(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
-    let requestParams = `?from=${from}&size=${size}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if (taxonomyFilter !== undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
-    }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`;
-    }
-    const requestURL = `${this.API_BASE_URL}/root_organisms/root/filter/results${requestParams}`;
-    return this.http.post(`${requestURL}`, filter);
-  }
-
-  public getExperimentTypeFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root/experiment-type/filters`);
-  }
 
   public downloadFastaq(accession: any): any {
     const result = 'read_run';

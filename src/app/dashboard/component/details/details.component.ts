@@ -114,7 +114,7 @@ export class DetailsComponent implements OnInit {
     this.dashboardService.getBiosampleByAccession(this.bioSampleId).subscribe(
         (data: any) => {
           const unpackedData: BioSample[] = [];
-          for (const item of data.hits.hits) {
+          for (const item of data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.bioSampleObj = unpackedData[0];
@@ -257,56 +257,6 @@ export class DetailsComponent implements OnInit {
     } else if (this.filterJson.organismPart === filter) {
       this.filterJson.organismPart = '';
     }
-  }
-
-  getFilters(accession: string): void {
-    this.dashboardService.getSpecimenFilters(accession).subscribe(
-        (data: { sex: Filter[]; organismPart: Filter[] }) => {
-          this.filtersMap = data;
-          this.sexFilters = this.filtersMap.sex.filter(i => i.key !== '');
-          this.organismPartFilters = this.filtersMap.organismPart.filter(i => i.key !== '');
-        },
-        err => console.log(err)
-    );
-  }
-
-  getStatusClass(status: string): string {
-    return status === 'Annotation Complete' ? 'badge badge-pill badge-success' : 'badge badge-pill badge-warning';
-  }
-
-  getSearchResults(from?: number, size?: number): void {
-    $('.sex-inactive').removeClass('non-disp active');
-    $('.org-part-inactive').removeClass('non-disp active');
-    if (this.searchText.length === 0) {
-      this.getBiosamples();
-    } else {
-      this.activeFilters = [];
-      this.dataSourceRecords.filter = this.searchText.trim();
-      this.dataSourceRecords.filterPredicate = ((data: BioSample, filter: string) => {
-        const a = !filter || data.sex?.toLowerCase().includes(filter.toLowerCase());
-        const b = !filter || data.organismPart?.toLowerCase().includes(filter.toLowerCase());
-        const c = !filter || data.accession.toLowerCase().includes(filter.toLowerCase());
-        const d = !filter || data.commonName?.toLowerCase().includes(filter.toLowerCase());
-        return a || b || c || d;
-      }) as (PeriodicElement: BioSample, string) => boolean;
-      this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
-    }
-  }
-
-  toggleCollapse(filterKey: string): void {
-    if (filterKey === 'Sex') {
-      this.isSexFilterCollapsed = !this.isSexFilterCollapsed;
-      this.itemLimitSexFilter = this.isSexFilterCollapsed ? 3 : 10000;
-    } else if (filterKey === 'Organism Part') {
-      this.isOrganismPartCollapsed = !this.isOrganismPartCollapsed;
-      this.itemLimitOrgFilter = this.isOrganismPartCollapsed ? 3 : 10000;
-    }
-  }
-
-  redirectTo(accession: string): void {
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-        this.router.navigate(['/data/root/details/' + accession])
-    );
   }
 
   exportTableToCSV(filename: string): void {

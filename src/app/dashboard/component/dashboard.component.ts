@@ -240,7 +240,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   onFilterClick(filterValue: string, phylogenyFilter: boolean = false) {
-    console.log(filterValue);
     if (phylogenyFilter) {
       if (this.isPhylogenyFilterProcessing) {
         return;
@@ -303,9 +302,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   getAllBiosamples(offset, limit, sortColumn?, sortOrder?) {
-    console.log(this.currentClass);
-    console.log(this.phylogenyFilters);
-    console.log(this.activeFilters);
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
@@ -313,7 +309,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         this.activeFilters
     ).subscribe(
             data => {
-              console.log(data);
               const unpackedData = [];
               this.aggregations = data.aggregations;
 

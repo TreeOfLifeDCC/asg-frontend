@@ -67,8 +67,9 @@ export class SpecimensComponent implements OnInit {
     this.dashboardService.getSpecimenByAccession(this.bioSampleId)
       .subscribe(
         data => {
+          console.log(data)
           const unpackedData = [];
-          for (const item of data.hits.hits) {
+          for (const item of data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.bioSampleObj = unpackedData[0];
