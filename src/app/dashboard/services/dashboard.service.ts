@@ -92,23 +92,6 @@ export class DashboardService {
     return this.http.get(url);
   }
 
-  public download(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
-    let requestParams = `?from=${from}&size=${size}`;
-    if (sortColumn !== undefined) {
-      requestParams = requestParams + `&z=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if (taxonomyFilter !== undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`;
-    }
-    if (searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`;
-    }
-    const requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
-    return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});
-  }
-
-
   downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
                sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
                indexName: string) {
