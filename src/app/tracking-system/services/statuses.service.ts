@@ -13,20 +13,6 @@ export class StatusesService {
 
   constructor(private http: HttpClient) { }
 
-  public getTrackingDataOLD(offset, limit, sortColumn?, sortOrder?, searchText?): Observable<any> {
-    const indexName = 'tracking_status_index';
-    let url = `http://localhost:8000/${indexName}?limit=${limit}&offset=${offset}`;
-
-    if (searchText) {
-      url += `&search=${searchText}`;
-    }
-    if (sortColumn && sortOrder) {
-      url += `&sort=${sortColumn}:${sortOrder}`;
-    }
-    return this.http.get<any>(url);
-  }
-
-
   public getTrackingData(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
 
     let url = `http://localhost:8000/${indexName}?limit=${limit}&offset=${offset}`;
