@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-import { Sample } from '../model/dashboard.model';
-import {ConfirmationDialogComponent} from '../../confirmation-dialog-component/confirmation-dialog.component';
 import {BytesPipe} from '../../shared/bytes-pipe';
 import {tap} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
@@ -95,33 +92,6 @@ export class DashboardService {
     return this.http.get(url);
   }
 
-
-  public downloadFastaq(accession: any): any {
-    const result = 'read_run';
-    const field = 'fastq_ftp';
-    const body = `result=${result}&accession=${accession}&field=${field}&count=true`;
-
-    const requestURL = this.ENA_PORTAL_API_BASE_URL;
-    return this.http.post(`${requestURL}`, body, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).pipe(
-        tap((response: any) => {
-          this.dialog.open(ConfirmationDialogComponent, {
-            width: '550px',
-            autoFocus: false,
-            data: {
-              field: 'fastq_ftp',
-              fileCount: response.totalFiles,
-              fileSize: this.bytesPipe.transform(response.totalFileSize),
-              accession,
-              url: this.ENA_PORTAL_API_BASE_URL
-            }
-          });
-        })).subscribe();
-  }
   public download(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
     let requestParams = `?from=${from}&size=${size}`;
     if (sortColumn !== undefined) {

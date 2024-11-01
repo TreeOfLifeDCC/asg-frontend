@@ -15,7 +15,6 @@ import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {NgxSpinnerService} from "ngx-spinner";
 import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
 
 
@@ -169,17 +168,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
   private dataTabInitialized = false;
   aggregations;
-  nbnatlasMapUrl: string;
   url: SafeResourceUrl;
-  genomeNotes = [];
-  dataSourceRelatedAnnotation;
-  dataSourceRelatedAnnotationCount;
 
   constructor(private route: ActivatedRoute,
-              private dashboardService: DashboardService,
-              private router: Router,
-              private spinner: NgxSpinnerService,
-              private sanitizer: DomSanitizer) {
+              private dashboardService: DashboardService) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
 
@@ -441,30 +433,11 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  spliceFilterArray(filter: string) {
-    if (this.filterJson.sex === filter) {
-      this.filterJson.sex = '';
-    } else if (this.filterJson.organismPart === filter) {
-      this.filterJson.organismPart = '';
-    } else if (this.filterJson.trackingSystem === filter) {
-      this.filterJson.trackingSystem = '';
-    }
-    this.dataSourceRecords.filter = JSON.stringify(this.filterJson);
-  }
-
   getFilters(organism) {
     this.sexFilters = this.aggregations.filters.sex_filter.buckets;
     this.trackingSystemFilters = this.aggregations.filters.tracking_status_filter.buckets;
     this.organismPartFilters = this.aggregations.filters.
         organism_part_filter.buckets;
-  }
-
-  getStatusClass(status: string) {
-    if (status === 'Annotation Complete') {
-      return 'badge badge-pill badge-success';
-    } else {
-      return 'badge badge-pill badge-warning';
-    }
   }
 
   getSearchResults(from?, size?) {
@@ -486,75 +459,5 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       }) as (PeriodicElement, string) => boolean;
       this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
     }
-  }
-
-  toggleCollapse(filterKey) {
-    if (filterKey === 'Sex') {
-      if (this.isSexFilterCollapsed) {
-        this.itemLimitSexFilter = 10000;
-        this.isSexFilterCollapsed = false;
-      } else {
-        this.itemLimitSexFilter = 3;
-        this.isSexFilterCollapsed = true;
-      }
-    } else if (filterKey === 'Tracking Status') {
-      if (this.isTrackCollapsed) {
-        this.itemLimitTrackFilter = 10000;
-        this.isTrackCollapsed = false;
-      } else {
-        this.itemLimitTrackFilter = 3;
-        this.isTrackCollapsed = true;
-      }
-    } else if (filterKey === 'Organism Part') {
-      if (this.isOrganismPartCollapsed) {
-        this.itemLimitOrgFilter = 10000;
-        this.isOrganismPartCollapsed = false;
-      } else {
-        this.itemLimitOrgFilter = 3;
-        this.isOrganismPartCollapsed = true;
-      }
-    }
-  }
-
-  redirectTo(accession: string) {
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() =>
-        this.router.navigate(['/data/root/details/' + accession]));
-  }
-
-  downloadRawFiles(): void {
-    this.dashboardService.downloadFastaq(this.INSDC_ID);
-  }
-
-  downloadAnnotation(): void {
-    this.download_files(this.annotationsurls);
-  }
-
-  downloadAssemblies(): void {
-    this.download_files(this.assembliesurls);
-  }
-
-  download_files(files) {
-    function download_next(i) {
-      if (i >= files.length) {
-        return;
-      }
-      const a = document.createElement('a');
-      a.href = files[i];
-      a.target = '_parent';
-      if ('download' in a) {
-        a.download = files[i].filename;
-      }
-      (document.body || document.documentElement).appendChild(a);
-      if (a.click) {
-        a.click();
-      } else {
-        $(a).click();
-      }
-      a.parentNode.removeChild(a);
-      setTimeout(function() {
-        download_next(i + 1);
-      }, 500);
-    }
-    download_next(0);
   }
 }
