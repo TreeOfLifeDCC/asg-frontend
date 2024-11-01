@@ -80,6 +80,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
     'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
     'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
+  displayProgressBar = false;
 
   orginlTaxonomies = [
     'cellularorganism',
@@ -490,6 +491,63 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
         }
       }
     }
+  }
+
+  displayActiveFilterName(filterName: string) {
+    if (filterName && filterName.startsWith('symbionts_')) {
+      return 'Symbionts-' + filterName.split('-')[1];
+    }
+    if (filterName && filterName.startsWith('experimentType_')) {
+      return  filterName.split('_')[1];
+    }
+    return filterName;
+  }
+
+  removePhylogenyFilters() {
+    // update url with the value of the phylogeny current class
+    const queryParamPhyloIndex = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+    if (queryParamPhyloIndex > -1) {
+      this.queryParams.splice(queryParamPhyloIndex, 1);
+    }
+
+    const queryParamCurrentClassIndex = this.queryParams.findIndex(element => element.includes('phylogenyCurrentClass - '));
+    if (queryParamCurrentClassIndex > -1) {
+      this.queryParams.splice(queryParamCurrentClassIndex, 1);
+    }
+    // Replace current url parameters with new parameters.
+    this.replaceUrlQueryParams();
+    // reset phylogeny variables
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
+  }
+
+  removeFilter() {
+    this.activeFilters = [];
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
+    this.router.navigate([]);
+  }
+
+  downloadFile(downloadOption: string, dialog: boolean) {
+    this.statusesService.downloadData(downloadOption, this.paginator.pageIndex,
+        this.paginator.pageSize, this.searchValue || '', this.sort.active, this.sort.direction, this.activeFilters,
+        this.currentClass, this.phylogenyFilters, 'tracking_status').subscribe({
+      next: (response: Blob) => {
+        const blobUrl = window.URL.createObjectURL(response);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = 'download.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        this.displayProgressBar = false;
+      },
+      error: error => {
+        console.error('Error downloading the CSV file:', error);
+      }
+    });
   }
 
   getBadgeColor(status: string) {

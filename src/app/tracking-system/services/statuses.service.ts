@@ -107,4 +107,63 @@ export class StatusesService {
     return this.http.get(`${requestURL}`);
   }
 
+  downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
+               sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
+               indexName: string) {
+
+    const url = `http://127.0.0.1:8000/data-download`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    // phylogeny
+    const phylogenyStr = phylogenyFilters.length ? phylogenyFilters.join('-') : '';
+
+    // Filter string
+    let filterStr = '';
+
+    if (filterValue.length !== 0) {
+      const filterItems = [];
+
+      for (const item of filterValue) {
+        let filterItem = '';
+
+        if (projectNames.includes(item)) {
+          filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
+        } else if (item.includes('-') && !item.startsWith('experimentType')) {
+          if (item.startsWith('symbionts') || item.startsWith('metagenomes')) {
+            filterItem = item.replace('-', ':');
+          } else {
+            filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');
+            filterItem = (filterItem === 'assemblies') ? 'assemblies_status:Done' :
+                (filterItem === 'genome_notes') ? 'genome_notes:Submitted' :
+                    `${filterItem}:Done`;
+          }
+        } else if (item.includes('_') && item.startsWith('experimentType')) {
+          filterItem = item.replace('_', ':');
+        } else {
+          filterItem = `${currentClass}:${item}`;
+        }
+
+        filterItems.push(filterItem);
+      }
+
+      filterStr = filterItems.join(',');
+    }
+
+    const payload = {
+      pageIndex,
+      pageSize,
+      searchValue,
+      sortValue: `${sortActive}:${sortDirection}`,
+      filterValue: filterStr || '',
+      currentClass,
+      phylogenyFilters: phylogenyStr,
+      indexName,
+      downloadOption
+    };
+
+    console.log(payload);
+
+    return this.http.post(url, payload, { responseType: 'blob' });
+  }
+
 }

@@ -132,7 +132,7 @@
                     </div>
                 </div>
 
-                <!-- Ontology aware filters -->
+                <!-- Phylogeny filters -->
                 <div class="row">
                     <div class="col-md-12 col-sm-6">
                         <div class="card bg-lite mb-3 filter-top">
@@ -174,19 +174,33 @@
 
             <div class="col-md-10 status-table">
                 <h1 class="page-header">Statuses</h1>
-<!--                @if (activeFilters.length !== 0) {-->
-<!--                    <h1>Filters:-->
-<!--                        @for (filter of activeFilters; track filter) {-->
-<!--                            <button type="button" class="btn btn-success">-->
-<!--                                {{displayActiveFilterName(filter)}}-->
-<!--                                <span class="badge badge-light" (click)="removeFilter(filter)">X</span>-->
-<!--                            </button>-->
-<!--                        }-->
-<!--                        <button type="button" class="btn btn-primary" (click)="removeAllFilters()">-->
-<!--                            Remove all filters-->
-<!--                        </button>-->
-<!--                    </h1>-->
-<!--                }-->
+
+                @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
+                    <h1 >Filters: </h1>
+                }
+                @if(activeFilters.length > 0){
+                    @for(field of activeFilters;track $index){
+                        <button type="button" class="btn btn-success">
+                            {{displayActiveFilterName(field)}} <span class="badge badge-light" (click)="onFilterClick(field)">X</span>
+                        </button>
+                    }
+                }
+                @if(phylogenyFilters.length > 0){
+                    <button type="button" class="btn btn-success">
+                        {{displayActiveFilterName(lastPhylogenyVal)}} <span class="badge badge-light" (click)="removePhylogenyFilters()">X</span>
+                    </button>
+                }
+                @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
+                    <button class="btn btn-primary" type="button" (click)="removeFilter()"> Remove all filters </button>
+                }
+                <br>
+
+                <button  class="btn btn-primary" style="float: right;
+                    background-color: #4BBEFD; color: #ffffff;" mat-raised-button
+                         (click)="downloadFile('metadata', false)">
+                    Download metadata
+                </button>
+
                 <mat-form-field>
                     <mat-label>Search</mat-label>
                     <input matInput [(ngModel)]='searchValue' (ngModelChange)="this.searchUpdate.next($event)"
