@@ -45,7 +45,8 @@ import {MatChip, MatChipSet} from '@angular/material/chips';
     MatSort,
     MatCheckbox,
     MatChip,
-    MatChipSet
+    MatChipSet,
+    MatSortModule
   ],
   styleUrls: ['./dashboard.component.css']
 })
