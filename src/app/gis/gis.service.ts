@@ -12,7 +12,9 @@ export class GisService {
 
   constructor(private http: HttpClient) { }
 
-  public getGisData(filter: any, searchText?): Observable<any> {
+  public getGisDataOLD(filter: any, searchText?): Observable<any> {
+    //gis_filter_data
+
     let requestParams = `?`;
     if (searchText) {
       requestParams = requestParams + `&searchText=${searchText}`;
@@ -21,7 +23,60 @@ export class GisService {
 
   }
 
-  public getGisSearchData(search: any): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/gis/search?filter=${search}`);
+  public getGisData(indexName, currentClass, phylogenyFilters, searchText?, filterValue?): Observable<any> {
+
+    let url = `http://localhost:8000/${indexName}?limit=15&offset=0`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    if (searchText) {
+      url += `&search=${searchText}`;
+    }
+
+    if (filterValue.length !== 0) {
+      let filterStr = '&filter=';
+      let filterItem;
+      for (let i = 0; i < filterValue.length; i++) {
+        if (projectNames.indexOf(filterValue[i]) !== -1) {
+          filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
+        } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
+            filterItem = filterValue[i].replace('-', ':');
+          } else {
+            filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
+            if (filterItem === 'assemblies') {
+              filterItem = 'assemblies_status:Done';
+            }else if (filterItem === 'genome_notes') {
+              filterItem = 'genome_notes:Submitted';
+            } else {
+              filterItem = `${filterItem}:Done`;
+            }
+          }
+        }else if (filterValue[i].includes('_') && filterValue[i].startsWith('experimentType')) {
+          filterItem = filterValue[i].replace('_', ':');
+
+        }
+        else {
+          filterItem = `${currentClass}:${filterValue[i]}`;
+        }
+
+        filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
+
+      }
+      url += filterStr;
+    }
+
+    if (phylogenyFilters.length !== 0) {
+      let filterStr = '&phylogeny_filters=';
+      for (const filter of phylogenyFilters) {
+        filterStr = filterStr === '&phylogeny_filters=' ? `${filterStr}${filter}` : `${filterStr}-${filter}`;
+      }
+      url += filterStr;
+      url += `&current_class=${currentClass}`;
+    }
+    url += `&action=download`;
+
+    console.log(url);
+    return this.http.get<any>(url);
   }
+
 }

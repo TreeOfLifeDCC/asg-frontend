@@ -124,28 +124,13 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   itemLimitEnaFilter: number;
   filterSize: number;
   urlAppendFilterArray = [];
-  searchText = '';
 
   symbiontsFilters = [];
   metagenomesFilters = [];
   activeFilters = [];
-
-  RawDataFilters = [];
-
-  AssembliesFilters = [];
-  AnnotationFilters = [];
-  AnnotationCompleteFilters = [];
   statusesTotalCount = 0;
   unpackedData;
   showOrganismTable: boolean;
-
-  childTaxanomy: Taxonomy;
-  currentTaxonomyTree: any;
-  showElement = true;
-  taxonomies = [];
-  currentTaxonomy: any;
-  modalTaxa = '';
-  isDoubleClick: boolean;
   searchUpdate = new Subject<string>();
 
   constructor(private titleService: Title,
@@ -167,7 +152,6 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.spinner.show();
-    this.searchText = '';
     this.showOrganismTable = false;
     this.activeFilters = [];
     this.urlAppendFilterArray = [];

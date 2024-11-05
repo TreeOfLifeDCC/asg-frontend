@@ -60,6 +60,7 @@ export class TrackingDetailsComponent implements OnInit {
     this.statusesService.getBiosampleByOrganism(this.bioSampleId)
       .subscribe(
         data => {
+          console.log(data)
           this.bioSampleObj = data;
           this.dataSourceFiles = new MatTableDataSource<Sample>(this.bioSampleObj.experiment);
           this.dataSourceAssemblies = new MatTableDataSource<any>(this.bioSampleObj.assemblies);

@@ -13,6 +13,9 @@ import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-fil
 import {FilterComponent} from '../shared/filter/filter.component';
 import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
 import {MatInputModule} from '@angular/material/input';
+import {MatIcon} from "@angular/material/icon";
+import {filter, Subject} from "rxjs";
+import {debounceTime, distinctUntilChanged} from "rxjs/operators";
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -47,7 +50,8 @@ L.Marker.prototype.options.icon = iconDefault;
     MatAutocompleteTrigger,
     PhylogenyFilterComponent,
     FilterComponent,
-    ActiveFilterComponent
+    ActiveFilterComponent,
+    MatIcon
   ],
   styleUrls: ['./gis.component.css']
 })
@@ -57,85 +61,204 @@ export class GisComponent implements AfterViewInit , OnDestroy {
   private markers;
   toggleSpecimen = new UntypedFormControl();
   unpackedData;
-
+  isPhylogenyFilterProcessing = false; // Flag to prevent double-clicking
+  phylogenyFilters: string[] = [];
+  activeFilters = new Array<string>();
+  currentClass = 'kingdom';
+  searchValue: string;
+  aggregations: any;
+  lastPhylogenyVal = '';
+  queryParams: any = {};
+  experimentTypeFilters: any[] = [];
+  itemLimit = 5;
+  isCollapsed = true;
+  classes: string[] = [
+    'cellularorganism',
+    'superkingdom',
+    'kingdom',
+    'subkingdom',
+    'superphylum',
+    'phylum',
+    'subphylum',
+    'superclass',
+    'class',
+    'subclass',
+    'infraclass',
+    'cohort',
+    'subcohort',
+    'superorder',
+    'order',
+    'parvorder',
+    'suborder',
+    'infraorder',
+    'section',
+    'subsection',
+    'superfamily',
+    'family',
+    'subfamily',
+    'tribe',
+    'subtribe',
+    'genus',
+    'series',
+    'subgenus',
+    'species_group',
+    'species_subgroup',
+    'species',
+    'subspecies',
+    'varietas',
+    'forma'
+  ];
+  searchUpdate = new Subject<string>();
   myControl = new UntypedFormControl('');
   filteredOptions: string[];
   radioOptions = 1;
+  coordinateControl: any = null;
+
   constructor(private gisService: GisService, private spinner: NgxSpinnerService, private activatedRoute: ActivatedRoute,
-              private router: Router, public filterService: FilterService) { }
+              private router: Router, public filterService: FilterService) {
+    this.searchUpdate.pipe(
+        debounceTime(500),
+        distinctUntilChanged()).subscribe(
+        value => {
+          this.spinner.show();
+          this.getGisData();
+          this.getDropDownOptions();
+        }
+    );
+  }
 
   ngOnInit(): void {
     this.toggleSpecimen.setValue(false);
     this.radioOptions = 1;
+
+    // get url parameters
     const queryParamMap = this.activatedRoute.snapshot['queryParamMap'];
     const params = queryParamMap['params'];
-    // tslint:disable-next-line:triple-equals
-    if (Object.keys(params).length != 0) {
-
-      this.resetFilter();
-      // tslint:disable-next-line:forin
+    if (Object.keys(params).length !== 0) {
       for (const key in params) {
-        this.filterService.urlAppendFilterArray.push({name: key, value: params[key]});
-        if (key === 'experiment-type') {
-          const list = params[key].split(',');
-          list.forEach((param: any) => {
-            this.filterService.activeFilters.push('experimentType-' + param);
-          });
-        } else if (key === 'phylogeny') {
-          this.filterService.isFilterSelected = true;
-          this.filterService.phylSelectedRank = params[key];
-          this.filterService.activeFilters.push(params[key]);
+        if (params.hasOwnProperty(key)) {
+          if (params[key].includes('phylogenyFilters - ')) {
+            const phylogenyFilters = params[key].split('phylogenyFilters - ')[1];
+            // Remove square brackets and split by comma
+            this.phylogenyFilters = phylogenyFilters.slice(1, -1).split(',');
+          } else if (params[key].includes('phylogenyCurrentClass - ')) {
+            const phylogenyCurrentClass = params[key].split('phylogenyCurrentClass - ')[1];
+            this.currentClass = phylogenyCurrentClass;
+          } else {
+            this.activeFilters.push(params[key]);
+          }
 
-        } else {
-          this.filterService.activeFilters.push(params[key]);
         }
       }
     }
     this.getGisData();
+    this.initMap();
   }
-  hasActiveFilters() {
-    if (typeof this.filterService.activeFilters === 'undefined') {
-      return false;
+
+  displayActiveFilterName(filterName: string) {
+    if (filterName && filterName.startsWith('symbionts_')) {
+      return 'Symbionts-' + filterName.split('-')[1];
     }
-    for (const key of Object.keys(this.filterService.activeFilters)) {
-      if (this.filterService.activeFilters[key].length !== 0) {
-        return true;
-      }
+    if (filterName && filterName.startsWith('experimentType_')) {
+      return  filterName.split('_')[1];
     }
-    return false;
+    return filterName;
   }
+
+  removePhylogenyFilters() {
+    // update url with the value of the phylogeny current class
+    const queryParamPhyloIndex = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+    if (queryParamPhyloIndex > -1) {
+      this.queryParams.splice(queryParamPhyloIndex, 1);
+    }
+
+    const queryParamCurrentClassIndex = this.queryParams.findIndex(element => element.includes('phylogenyCurrentClass - '));
+    if (queryParamCurrentClassIndex > -1) {
+      this.queryParams.splice(queryParamCurrentClassIndex, 1);
+    }
+    // Replace current url parameters with new parameters.
+    this.replaceUrlQueryParams();
+    // reset phylogeny variables
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    this.getGisData();
+  }
+
 
   ngAfterViewInit(): void {
   }
 
-  filterSearchResults() {
-    if (this.filterService.searchText !== '' && this.filterService.searchText.length > 1) {
-      const filterValue = this.filterService.searchText.toLowerCase();
+  getDropDownOptions() {
+    if (this.searchValue !== '' && this.searchValue.length > 1) {
+      const filterValue = this.searchValue.toLowerCase();
       this.filteredOptions = this.unpackedData.filter(option => {
         if (option.id !== undefined) {
           if (option.id.toLowerCase().includes(filterValue)) {
-            return option.id;
+            return option;
           }
         }
       });
-    }
-    else if (this.filterService.searchText.length === 0){
-      this.filteredOptions = [];
-      this.removeInputAndGetAllData();
+      console.log("this.filteredOptions: ", this.filteredOptions)
     }
   }
+
+  // filterSearchResults() {
+  //   if (this.filterService.searchText !== '' && this.filterService.searchText.length > 1) {
+  //     const filterValue = this.filterService.searchText.toLowerCase();
+  //     this.filteredOptions = this.unpackedData.filter(option => {
+  //       if (option.id !== undefined) {
+  //         if (option.id.toLowerCase().includes(filterValue)) {
+  //           return option.id;
+  //         }
+  //       }
+  //     });
+  //   }
+  //   else if (this.filterService.searchText.length === 0){
+  //     this.filteredOptions = [];
+  //     this.removeInputAndGetAllData();
+  //   }
+  // }
   // tslint:disable-next-line:typedef
+  // removeFilter() {
+  //   this.resetFilter();
+  //   const currentUrl = this.router.url;
+  //   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+  //     this.router.navigate([currentUrl.split('?')[0]] );
+  //     this.spinner.show();
+  //     setTimeout(() => {
+  //       this.spinner.hide();
+  //     }, 800);
+  //   });
+  // }
+
   removeFilter() {
-    this.resetFilter();
-    const currentUrl = this.router.url;
-    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-      this.router.navigate([currentUrl.split('?')[0]] );
-      this.spinner.show();
-      setTimeout(() => {
-        this.spinner.hide();
-      }, 800);
-    });
+    this.activeFilters = [];
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    this.getGisData();
+    this.router.navigate([]);
   }
+
+  onHistoryClick() {
+    this.phylogenyFilters.splice(this.phylogenyFilters.length - 1, 1);
+    const previousClassIndex = this.classes.indexOf(this.currentClass) - 1;
+    this.currentClass = this.classes[previousClassIndex];
+    this.getGisData();
+  }
+
+  onRefreshClick() {
+    this.phylogenyFilters = [];
+    this.currentClass = 'kingdom';
+    // remove phylogenyFilters param from url
+    const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+    if (index > -1) {
+      this.queryParams.splice(index, 1);
+      // Replace current parameters with new parameters.
+      this.replaceUrlQueryParams();
+    }
+    this.getGisData();
+  }
+
   toggleSpecimens(event: MatRadioChange) {
     if (event.value === 3) {
       // this.radioOptions = 3;
@@ -167,20 +290,63 @@ export class GisComponent implements AfterViewInit , OnDestroy {
   }
 
   getGisData() {
+    console.log("this.phylogenyFilters: ", this.phylogenyFilters)
+    console.log("this.searchValue: ", this.searchValue)
+    console.log("this.activeFilters: ", this.activeFilters)
     this.spinner.show();
-    this.gisService.getGisData(this.filterService.activeFilters.join(','), this.filterService.searchText)
+    this.gisService.getGisData('gis_filter_data', this.currentClass, this.phylogenyFilters, this.searchValue,
+        this.activeFilters)
       .subscribe(
         data => {
+          console.log(data)
+          this.aggregations = data.aggregations;
+
+          // experiment type
+          this.experimentTypeFilters = [];
+          if (this.aggregations?.experiment.library_construction_protocol.buckets.length > 0) {
+            this.experimentTypeFilters = this.merge(this.experimentTypeFilters,
+                this.aggregations?.experiment.library_construction_protocol.buckets,
+                'experimentType');
+          }
+
+          // get last phylogeny element for filter button
+          this.lastPhylogenyVal = this.phylogenyFilters.slice(-1)[0];
+
+          // add filters to URL query parameters
+          this.queryParams = [...this.activeFilters];
+          if (this.phylogenyFilters && this.phylogenyFilters.length) {
+            const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
+            if (index > -1) {
+              this.queryParams[index] = `phylogenyFilters - [${this.phylogenyFilters}]`;
+            } else {
+              this.queryParams.push(`phylogenyFilters - [${this.phylogenyFilters}]`);
+            }
+          }
+
+          // update url with the value of the phylogeny current class
+          this.updateQueryParams('phylogenyCurrentClass');
+
+          this.replaceUrlQueryParams();
+
           const unpackedData = [];
           this.filterService.getFilters(data);
-          for (const item of  data.hits.hits) {
+          for (const item of  data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.unpackedData = unpackedData;
+          this.refreshMapLayers();
           setTimeout(() => {
             this.spinner.hide();
-            this.initMap();
             this.populateMap();
+            if (this.searchValue && this.unpackedData.length > 0) {
+              const lat = this.unpackedData[0].organisms[0].lat;
+              const lng = this.unpackedData[0].organisms[0].lng;
+              this.map.setView([lat, lng], 6);
+            }
+            else {
+              this.resetMapView();
+            }
+            this.spinner.hide();
             this.showCursorCoordinates();
           }, 300);
         },
@@ -189,6 +355,95 @@ export class GisComponent implements AfterViewInit , OnDestroy {
           this.spinner.hide();
         }
       );
+  }
+
+  merge = (first: any[], second: any[], filterLabel: string) => {
+    for (const item of second) {
+      item.label = filterLabel;
+      first.push(item);
+    }
+    return first;
+  }
+
+  updateQueryParams(urlParam: string){
+    if (urlParam === 'phylogenyCurrentClass'){
+      const queryParamIndex = this.queryParams.findIndex((element: any) => element.includes('phylogenyCurrentClass - '));
+      if (queryParamIndex > -1) {
+        this.queryParams[queryParamIndex] = `phylogenyCurrentClass - ${this.currentClass}`;
+      } else {
+        this.queryParams.push(`phylogenyCurrentClass - ${this.currentClass}`);
+      }
+    }
+  }
+
+  replaceUrlQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: this.queryParams,
+      replaceUrl: true,
+      skipLocationChange: false
+    });
+  }
+
+  toggleCollapse = () => {
+    if (this.isCollapsed) {
+      this.itemLimit = 10000;
+      this.isCollapsed = false;
+    } else {
+      this.itemLimit = 5;
+      this.isCollapsed = true;
+    }
+  }
+
+  getStatusCount(data: any) {
+    if (data) {
+      for (const item of data) {
+        if (item.key.includes('Done')) {
+          return item.doc_count;
+        }
+      }
+    }
+  }
+
+  checkStyle(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      return 'background-color: #4BBEFD;';
+    } else {
+      return '';
+    }
+  }
+
+  onFilterClick(filterValue: string, phylogenyFilter: boolean = false) {
+    console.log(filterValue);
+    if (phylogenyFilter) {
+      if (this.isPhylogenyFilterProcessing) {
+        return;
+      }
+      // Set flag to prevent further clicks
+      this.isPhylogenyFilterProcessing = true;
+
+      this.phylogenyFilters.push(`${this.currentClass}:${filterValue}`);
+      const index = this.classes.indexOf(this.currentClass) + 1;
+      this.currentClass = this.classes[index];
+
+      // update url with the value of the phylogeny current class
+      this.updateQueryParams('phylogenyCurrentClass');
+
+      // Replace current parameters with new parameters.
+      this.replaceUrlQueryParams();
+
+      this.getGisData();
+
+      // Reset isPhylogenyFilterProcessing flag
+      setTimeout(() => {
+        this.isPhylogenyFilterProcessing = false;
+      }, 500);
+    } else{
+      const index = this.activeFilters.indexOf(filterValue);
+      index !== -1 ? this.activeFilters.splice(index, 1) :
+          this.activeFilters.push(filterValue);
+      this.getGisData();
+    }
   }
 
   unpackData(data: any) {
@@ -373,7 +628,7 @@ export class GisComponent implements AfterViewInit , OnDestroy {
     }
   }
 
-  showCursorCoordinates() {
+  showCursorCoordinatesOLD() {
     const Coordinates = L.Control.extend({
       onAdd: map => {
         const container = L.DomUtil.create('div');
@@ -387,6 +642,34 @@ export class GisComponent implements AfterViewInit , OnDestroy {
     this.map.addControl(new Coordinates({ position: 'bottomright' }));
   }
 
+  showCursorCoordinates() {
+    this.removeCursorCoordinates();
+    const CoordinateControl = L.Control.extend({
+      options: {
+        position: 'bottomright'
+      },
+      onAdd: map => {
+        const container = L.DomUtil.create('div');
+        container.style.backgroundColor = 'rgba(255,255,255,.8)';
+        map.addEventListener('mousemove', e => {
+          container.innerHTML = `Lat: ${e.latlng.lat.toFixed(4)} Lng: ${e.latlng.lng.toFixed(4)}`;
+        });
+        return container;
+      }
+    });
+    // Add the control to the map and store the instance
+    this.coordinateControl = new CoordinateControl();
+    this.map.addControl(this.coordinateControl);
+  }
+
+  removeCursorCoordinates() {
+    // Check if coordinates control exists and remove it
+    if (this.coordinateControl) {
+      this.map.removeControl(this.coordinateControl);
+      this.coordinateControl = null;
+    }
+  }
+
   refreshMapLayers() {
     this.map.eachLayer(layer => {
       this.map.removeLayer(layer);
@@ -398,81 +681,80 @@ export class GisComponent implements AfterViewInit , OnDestroy {
     this.map.setView([53.4862, -1.8904], 6);
   }
 
-  searchGisData = () => {
-    this.getSearchData(this.filterService.searchText);
-  }
 
-  getSearchData(search: any) {
-    this.toggleSpecimen.setValue(false);
-    this.radioOptions = 1;
-    this.spinner.show();
-    this.gisService.getGisData(this.filterService.activeFilters.join(','), search)
-      .subscribe(
-        data => {
-          this.filterService.getFilters(data);
-          this.filterService.updateActiveRouteParams();
-          const unpackedData = [];
-          this.unpackedData = [];
-          for (const item of data.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.unpackedData = unpackedData;
-          this.refreshMapLayers();
-          setTimeout(() => {
-            this.populateMap();
-            if (this.unpackedData.length > 0) {
-              const lat = this.unpackedData[0].organisms[0].lat;
-              const lng = this.unpackedData[0].organisms[0].lng;
-              this.map.setView([lat, lng], 6);
-            }
-            else {
-              this.resetMapView();
-            }
-            this.spinner.hide();
-          }, 100);
-        },
-        err => {
-          console.log(err);
-          this.spinner.hide();
-        }
-      );
+  // getSearchData(search: any) {
+  //   this.toggleSpecimen.setValue(false);
+  //   this.radioOptions = 1;
+  //   this.spinner.show();
+  //   this.gisService.getGisData('gis_filter_data', this.currentClass, this.phylogenyFilters, this.searchValue,
+  //       this.activeFilters)
+  //     .subscribe(
+  //       data => {
+  //         this.filterService.getFilters(data);
+  //         this.filterService.updateActiveRouteParams();
+  //         const unpackedData = [];
+  //         this.unpackedData = [];
+  //         for (const item of data.results) {
+  //           unpackedData.push(this.unpackData(item));
+  //         }
+  //         this.unpackedData = unpackedData;
+  //         this.refreshMapLayers();
+  //         setTimeout(() => {
+  //           this.populateMap();
+  //           if (this.unpackedData.length > 0) {
+  //             const lat = this.unpackedData[0].organisms[0].lat;
+  //             const lng = this.unpackedData[0].organisms[0].lng;
+  //             this.map.setView([lat, lng], 6);
+  //           }
+  //           else {
+  //             this.resetMapView();
+  //           }
+  //           this.spinner.hide();
+  //         }, 100);
+  //       },
+  //       err => {
+  //         console.log(err);
+  //         this.spinner.hide();
+  //       }
+  //     );
+  //
+  // }
 
-  }
+  // removeInputAndGetAllData() {
+  //   this.toggleSpecimen.setValue(false);
+  //   this.radioOptions = 1;
+  //   this.getAllData();
+  // }
 
-  removeInputAndGetAllData() {
-    this.toggleSpecimen.setValue(false);
-    this.radioOptions = 1;
-    this.getAllData();
-  }
-
-  getAllData() {
-    this.filteredOptions = [];
-    this.myControl.reset();
-    this.spinner.show();
-    this.gisService.getGisData(this.filterService.activeFilters.join(','), this.filterService.searchText)
-      .subscribe(
-        data => {
-          this.filterService.getFilters(data);
-          this.filterService.updateActiveRouteParams();
-          const unpackedData = [];
-          this.unpackedData = [];
-          for (const item of data.hits.hits) {
-            unpackedData.push(this.unpackData(item));
-          }
-          this.unpackedData = unpackedData;
-          this.refreshMapLayers();
-          setTimeout(() => {
-            this.populateMap();
-            this.resetMapView();
-            this.spinner.hide();
-          }, 400);
-        },
-        err => {
-          console.log(err);
-          this.spinner.hide();
-        }
-      );
-  }
+  // getAllData() {
+  //   this.filteredOptions = [];
+  //   this.myControl.reset();
+  //   this.spinner.show();
+  //   this.gisService.getGisData('gis_filter_data', this.currentClass, this.phylogenyFilters, this.searchValue,
+  //       this.activeFilters)
+  //     .subscribe(
+  //       data => {
+  //         this.filterService.getFilters(data);
+  //         this.filterService.updateActiveRouteParams();
+  //         const unpackedData = [];
+  //         this.unpackedData = [];
+  //         for (const item of data.results) {
+  //           unpackedData.push(this.unpackData(item));
+  //         }
+  //         this.unpackedData = unpackedData;
+  //         this.refreshMapLayers();
+  //         setTimeout(() => {
+  //           this.populateMap();
+  //           this.resetMapView();
+  //           this.spinner.hide();
+  //         }, 400);
+  //       },
+  //       err => {
+  //         console.log(err);
+  //         this.spinner.hide();
+  //       }
+  //     );
+  // }
   resetFilter = () => {
     for (const key of Object.keys(this.filterService.activeFilters)) {
       this.filterService.activeFilters[key] = [];
@@ -488,4 +770,6 @@ export class GisComponent implements AfterViewInit , OnDestroy {
     this.resetFilter();
 
   }
+
+  protected readonly filter = filter;
 }

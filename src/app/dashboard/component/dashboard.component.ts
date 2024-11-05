@@ -186,7 +186,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
           } else {
             this.activeFilters.push(params[key]);
           }
-
         }
       }
     }

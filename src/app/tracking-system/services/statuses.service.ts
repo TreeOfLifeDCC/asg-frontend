@@ -65,6 +65,7 @@ export class StatusesService {
 
       url += filterStr;
     }
+
     url += `&current_class=${currentClass}`;
     console.log(url);
     return this.http.get<any>(url);
@@ -72,6 +73,7 @@ export class StatusesService {
 
 
   public getBiosampleByOrganism(organism: string): Observable<any> {
+    console.log(`${this.API_BASE_URL}/statuses/detail/${organism}`)
     return this.http.get(`${this.API_BASE_URL}/statuses/detail/${organism}`);
   }
 

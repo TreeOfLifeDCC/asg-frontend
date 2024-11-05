@@ -273,8 +273,6 @@
                     <mat-label>Search</mat-label>
                     <input matInput [(ngModel)]='searchValue' (ngModelChange)="this.searchUpdate.next($event)"
                            placeholder="Ex. lutra" #input>
-
-
                 </mat-form-field>
                 <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
                     <ng-container matColumnDef="organism">

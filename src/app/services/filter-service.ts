@@ -362,14 +362,14 @@ export class FilterService {
         });
 
         let assembliesFiltersCount = 0;
-        this.AssembliesFilters = this.filtersMap.aggregations.assemblies_status.buckets.filter(i => {
-            if (i !== '' && i.key.toLowerCase() === 'done') {
-                const obj = i;
-                obj.key = 'Assemblies - ' + obj.key;
-                assembliesFiltersCount = obj.doc_count;
-                return obj;
-            }
-        });
+        // this.AssembliesFilters = this.filtersMap.aggregations.assemblies_status.buckets.filter(i => {
+        //     if (i !== '' && i.key.toLowerCase() === 'done') {
+        //         const obj = i;
+        //         obj.key = 'Assemblies - ' + obj.key;
+        //         assembliesFiltersCount = obj.doc_count;
+        //         return obj;
+        //     }
+        // });
         this.filterArray.push({
             title: 'Assemblies - Submitted',
             key: 'Assemblies - Done',
