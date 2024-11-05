@@ -5,7 +5,6 @@ import { GisService } from './gis.service';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {FormsModule, UntypedFormControl} from '@angular/forms';
 import {MatRadioButton, MatRadioChange, MatRadioGroup} from '@angular/material/radio';
-import {FilterService} from '../services/filter-service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatAutocomplete, MatAutocompleteTrigger, MatOption} from '@angular/material/autocomplete';
 import {MatFormField, MatFormFieldModule} from '@angular/material/form-field';
@@ -13,9 +12,9 @@ import {PhylogenyFilterComponent} from '../shared/phylogeny-filter/phylogeny-fil
 import {FilterComponent} from '../shared/filter/filter.component';
 import {ActiveFilterComponent} from '../shared/active-filter/active-filter.component';
 import {MatInputModule} from '@angular/material/input';
-import {MatIcon} from "@angular/material/icon";
-import {filter, Subject} from "rxjs";
-import {debounceTime, distinctUntilChanged} from "rxjs/operators";
+import {MatIcon} from '@angular/material/icon';
+import {filter, Subject} from 'rxjs';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -115,7 +114,7 @@ export class GisComponent implements AfterViewInit , OnDestroy {
   coordinateControl: any = null;
 
   constructor(private gisService: GisService, private spinner: NgxSpinnerService, private activatedRoute: ActivatedRoute,
-              private router: Router, public filterService: FilterService) {
+              private router: Router) {
     this.searchUpdate.pipe(
         debounceTime(500),
         distinctUntilChanged()).subscribe(
@@ -201,35 +200,6 @@ export class GisComponent implements AfterViewInit , OnDestroy {
       console.log("this.filteredOptions: ", this.filteredOptions)
     }
   }
-
-  // filterSearchResults() {
-  //   if (this.filterService.searchText !== '' && this.filterService.searchText.length > 1) {
-  //     const filterValue = this.filterService.searchText.toLowerCase();
-  //     this.filteredOptions = this.unpackedData.filter(option => {
-  //       if (option.id !== undefined) {
-  //         if (option.id.toLowerCase().includes(filterValue)) {
-  //           return option.id;
-  //         }
-  //       }
-  //     });
-  //   }
-  //   else if (this.filterService.searchText.length === 0){
-  //     this.filteredOptions = [];
-  //     this.removeInputAndGetAllData();
-  //   }
-  // }
-  // tslint:disable-next-line:typedef
-  // removeFilter() {
-  //   this.resetFilter();
-  //   const currentUrl = this.router.url;
-  //   this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
-  //     this.router.navigate([currentUrl.split('?')[0]] );
-  //     this.spinner.show();
-  //     setTimeout(() => {
-  //       this.spinner.hide();
-  //     }, 800);
-  //   });
-  // }
 
   removeFilter() {
     this.activeFilters = [];
@@ -329,7 +299,6 @@ export class GisComponent implements AfterViewInit , OnDestroy {
           this.replaceUrlQueryParams();
 
           const unpackedData = [];
-          this.filterService.getFilters(data);
           for (const item of  data.results) {
             unpackedData.push(this.unpackData(item));
           }
@@ -517,7 +486,8 @@ export class GisComponent implements AfterViewInit , OnDestroy {
             let alreadyExists = false;
             if ((this.markers !== undefined && this.markers.getLayers() !== undefined)) {
               this.markers.getLayers().forEach((layer) => {
-                if (!alreadyExists && layer instanceof L.Marker && (layer.getLatLng().equals(latlng)) && layer.options.title === tempArr[j].organism) {
+                if (!alreadyExists && layer instanceof L.Marker && (layer.getLatLng().equals(latlng)) &&
+                    layer.options.title === tempArr[j].organism) {
                   alreadyExists = true;
                 }
               });
@@ -681,93 +651,10 @@ export class GisComponent implements AfterViewInit , OnDestroy {
     this.map.setView([53.4862, -1.8904], 6);
   }
 
-
-  // getSearchData(search: any) {
-  //   this.toggleSpecimen.setValue(false);
-  //   this.radioOptions = 1;
-  //   this.spinner.show();
-  //   this.gisService.getGisData('gis_filter_data', this.currentClass, this.phylogenyFilters, this.searchValue,
-  //       this.activeFilters)
-  //     .subscribe(
-  //       data => {
-  //         this.filterService.getFilters(data);
-  //         this.filterService.updateActiveRouteParams();
-  //         const unpackedData = [];
-  //         this.unpackedData = [];
-  //         for (const item of data.results) {
-  //           unpackedData.push(this.unpackData(item));
-  //         }
-  //         this.unpackedData = unpackedData;
-  //         this.refreshMapLayers();
-  //         setTimeout(() => {
-  //           this.populateMap();
-  //           if (this.unpackedData.length > 0) {
-  //             const lat = this.unpackedData[0].organisms[0].lat;
-  //             const lng = this.unpackedData[0].organisms[0].lng;
-  //             this.map.setView([lat, lng], 6);
-  //           }
-  //           else {
-  //             this.resetMapView();
-  //           }
-  //           this.spinner.hide();
-  //         }, 100);
-  //       },
-  //       err => {
-  //         console.log(err);
-  //         this.spinner.hide();
-  //       }
-  //     );
-  //
-  // }
-
-  // removeInputAndGetAllData() {
-  //   this.toggleSpecimen.setValue(false);
-  //   this.radioOptions = 1;
-  //   this.getAllData();
-  // }
-
-  // getAllData() {
-  //   this.filteredOptions = [];
-  //   this.myControl.reset();
-  //   this.spinner.show();
-  //   this.gisService.getGisData('gis_filter_data', this.currentClass, this.phylogenyFilters, this.searchValue,
-  //       this.activeFilters)
-  //     .subscribe(
-  //       data => {
-  //         this.filterService.getFilters(data);
-  //         this.filterService.updateActiveRouteParams();
-  //         const unpackedData = [];
-  //         this.unpackedData = [];
-  //         for (const item of data.results) {
-  //           unpackedData.push(this.unpackData(item));
-  //         }
-  //         this.unpackedData = unpackedData;
-  //         this.refreshMapLayers();
-  //         setTimeout(() => {
-  //           this.populateMap();
-  //           this.resetMapView();
-  //           this.spinner.hide();
-  //         }, 400);
-  //       },
-  //       err => {
-  //         console.log(err);
-  //         this.spinner.hide();
-  //       }
-  //     );
-  // }
-  resetFilter = () => {
-    for (const key of Object.keys(this.filterService.activeFilters)) {
-      this.filterService.activeFilters[key] = [];
-    }
-    this.filterService.activeFilters = [];
-    this.filterService.urlAppendFilterArray = [];
-    this.filterService.isFilterSelected = false;
-    this.filterService.phylSelectedRank = '';
-    this.filterService.selectedFilterValue = '';
-  }
-
   ngOnDestroy() {
-    this.resetFilter();
+    this.activeFilters = [];
+    this.phylogenyFilters = [];
+    this.experimentTypeFilters = [];
 
   }
 

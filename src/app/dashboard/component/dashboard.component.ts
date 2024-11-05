@@ -1,20 +1,16 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
-
-import {MatSort, MatSortModule} from '@angular/material/sort';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {MatSort} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
-
 import 'jquery';
 import 'bootstrap';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {filter, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {FilterComponent} from '../../shared/filter/filter.component';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
-import {ActiveFilterComponent} from '../../shared/active-filter/active-filter.component';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
@@ -35,12 +31,10 @@ import {MatDialog} from '@angular/material/dialog';
     MatTableModule,
     MatInputModule,
     NgxSpinnerModule,
-    FilterComponent,
     PhylogenyFilterComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     FormsModule,
-    ActiveFilterComponent,
     RouterLink,
     NgStyle,
     NgClass,

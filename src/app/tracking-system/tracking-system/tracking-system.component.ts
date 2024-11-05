@@ -4,7 +4,6 @@ import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { StatusesService } from '../services/statuses.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { Taxonomy } from 'src/app/taxanomy/taxonomy.model';
 import 'jquery';
 import {
   MatCell,
@@ -22,8 +21,7 @@ import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatChip, MatChipSet } from '@angular/material/chips';
 import { MatInputModule } from '@angular/material/input';
-import { PhylogenyFilterComponent } from '../../shared/phylogeny-filter/phylogeny-filter.component';
-import {MatIcon} from "@angular/material/icon";
+import {MatIcon} from '@angular/material/icon';
 
 
 @Component({
@@ -55,7 +53,6 @@ import {MatIcon} from "@angular/material/icon";
     MatInputModule,
     MatColumnDef,
     MatSortHeader,
-    PhylogenyFilterComponent,
     JsonPipe,
     MatIcon
   ],
