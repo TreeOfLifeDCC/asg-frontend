@@ -6,32 +6,19 @@ import { Observable } from 'rxjs';
 })
 export class GisService {
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
-  // private API_BASE_URL = 'http://localhost:8080';
+  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  private API_BASE_URL = 'http://localhost:8000';
   //    private API_BASE_URL = 'http://45.88.81.15';
 
   constructor(private http: HttpClient) { }
 
-  public getGisDataOLD(filter: any, searchText?): Observable<any> {
-    //gis_filter_data
-
-    let requestParams = `?`;
-    if (searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`;
-    }
-    return this.http.post(`${this.API_BASE_URL}/root_organisms/gis-filter${requestParams}`, filter);
-
-  }
-
   public getGisData(indexName, currentClass, phylogenyFilters, searchText?, filterValue?): Observable<any> {
 
-    let url = `http://localhost:8000/${indexName}?limit=15&offset=0`;
+    let url = `${this.API_BASE_URL}/${indexName}?limit=15&offset=0`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
-
     if (searchText) {
       url += `&search=${searchText}`;
     }
-
     if (filterValue.length !== 0) {
       let filterStr = '&filter=';
       let filterItem;
@@ -53,14 +40,11 @@ export class GisService {
           }
         }else if (filterValue[i].includes('_') && filterValue[i].startsWith('experimentType')) {
           filterItem = filterValue[i].replace('_', ':');
-
         }
         else {
           filterItem = `${currentClass}:${filterValue[i]}`;
         }
-
         filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
-
       }
       url += filterStr;
     }

@@ -7,15 +7,15 @@ import {Observable} from "rxjs";
 })
 export class StatusesService {
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  // private API_BASE_URL = 'http://localhost:8080';
+  private API_BASE_URL = 'http://localhost:8000';
 
   constructor(private http: HttpClient) { }
 
-  public getTrackingData(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
-
-    let url = `http://localhost:8000/${indexName}?limit=${limit}&offset=${offset}`;
+  public getTrackingData(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? ,
+                         searchText?, filterValue?): Observable<any> {
+    let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
 
     if (searchText) {
@@ -50,9 +50,7 @@ export class StatusesService {
         else {
           filterItem = `${currentClass}:${filterValue[i]}`;
         }
-
         filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
-
       }
       url += filterStr;
     }
@@ -62,16 +60,15 @@ export class StatusesService {
       for (const filter of phylogenyFilters) {
         filterStr = filterStr === '&phylogeny_filters=' ? `${filterStr}${filter}` : `${filterStr}-${filter}`;
       }
-
       url += filterStr;
     }
-
     url += `&current_class=${currentClass}`;
     console.log(url);
     return this.http.get<any>(url);
   }
 
 
+  // TODO Check with Raheela whether this is used. It doesn't seem to be used.
   public getBiosampleByOrganism(organism: string): Observable<any> {
     console.log(`${this.API_BASE_URL}/statuses/detail/${organism}`)
     return this.http.get(`${this.API_BASE_URL}/statuses/detail/${organism}`);
@@ -80,8 +77,7 @@ export class StatusesService {
   downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
                sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
                indexName: string) {
-
-    const url = `http://127.0.0.1:8000/data-download`;
+    const url = `${this.API_BASE_URL}/data-download`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
 
     // phylogeny
@@ -115,7 +111,6 @@ export class StatusesService {
 
         filterItems.push(filterItem);
       }
-
       filterStr = filterItems.join(',');
     }
 
