@@ -26,9 +26,6 @@
                                 (click)="onFilterClick('BioSamples - Submitted')"
                                 style="cursor: pointer">
                                 <span>BioSamples - Submitted</span>
-                                <span class="badge badge-pill badge-space badge-info">
-                                         {{getStatusCount(aggregations?.biosamples.buckets)}}
-                                        </span>
                             </li>
                         }
                         @if (getStatusCount(aggregations?.raw_data.buckets)) {
@@ -38,11 +35,7 @@
                                 [style]="checkStyle('Raw Data - Submitted')"
                                 (click)="onFilterClick('Raw Data - Submitted')"
                                 style="cursor: pointer">
-
                                 <span>Raw Data - Submitted</span>
-                                <span class="badge badge-pill badge-info badge-space">
-                                            {{ getStatusCount(aggregations?.raw_data.buckets) }}
-                                        </span>
                             </li>
                         }
                         @if (getStatusCount(aggregations?.assemblies_status.buckets)) {
@@ -53,9 +46,6 @@
                                 (click)="onFilterClick('Assemblies - Submitted')"
                                 style="cursor: pointer">
                                 <span> Assemblies - Submitted</span>
-                                <span class="badge badge-pill badge-info badge-space">
-                                            {{ getStatusCount(aggregations?.assemblies_status.buckets) }}
-                                       </span>
                             </li>
                         }
                         @if (getStatusCount(aggregations?.annotation_complete.buckets)) {
@@ -65,11 +55,7 @@
                                 [style]="checkStyle('Annotation Complete - Done')"
                                 (click)="onFilterClick('Annotation Complete - Done')"
                                 style="cursor: pointer">
-
                                 <span> Annotation Complete - Done  </span>
-                                <span class="badge badge-pill badge-info badge-space">
-                                            {{ getStatusCount(aggregations?.annotation_complete.buckets) }}
-                                        </span>
                             </li>
                         }
 
@@ -80,11 +66,7 @@
                                 [style]="checkStyle('Genome Notes - Submitted')"
                                 (click)="onFilterClick('Genome Notes - Submitted')"
                                 style="cursor: pointer">
-
                                 <span> Genome Notes - Submitted</span>
-                                <span class="badge badge-pill badge-info badge-space">
-                                        {{ aggregations?.genome.doc_count }}
-                                    </span>
                             </li>
                         }
                     </ul>
@@ -119,10 +101,6 @@
                                         [style]="checkStyle(phylogeny_name.key)"
                                         (click)="onFilterClick(phylogeny_name.key, true)">
                                         <span> {{ phylogeny_name.key }}</span>
-
-                                        <span class="badge badge-pill badge-info badge-space">
-                                            {{ phylogeny_name.doc_count }}
-                                        </span>
                                     </li>
                                 }
                             </ul>
@@ -152,9 +130,6 @@
                                     (click)="onFilterClick(filter.label + '_' + filter.key)"
                                     style="cursor: pointer">
                                     <span >{{ filter.key }}</span>
-                                    <span class="badge badge-pill badge-info badge-space">
-                                        {{filter.doc_count }}
-                                    </span>
                                 </li>
                             }
                         }
