@@ -73,14 +73,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   lastPhylogenyVal = '';
   queryParams: any = {};
   currentClass = 'kingdom';
-  classes = ['superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class',
-    'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
-    'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
-    'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
-  displayProgressBar = false;
-
-  orginlTaxonomies = [
-    'cellularorganism',
+  classes: string[] = ['cellularorganism',
     'superkingdom',
     'kingdom',
     'subkingdom',
@@ -115,6 +108,8 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     'varietas',
     'forma'
   ];
+  displayProgressBar = false;
+
   searchValue: string;
 
   itemLimitBiosampleFilter: number;

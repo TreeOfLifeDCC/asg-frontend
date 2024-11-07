@@ -109,10 +109,41 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   isPhylogenyFilterProcessing = false; // Flag to prevent double-clicking
   phylogenyFilters: string[] = [];
   activeFilters = new Array<string>();
-  classes = ['superkingdom', 'kingdom', 'subkingdom', 'superphylum', 'phylum', 'subphylum', 'superclass', 'class',
-    'subclass', 'infraclass', 'cohort', 'subcohort', 'superorder', 'order', 'suborder', 'infraorder', 'parvorder',
-    'section', 'subsection', 'superfamily', 'family', ' subfamily', ' tribe', 'subtribe', 'genus', 'series', 'subgenus',
-    'species_group', 'species_subgroup', 'species', 'subspecies', 'varietas', 'forma'];
+  classes: string[] = ['cellularorganism',
+    'superkingdom',
+    'kingdom',
+    'subkingdom',
+    'superphylum',
+    'phylum',
+    'subphylum',
+    'superclass',
+    'class',
+    'subclass',
+    'infraclass',
+    'cohort',
+    'subcohort',
+    'superorder',
+    'order',
+    'parvorder',
+    'suborder',
+    'infraorder',
+    'section',
+    'subsection',
+    'superfamily',
+    'family',
+    'subfamily',
+    'tribe',
+    'subtribe',
+    'genus',
+    'series',
+    'subgenus',
+    'species_group',
+    'species_subgroup',
+    'species',
+    'subspecies',
+    'varietas',
+    'forma'
+  ];
   symbiontsFilters: any[] = [];
   metagenomesFilters: any[] = [];
   experimentTypeFilters: any[] = [];
