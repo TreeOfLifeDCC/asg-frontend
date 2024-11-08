@@ -20,6 +20,7 @@ import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MatIcon} from '@angular/material/icon';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {MatDialog} from '@angular/material/dialog';
+import {MatProgressBar} from "@angular/material/progress-bar";
 
 
 @Component({
@@ -47,7 +48,8 @@ import {MatDialog} from '@angular/material/dialog';
     JsonPipe,
     ReactiveFormsModule,
     MatRadioGroup,
-    MatRadioButton
+    MatRadioButton,
+    MatProgressBar
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -158,6 +160,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   displayProgressBar = false;
   bioSampleTotalCount = 0;
   unpackedData;
+  mgnifyStudyIds: any[] = [];
 
   phylSelectedRank = '';
 
@@ -181,6 +184,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   public downloadForm!: FormGroup;
   displayErrorMsg = false;
   @ViewChild('downloadTemplate') downloadTemplate = {} as TemplateRef<any>;
+  @ViewChild('mgnifyTemplate') mgnifyTemplate = {} as TemplateRef<any>;
 
   protected readonly filter = filter;
 
@@ -333,7 +337,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         this.activeFilters
     ).subscribe(
             data => {
-              const unpackedData = [];
               this.aggregations = data.aggregations;
 
               // symbionts
@@ -400,9 +403,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
               this.replaceUrlQueryParams();
 
-              if (data === null || !data.results?.length) {
-                return [];
-              }
+              const unpackedData = [];
               for (const item of data.results) {
                 unpackedData.push(this.unpackData(item));
               }
@@ -520,6 +521,16 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       data = data._source;
     }
     for (const key of Object.keys(data)) {
+      if (key === 'metagenomes_records') {
+        const metagenomesRecords = data[key];
+        this.mgnifyStudyIds = metagenomesRecords
+            .filter(ele => ele.mgnify_study_ids)
+            .map(ele => ele.mgnify_study_ids);
+        console.log(this.mgnifyStudyIds)
+        dataToReturn['mgnify_study_ids'] = this.mgnifyStudyIds
+        dataToReturn[key] = data[key];
+      }
+
       if (key === 'tax_id') {
         dataToReturn['goatInfo'] = 'https://goat.genomehubs.org/records?record_id=' + data[key] +
             '&result=taxon&taxonomy=ncbi#' + dataToReturn['organism'];
@@ -572,6 +583,16 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   checkTolidExists(data) {
     return data !== undefined && data.tolid !== undefined && data.tolid != null && data.tolid.length > 0;
+  }
+
+  checkMgnifyIdsLength(data) {
+    return data !== undefined && data.mgnify_study_ids !== undefined && data.mgnify_study_ids != null
+        ? data.mgnify_study_ids.length
+        : 0;
+  }
+
+  generateMgnifyIDLink(mgnifyId) {
+    return `https://www.ebi.ac.uk/metagenomics/studies/${mgnifyId}#overview`;
   }
 
   generateTolidLink(data) {
@@ -660,6 +681,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.downloadDialogTitle = `Download data`;
     this.dialogRef = this.dialog.open(this.downloadTemplate,
         { data: value, height: '260px', width: '400px' });
+  }
+
+  openMGnifyDialog(mgnifyUrls: any) {
+    this.downloadDialogTitle = `Download data`;
+    this.dialogRef = this.dialog.open(this.mgnifyTemplate,
+        { data: mgnifyUrls, height: '260px', width: '400px' });
   }
 
   applyFilter(event: Event) {

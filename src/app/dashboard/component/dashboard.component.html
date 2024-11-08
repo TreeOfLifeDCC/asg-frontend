@@ -301,7 +301,7 @@
                     <ng-container matColumnDef="goatInfo">
                         <mat-header-cell *matHeaderCellDef style=" padding-right: 0px; ">External references
                         </mat-header-cell>
-                        <mat-cell *matCellDef="let element" class="text-center" style=" padding-right: 0px; ">
+                        <mat-cell *matCellDef="let element" class="text-left" style=" padding-right: 0px; ">
                             <span>
                                     <mat-chip [ngStyle]="{'background-color': 'deepskyblue'}">
                                         <a class="mat-standard-chip goat_info" target="_blank" href="{{element?.goatInfo}}"
@@ -314,6 +314,20 @@
                                         <a class="mat-standard-chip" target="_blank"
                                            href="{{generateTolidLink(element)}}">ToL QC</a>
                                     </mat-chip>
+                                }
+                                @if (checkMgnifyIdsLength(element) > 0) {
+                                    @if (checkMgnifyIdsLength(element) === 1) {
+                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="mgnifychip">
+                                        <a class="mat-standard-chip" target="_blank"
+                                           href="{{generateMgnifyIDLink(element['mgnify_study_ids'])}}">MGnify IDs</a>
+                                        </mat-chip>
+                                    } @else {
+                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}"
+                                                  (click)="openMGnifyDialog(element['mgnify_study_ids'])"
+                                                  class="mgnifychip">
+                                        <a class="mat-standard-chip">MGnify IDs</a>
+                                       </mat-chip>
+                                    }
                                 }
                             </span>
                         </mat-cell>
@@ -418,4 +432,26 @@
         </div>
     </ng-template>
 
+    <!-- MGnify Studies IDS Dialog Box -->
+    <ng-template let-data #mgnifyTemplate>
+        <div mat-dialog-content class="centerContents">
+            <p class="mat-dialog-title-font">MGnify Studies IDs</p>
+            @if (data && data.length) {
+                <div>
+                    <p>Links to associated MGnify Studies:</p>
+                    <ul>
+                        @for (id of data; track $index) {
+                            <a href="{{generateMgnifyIDLink(id)}}" target="_blank">
+                                <mat-icon>link</mat-icon>
+                                {{ id }}
+                            </a>
+                        }
+                    </ul>
+                </div>
+            }
+            <div mat-dialog-actions class="buttonContainer">
+                <button mat-button (click)="onCancelDialog()" class="flex-item cancel-button">Close</button>
+            </div>
+        </div>
+    </ng-template>
 </div>
