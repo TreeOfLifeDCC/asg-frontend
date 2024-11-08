@@ -152,7 +152,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   itemLimit = 5;
   isCollapsed = true;
   searchValue: string;
-  filtersMap;
   filters = {
     sex: {},
     trackingSystem: {}
@@ -160,10 +159,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   displayProgressBar = false;
   bioSampleTotalCount = 0;
   unpackedData;
-  mgnifyStudyIds: any[] = [];
-
-  phylSelectedRank = '';
-
   itemLimitBiosampleFilter: number;
   itemLimitEnaFilter: number;
   pagesize = 15;
@@ -522,12 +517,9 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
     for (const key of Object.keys(data)) {
       if (key === 'metagenomes_records') {
-        const metagenomesRecords = data[key];
-        this.mgnifyStudyIds = metagenomesRecords
+        dataToReturn['mgnify_study_ids'] = data[key]
             .filter(ele => ele.mgnify_study_ids)
             .map(ele => ele.mgnify_study_ids);
-        console.log(this.mgnifyStudyIds)
-        dataToReturn['mgnify_study_ids'] = this.mgnifyStudyIds
         dataToReturn[key] = data[key];
       }
 
