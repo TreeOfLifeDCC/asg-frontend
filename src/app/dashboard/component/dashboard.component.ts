@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, MatSortModule} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import 'jquery';
@@ -47,7 +47,8 @@ import {MatDialog} from '@angular/material/dialog';
     JsonPipe,
     ReactiveFormsModule,
     MatRadioGroup,
-    MatRadioButton
+    MatRadioButton,
+    MatSortModule
   ],
   styleUrls: ['./dashboard.component.css']
 })
