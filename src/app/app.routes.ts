@@ -22,16 +22,48 @@ export const routes: Routes = [
   { path: 'help', component: HelpComponent, title: 'Help' },
   { path: 'bulk-downloads' , component: BulkDownloadsComponent, title: 'Bulk-downloads' },
 
-  { path: 'data/specimens/details/:id', component: SpecimensComponent, title: 'Specimens' },
-  { path: 'data/organism/details/:id', component: DetailsComponent, title: 'Organism' },
-  { path: 'data/root/details/:id', component: OrganismDetailsComponent, title: 'Details' },
-  { path: 'data', component: DashboardComponent, title: 'Data' },
+  {
+    path: 'data/specimens/details/:id',
+    loadComponent: () => import('./dashboard/specimens/specimens.component').then(m => m.SpecimensComponent),
+    title: 'Specimens'
+  },
+  {
+    path: 'data/organism/details/:id',
+    loadComponent: () => import('./dashboard/component/details/details.component').then(m => m.DetailsComponent),
+    title: 'Organism'
+  },
+  {
+    path: 'data/root/details/:id',
+    loadComponent: () => import('./dashboard/component/organism-details/organism-details.component').then(m => m.OrganismDetailsComponent),
+    title: 'Details'
+  },
+  {
+    path: 'data',
+    loadComponent: () => import('./dashboard/component/dashboard.component').then(m => m.DashboardComponent),
+    title: 'Data'
+  },
 
-  { path: 'tracking/:id', component: TrackingDetailsComponent, title: 'Tracking Id' },
-  { path: 'tracking/details/:organism', component: TrackingDetailsComponent, title: 'Tracking Details' },
-  { path: 'tracking', component: TrackingSystemComponent, title: 'Tracking' },
+  {
+    path: 'tracking/:id',
+    loadComponent: () => import('./tracking-system/tracking-system/details/details.component').then(m => m.TrackingDetailsComponent),
+    title: 'Tracking Id'
+  },
+  {
+    path: 'tracking/details/:organism',
+    loadComponent: () => import('./tracking-system/tracking-system/details/details.component').then(m => m.TrackingDetailsComponent),
+    title: 'Tracking Details'
+  },
+  {
+    path: 'tracking',
+    loadComponent: () => import('./tracking-system/tracking-system/tracking-system.component').then(m => m.TrackingSystemComponent),
+    title: 'Tracking'
+  },
 
-  { path: 'tree', component: PhylogeneticsComponent, title: 'Tree' },
+  {
+    path: 'tree',
+    loadComponent: () => import('./phylogenetics/phylogenetics.component').then(m => m.PhylogeneticsComponent),
+    title: 'Tree'
+  },
   {
     path: '',
     children: [

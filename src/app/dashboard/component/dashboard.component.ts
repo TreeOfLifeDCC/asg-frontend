@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {MatSort} from '@angular/material/sort';
+import {MatSort, MatSortModule} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import 'jquery';
@@ -20,7 +20,7 @@ import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MatIcon} from '@angular/material/icon';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {MatDialog} from '@angular/material/dialog';
-import {MatProgressBar} from "@angular/material/progress-bar";
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 
 @Component({
@@ -49,6 +49,7 @@ import {MatProgressBar} from "@angular/material/progress-bar";
     ReactiveFormsModule,
     MatRadioGroup,
     MatRadioButton,
+    MatSortModule,
     MatProgressBar
   ],
   styleUrls: ['./dashboard.component.css']
