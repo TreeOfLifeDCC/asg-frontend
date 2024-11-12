@@ -182,7 +182,7 @@
                                             <mat-header-cell *matHeaderCellDef> FASTQ FTP </mat-header-cell>
                                             <mat-cell *matCellDef="let element" class="assemblies-font">
                                                 <mat-list class="list-group">
-                                                    @for (fastq of element.fastq_ftp; track fastq) {
+                                                    @for(fastq of element.fastq_ftp.split(';'); track $index){
                                                         <mat-list-item role="listitem">
                                                             <a href="ftp://{{fastq}}">{{ element.run_accession }}</a>
                                                         </mat-list-item>
@@ -194,7 +194,7 @@
                                             <mat-header-cell *matHeaderCellDef> Submitted FTP </mat-header-cell>
                                             <mat-cell *matCellDef="let element" class="assemblies-font">
                                                 <mat-list class="list-group">
-                                                    @for (submitted_ftp of element.submitted_ftp; track submitted_ftp) {
+                                                    @for(submitted_ftp of element.submitted_ftp.split(';'); track $index){
                                                         <mat-list-item role="listitem">
                                                             <a href="ftp://{{submitted_ftp}}">{{ element.study_accession }}</a>
                                                         </mat-list-item>
