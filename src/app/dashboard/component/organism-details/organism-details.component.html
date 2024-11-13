@@ -647,6 +647,27 @@
                         <hr>
                         <h1 class="col-md-12 page-header">Related Metagenomes </h1>
                         @if (dataSourceMetagenomesRecords?.data?.length) {
+                            <div>
+<!--                                <mat-accordion>-->
+<!--                                    <mat-expansion-panel hideToggle>-->
+<!--                                        <mat-expansion-panel-header>-->
+<!--                                            <mat-panel-title> This is the expansion title </mat-panel-title>-->
+<!--                                            <mat-panel-description> This is a summary of the content </mat-panel-description>-->
+<!--                                        </mat-expansion-panel-header>-->
+<!--                                        <p>This is the primary content of the panel.</p>-->
+<!--                                    </mat-expansion-panel>-->
+<!--                                    <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">-->
+<!--                                        <mat-expansion-panel-header>-->
+<!--                                            <mat-panel-title> Self aware panel </mat-panel-title>-->
+<!--                                            <mat-panel-description>-->
+<!--                                                Currently I am {{panelOpenState() ? 'open' : 'closed'}}-->
+<!--                                            </mat-panel-description>-->
+<!--                                        </mat-expansion-panel-header>-->
+<!--&lt;!&ndash;                                        <p>{{ mgnifyIDs }}</p>&ndash;&gt;-->
+<!--                                    </mat-expansion-panel>-->
+<!--                                </mat-accordion>-->
+                            </div>
+
                             <div class="table-container">
                                 <table mat-table [dataSource]="dataSourceMetagenomesRecords" matSort>
                                     <ng-container matColumnDef="accession">

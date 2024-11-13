@@ -5,14 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
 import { GisComponent } from './gis/gis.component';
 import { BulkDownloadsComponent } from './bulk-downloads/bulk-downloads.component';
-import { SpecimensComponent } from './dashboard/specimens/specimens.component';
-import { DetailsComponent } from './dashboard/component/details/details.component';
-import { OrganismDetailsComponent } from './dashboard/component/organism-details/organism-details.component';
-import { DashboardComponent } from './dashboard/component/dashboard.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { PhylogeneticsComponent } from './phylogenetics/phylogenetics.component';
-import { TrackingSystemComponent } from './tracking-system/tracking-system/tracking-system.component';
-import { TrackingDetailsComponent } from './tracking-system/tracking-system/details/details.component';
 
 export const routes: Routes = [
   { path: 'documentation', component: ApiComponent, title: 'Documentation' },

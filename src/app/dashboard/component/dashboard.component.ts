@@ -682,11 +682,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         { data: mgnifyUrls, height: '260px', width: '400px' });
   }
 
-  applyFilter(event: Event) {
-    this.searchValue = (event.target as HTMLInputElement).value;
-    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
-  }
-
   public displayError = (controlName: string, errorName: string) => {
     return this.downloadForm?.controls[controlName].hasError(errorName);
   }
