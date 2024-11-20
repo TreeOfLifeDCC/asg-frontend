@@ -317,12 +317,12 @@
                                 }
                                 @if (checkMgnifyIdsLength(element) > 0) {
                                     @if (checkMgnifyIdsLength(element) === 1) {
-                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="mgnifychip">
-                                        <a class="mat-standard-chip" target="_blank"
+                                        <mat-chip [ngStyle]="{'background-color': 'gold'}" class="mgnifychip">
+                                        <a class="mat-standard-chip mgnify" target="_blank"
                                            href="{{generateMgnifyIDLink(element['mgnify_study_ids'])}}">MGnify IDs</a>
                                         </mat-chip>
                                     } @else {
-                                        <mat-chip [ngStyle]="{'background-color': 'palegreen'}"
+                                        <mat-chip [ngStyle]="{'background-color': 'gold'}"
                                                   (click)="openMGnifyDialog(element['mgnify_study_ids'])"
                                                   class="mgnifychip">
                                         <a class="mat-standard-chip">MGnify IDs</a>
@@ -337,14 +337,14 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Metadata submitted to BioSamples
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.biosamples)">{{element.biosamples}}</span>
+                            <mat-chip [ngClass]="getStatusClass(element.biosamples)">{{element.biosamples}}</mat-chip>
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="raw_data">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Raw data submitted to ENA </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.raw_data)">{{element.raw_data}}</span>
+                            <mat-chip [ngClass]="getStatusClass(element.raw_data)">{{element.raw_data}}</mat-chip>
                         </mat-cell>
                     </ng-container>
 
@@ -352,7 +352,7 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Mapped reads submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.mapped_reads)">{{element.mapped_reads}}</span>
+                            <mat-chip [ngClass]="getStatusClass(element.mapped_reads)">{{element.mapped_reads}}</mat-chip>
                         </mat-cell>
                     </ng-container>
 
@@ -360,16 +360,16 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Assemblies submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.assemblies_status)">{{element.assemblies_status}}
-                            </span>
+                            <mat-chip [ngClass]="getStatusClass(element.assemblies_status)">{{element.assemblies_status}}
+                            </mat-chip>
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="annotation_complete">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Annotation complete </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.annotation_complete)">
-                                {{element.annotation_complete}}</span>
+                            <mat-chip [ngClass]="getStatusClass(element.annotation_complete)">
+                                {{element.annotation_complete}}</mat-chip>
                         </mat-cell>
                     </ng-container>
 
@@ -377,8 +377,8 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Annotation submitted to ENA
                         </mat-header-cell>
                         <mat-cell *matCellDef="let element">
-                            <span [ngClass]="getStatusClass(element.annotation_status)">{{element.annotation_status}}
-                            </span>
+                            <mat-chip [ngClass]="getStatusClass(element.annotation_status)">{{element.annotation_status}}
+                            </mat-chip>
                         </mat-cell>
                     </ng-container>
 

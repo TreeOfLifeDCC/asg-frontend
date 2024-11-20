@@ -564,7 +564,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       return 'badge badge-pill badge-success';
     }
     else if (status === 'Waiting') {
-      return 'badge badge-pill badge-warning';
+      return {'background-color': 'gold'};
     }
     else if (status === 'Submitted') {
       return 'badge badge-pill badge-success';

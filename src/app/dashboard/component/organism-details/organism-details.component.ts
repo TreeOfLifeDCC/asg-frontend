@@ -360,6 +360,26 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.dataSourceAnnotation.filter = filterValue.trim().toLowerCase();
   }
 
+  relatedSymbiontsSearch(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSourceSymbiontsRecords.filter = filterValue.trim().toLowerCase();
+  }
+
+  symbiontsAssembliesSearch(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSourceSymbiontsAssemblies.filter = filterValue.trim().toLowerCase();
+  }
+
+  metagenomesRecordsSearch(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSourceMetagenomesRecords.filter = filterValue.trim().toLowerCase();
+  }
+
+  metagenomesAssembliesSearch(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSourceMetagenomesAssemblies.filter = filterValue.trim().toLowerCase();
+  }
+
   unpackData(data: any) {
     const dataToReturn = {};
     if (data.hasOwnProperty('_source')) {
