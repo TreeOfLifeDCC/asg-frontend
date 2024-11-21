@@ -151,3 +151,10 @@ button {
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
 }
+.list-group-item {
+    padding: 0.25rem;
+}
+
+.filter-heading {
+    margin: 0px !important;
+}

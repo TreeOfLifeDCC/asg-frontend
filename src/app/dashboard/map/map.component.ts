@@ -18,6 +18,7 @@ const iconDefault = L.icon({
 L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
+  standalone: true,
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
@@ -44,7 +45,7 @@ export class MapComponent implements AfterViewInit {
       minZoom: 3,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     });
-    var latlng = L.latLng(this.lat, this.lng);
+    const latlng = L.latLng(this.lat, this.lng);
 
     this.map = L.map('map', {
       center: latlng,
@@ -67,9 +68,9 @@ export class MapComponent implements AfterViewInit {
   }
 
   getLatLong(): any {
-    if (this.lat != 'not collected' && this.lat != 'not provided') {
-      var latlng = L.latLng(this.lat, this.lng);
-      var m = L.marker(latlng);
+    if (this.lat !== 'not collected' && this.lat !== 'not provided') {
+      const latlng = L.latLng(this.lat, this.lng);
+      const m = L.marker(latlng);
       this.markers.addLayer(m);
     }
   }

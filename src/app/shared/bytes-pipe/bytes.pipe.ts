@@ -1,10 +1,10 @@
-
 import {Pipe, PipeTransform} from '@angular/core';
 import {isInteger, isNumberFinite, isPositive, toDecimal} from './utils';
 
 export type ByteUnit = 'B' | 'kB' | 'KB' | 'MB' | 'GB' | 'TB';
 
 @Pipe({
+    standalone: true,
     name: 'bytes'
 })
 export class BytesPipe implements PipeTransform {

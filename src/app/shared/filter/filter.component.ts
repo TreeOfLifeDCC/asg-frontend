@@ -1,19 +1,24 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, booleanAttribute, Component, Input, numberAttribute, OnInit} from '@angular/core';
 
-import {Title} from '@angular/platform-browser';
-import {ActivatedRoute, Router} from '@angular/router';
-import {NgxSpinnerService} from 'ngx-spinner';
 import {FilterService} from '../../services/filter-service';
+import {JsonPipe, NgClass} from '@angular/common';
+import {filter, of} from 'rxjs';
+
 
 @Component({
+  standalone: true,
   selector: 'app-filter',
   templateUrl: './filter.component.html',
+  imports: [
+    NgClass,
+    JsonPipe
+  ],
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit, AfterViewInit {
   @Input() title: string;
-  @Input() isShowCount: boolean;
-  @Input() filterSize: number;
+  @Input({transform: booleanAttribute}) isShowCount: boolean;
+  @Input({transform: numberAttribute}) filterSize: number;
 
   isCollapsed = true;
   itemLimit = 0;
@@ -26,35 +31,27 @@ export class FilterComponent implements OnInit, AfterViewInit {
     this.itemLimit = this.filterSize;
   }
 
-  checkFilterIsActive = (filter: string) => {
-    if (this.filterService.activeFilters.indexOf(filter) !== -1) {
+  checkFilterIsActive = (filterVal: string) => {
+    if (this.filterService.activeFilters.indexOf(filterVal) !== -1) {
       return 'active-filter';
     }
-
   }
 
-  onFilterClick = (event, label: string, filter: string) => {
-    if (label === 'symbionts_biosamples_status'){
-      filter = 'symbiontsBioSamplesStatus-' + filter;
-    } else if (label === 'symbionts_raw_data_status'){
-      filter = 'symbiontsRawDataStatus-' + filter;
-    } else if (label === 'symbionts_assemblies_status'){
-      filter = 'symbiontsAssembliesStatus-' + filter;
-    } else if (label === 'metagenomes_biosamples_status'){
-      filter = 'metagenomesBioSamplesStatus-' + filter;
-    } else if (label === 'metagenomes_raw_data_status'){
-      filter = 'metagenomesRawDataStatus-' + filter;
-    } else if (label === 'metagenomes_assemblies_status'){
-      filter = 'metagenomesAssembliesStatus-' + filter;
+  onFilterClick = (event, label: string, filterVal: string) => {
+    if (label.includes('symbionts_') || label.includes('metagenomes_')){
+      filterVal = `${label}-` + filterVal;
     } else if (label === 'experiment-type') {
-      filter = 'experimentType-' + filter;
+      filterVal = 'experimentType-' + filterVal;
     }
-    const filterIndex = this.filterService.activeFilters.indexOf(filter);
+
+    console.log("onFilterClick: ", this.filterService.activeFilters)
+
+    const filterIndex = this.filterService.activeFilters.indexOf(filterVal);
     if (filterIndex !== -1) {
-      this.removeFilter(label, filter);
+      this.removeFilter(label, filterVal);
     } else {
-      this.filterService.selectedFilterArray(label, filter);
-      this.filterService.activeFilters.push(filter);
+      this.filterService.selectedFilterArray(label, filterVal);
+      this.filterService.activeFilters.push(filterVal);
       this.filterService.updateActiveRouteParams();
 
       }
@@ -105,4 +102,6 @@ export class FilterComponent implements OnInit, AfterViewInit {
   }
 
 
+  protected readonly filter = filter;
+  protected readonly of = of;
 }

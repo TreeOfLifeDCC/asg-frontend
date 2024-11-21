@@ -32,10 +32,6 @@ button {
     background-color: midnightblue;
 }
 
-.active {
-    background-color: skyblue;
-}
-
 .page-header {
     color: midnightblue;
 }
@@ -46,12 +42,10 @@ button {
 
 .txt-center {
     text-align: center;
-    /* justify-content: center; */
 }
 
 .mat-header-cell {
     text-align: center;
-    /* justify-content: center; */
 }
 
 i {
@@ -81,17 +75,13 @@ ul.long-list {
     cursor: default;
 }
 
-
 /* Remove default bullets */
-
 ul,
 #myUL {
     list-style-type: none;
 }
 
-
 /* Remove margins and padding from the parent ul */
-
 #myUL {
     margin: 0;
     padding: 0;
@@ -101,58 +91,39 @@ ul,
     background-image: linear-gradient(white, lightblue, lightskyblue);
 }
 
-
 /* Style the caret/arrow */
-
 .caret {
     cursor: pointer;
     user-select: none;
-    /* Prevent text selection */
 }
 
-
-/* Create the caret/arrow with a unicode, and style it */
-
 .caret::before {
-    /* content: "\25B6"; */
     color: black;
     display: inline-block;
     margin-right: 6px;
 }
 
-
-/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
-
-.fas {
-    padding-right: 1px;
-}
-
-
 /* Hide the nested list */
-
 .nested {
     display: none;
 }
 
-
-/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
-
+/* Show the nested list when the user clicks on the caret/arrow */
 .active {
     display: block;
-    background-color: white;
+    background-color: inherit;
 }
 
 #myUL li .caret {
     padding: 0px 0px;
     margin-right: 0px;
     background: #fff;
-    /* font-size: smaller; */
 }
 
 .nested li .caret {
     padding: 0px 0px;
     margin-right: 0px;
-    background: #fff
+    background: #fff;
 }
 
 .badge-success {
@@ -167,10 +138,6 @@ hr {
 .modal-heading {
     width: 100%;
     text-align: center;
-}
-
-.active-filter {
-    background-color: skyblue;
 }
 
 .rank-heading {
@@ -232,4 +199,18 @@ ul[class*="other-"] {
 
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
+}
+
+.active-filter {
+    background-color: skyblue !important;
+    color: black !important;
+    border: none !important;
+}
+
+.biosample.list-group-item {
+    color: black;
+}
+
+.biosample.list-group-item:hover {
+    color: black;
 }

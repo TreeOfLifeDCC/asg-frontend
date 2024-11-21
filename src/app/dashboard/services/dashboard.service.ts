@@ -1,157 +1,151 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-import { Sample } from '../model/dashboard.model';
-import {ConfirmationDialogComponent} from '../../confirmation-dialog-component/confirmation-dialog.component';
 import {BytesPipe} from '../../shared/bytes-pipe';
 import {tap} from 'rxjs/operators';
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog} from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  // private API_BASE_URL = 'http://localhost:8080';
+  private API_BASE_URL = 'https://asg-python-backend-733243988471.europe-west2.run.app';
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(offset, limit, sortColumn?, sortOrder? , searchText?,filter?): Observable<any> {
-    let requestParams = `?offset=${offset}&limit=${limit}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
-    }
-    return this.http.post(`${this.API_BASE_URL}/root_organisms${requestParams}`, filter);
-  }
+  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
 
-  public getDistinctOrganisms(size, sortColumn?, sortOrder?, afterKey?): Observable<any> {
-    let requestParams = `?size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+    let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    if (searchText) {
+      url += `&search=${searchText}`;
     }
-    if (afterKey != undefined) {
-      requestParams = requestParams + `&afterKey=${afterKey}`
+    if (sortColumn && sortOrder) {
+      url += `&sort=${sortColumn}:${sortOrder}`;
     }
-    return this.http.get(`${this.API_BASE_URL}/root_organisms${requestParams}`);
+
+    if (filterValue.length !== 0) {
+      let filterStr = '&filter=';
+      let filterItem;
+      for (let i = 0; i < filterValue.length; i++) {
+        if (projectNames.indexOf(filterValue[i]) !== -1) {
+          filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
+        } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
+            filterItem = filterValue[i].replace('-', ':');
+          } else {
+            filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
+            if (filterItem === 'assemblies') {
+              filterItem = 'assemblies_status:Done';
+            }else if (filterItem === 'genome_notes') {
+              filterItem = 'genome_notes:Submitted';
+            } else {
+              filterItem = `${filterItem}:Done`;
+            }
+          }
+        }else if (filterValue[i].includes('_') && filterValue[i].startsWith('experimentType')) {
+          filterItem = filterValue[i].replace('_', ':');
+
+        }
+        else {
+          filterItem = `${currentClass}:${filterValue[i]}`;
+        }
+
+        filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
+
+      }
+      url += filterStr;
+    }
+
+    if (phylogenyFilters.length !== 0) {
+      let filterStr = '&phylogeny_filters=';
+      for (const filter of phylogenyFilters) {
+        filterStr = filterStr === '&phylogeny_filters=' ? `${filterStr}${filter}` : `${filterStr}-${filter}`;
+      }
+      url += filterStr;
+    }
+    url += `&current_class=${currentClass}`;
+    console.log(url);
+    return this.http.get<any>(url);
   }
 
   public getBiosampleByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/${accession}`);
+    const url = `${this.API_BASE_URL}/organisms_test/${accession}`;
+    return this.http.get(url);
   }
 
   public getSpecimenByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/specimen/${accession}`);
+    const url = `${this.API_BASE_URL}/specimens_test/${accession}`;
+    return this.http.get(url);
   }
 
-  public getRootOrganismByOrganism(organism: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/${organism}`);
+  public getRootOrganismById(organism: string, indexName: string): Observable<any> {
+    const url = `${this.API_BASE_URL}/${indexName}/${organism}`;
+    return this.http.get(url);
   }
 
-  public getRootOrganismById(organism: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root?id=${organism}`);
-  }
+  downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
+               sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
+               indexName: string) {
 
-  public getRootOrganismByAccession(accession: string): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/accession/${accession}`);
-  }
+    const url = `https://asg-python-backend-733243988471.europe-west2.run.app/data-download`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
 
-  public getOrganismFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root/filters`);
-  }
+    // phylogeny
+    const phylogenyStr = phylogenyFilters.length ? phylogenyFilters.join('-') : '';
 
-  public getRootOrganismFilters(organism): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/filters?organism=${organism}`);
-  }
+    // Filter string
+    let filterStr = '';
 
-  public getDetailTableOrganismFilters(organism): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/secondary/filters?organism=${organism}`);
-  }
+    if (filterValue.length !== 0) {
+      const filterItems = [];
 
-  public getSpecimenFilters(accession): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/organisms/filters?accession=${accession}`);
-  }
+      for (const item of filterValue) {
+        let filterItem = '';
 
-  // public getSearchResults(search: any, from?, size?): Observable<any> {
-  //   let requestURL = `${this.API_BASE_URL}/root_organisms/search?filter=${search}&from=${from}&size=${size}`;
-  //   return this.http.get(`${requestURL}`);
-  // }
+        if (projectNames.includes(item)) {
+          filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
+        } else if (item.includes('-') && !item.startsWith('experimentType')) {
+          if (item.startsWith('symbionts') || item.startsWith('metagenomes')) {
+            filterItem = item.replace('-', ':');
+          } else {
+            filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');
+            filterItem = (filterItem === 'assemblies') ? 'assemblies_status:Done' :
+                (filterItem === 'genome_notes') ? 'genome_notes:Submitted' :
+                    `${filterItem}:Done`;
+          }
+        } else if (item.includes('_') && item.startsWith('experimentType')) {
+          filterItem = item.replace('_', ':');
+        } else {
+          filterItem = `${currentClass}:${item}`;
+        }
 
-  public getRootSearchResults(search: any,sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestParams = `?filter=${search}&from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    let requestURL = `${this.API_BASE_URL}/root_organisms/search${requestParams}`;
-    return this.http.get(`${requestURL}`);
-  }
-
-  public getFilterResults(filter: any,sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText?): Observable<any> {
-    let requestParams = `?from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    if(taxonomyFilter != undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`
-    }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
-    }
-    const requestURL = `${this.API_BASE_URL}/root_organisms/root/filter/results${requestParams}`;
-    return this.http.post(`${requestURL}`, filter);
-  }
-
-  public getExperimentTypeFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/root_organisms/root/experiment-type/filters`);
-  }
-
-  public downloadFastaq(accession: any): any {
-    const result = 'read_run';
-    const field = 'fastq_ftp';
-    const body = `result=${result}&accession=${accession}&field=${field}&count=true`;
-
-    const requestURL = this.ENA_PORTAL_API_BASE_URL;
-    return this.http.post(`${requestURL}`, body, {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded'
+        filterItems.push(filterItem);
       }
-    }).pipe(
-        tap((response: any) => {
-          this.dialog.open(ConfirmationDialogComponent, {
-            width: '550px',
-            autoFocus: false,
-            data: {
-              field: 'fastq_ftp',
-              fileCount: response.totalFiles,
-              fileSize: this.bytesPipe.transform(response.totalFileSize),
-              accession,
-              url: this.ENA_PORTAL_API_BASE_URL
-            }
-          });
-        })).subscribe();
-  }
-  public download(filter: any,sortColumn?, sortOrder?, from?, size?, taxonomyFilter?, searchText? , downloadOption?): any {
-    let requestParams = `?from=${from}&size=${size}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&z=${sortColumn}&sortOrder=${sortOrder}`
+
+      filterStr = filterItems.join(',');
     }
-    if(taxonomyFilter != undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestParams = requestParams + `&taxonomyFilter=${taxa}`
-    }
-    if(searchText) {
-      requestParams = requestParams + `&searchText=${searchText}`
-    }
-    let requestURL = `${this.API_BASE_URL}/root_organisms/data-files/csv${requestParams}&downloadOption=` + downloadOption;
-    return this.http.post(`${requestURL}`, filter, {responseType: 'blob'});
+
+    const payload = {
+      pageIndex,
+      pageSize,
+      searchValue,
+      sortValue: `${sortActive}:${sortDirection}`,
+      filterValue: filterStr || '',
+      currentClass,
+      phylogenyFilters: phylogenyStr,
+      indexName,
+      downloadOption
+    };
+
+    console.log(payload);
+
+    return this.http.post(url, payload, { responseType: 'blob' });
   }
 
 }

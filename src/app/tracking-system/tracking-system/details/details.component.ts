@@ -1,18 +1,43 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Sample, samples } from '../../../dashboard/model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { StatusesService } from '../../services/statuses.service';
+import {
+  MatCell,
+  MatCellDef,
+  MatHeaderCell,
+  MatHeaderCellDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef,
+  MatTable,
+  MatTableDataSource
+} from '@angular/material/table';
+import {StatusesService} from '../../services/statuses.service';
+import {MatFormField} from '@angular/material/form-field';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {sample} from 'rxjs';
 
 
 @Component({
-  selector: 'app-details',
+  standalone: true,
+  selector: 'app-tracking-system-details',
   templateUrl: './details.component.html',
+  imports: [
+    MatFormField,
+    MatFormFieldModule,
+    MatTable,
+    MatHeaderCell,
+    MatCell,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRow,
+    MatHeaderRowDef,
+    MatRow,
+    MatRowDef,
+    MatPaginator
+  ],
   styleUrls: ['./details.component.css']
 })
-export class DetailsComponent implements OnInit {
+export class TrackingDetailsComponent implements OnInit {
 
   bioSampleId;
   bioSampleObj;
@@ -31,11 +56,11 @@ export class DetailsComponent implements OnInit {
     this.getBiosamples();
   }
 
-  // tslint:disable-next-line:typedef
   getBiosamples() {
     this.statusesService.getBiosampleByOrganism(this.bioSampleId)
       .subscribe(
         data => {
+          console.log(data)
           this.bioSampleObj = data;
           this.dataSourceFiles = new MatTableDataSource<Sample>(this.bioSampleObj.experiment);
           this.dataSourceAssemblies = new MatTableDataSource<any>(this.bioSampleObj.assemblies);
@@ -55,4 +80,5 @@ export class DetailsComponent implements OnInit {
     this.dataSourceFiles.filter = filterValue.trim().toLowerCase();
   }
 
+    protected readonly sample = sample;
 }

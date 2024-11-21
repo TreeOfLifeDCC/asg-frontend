@@ -32,15 +32,17 @@ button {
     background-color: midnightblue;
 }
 
-.active {
-    background-color: skyblue;
+.active-filter {
+    background-color: skyblue !important;
+    color: black !important;
+    border: none !important;
 }
 
 .page-header {
     color: midnightblue;
 }
 
-h1.page-header{
+h1.page-header {
     font-size: 30px;
     margin-bottom: 20px;
 }
@@ -51,12 +53,10 @@ h1.page-header{
 
 .txt-center {
     text-align: center;
-    /* justify-content: center; */
 }
 
 .mat-header-cell {
     text-align: center;
-    /* justify-content: center; */
 }
 
 i {
@@ -79,23 +79,6 @@ ul.long-list {
 .filter-heading {
     font-size: unset;
     font-weight: 400;
-}
-
-.main-table {
-    position: relative;
-}
-
-.status-table {
-    z-index: 1;
-    left: 0;
-    top: 0;
-}
-
-.org-table {
-    position: absolute;
-    z-index: 2;
-    left: 160px;
-    top: 0px;
 }
 
 .round-border {
@@ -125,50 +108,29 @@ ul.long-list {
     cursor: default;
 }
 
-
-/* Remove default bullets */
-
 ul,
 #myUL {
     list-style-type: none;
 }
-
-
-/* Remove margins and padding from the parent ul */
 
 #myUL {
     margin: 0;
     padding: 0;
 }
 
-
-/* Style the caret/arrow */
-
 .caret {
     cursor: pointer;
     user-select: none;
-    /* Prevent text selection */
 }
 
 
 /* Create the caret/arrow with a unicode, and style it */
 
 .caret::before {
-    /* content: "\25B6"; */
     color: black;
     display: inline-block;
     margin-right: 6px;
 }
-
-
-/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
-
-.fas {
-    padding-right: 1px;
-}
-
-
-/* Hide the nested list */
 
 .nested {
     display: none;
@@ -179,20 +141,19 @@ ul,
 
 .active {
     display: block;
-    background-color: white;
+    background-color: inherit;
 }
 
 #myUL li .caret {
     padding: 0px 0px;
     margin-right: 0px;
     background: #fff;
-    /* font-size: smaller; */
 }
 
 .nested li .caret {
     padding: 0px 0px;
     margin-right: 0px;
-    background: #fff
+    background: #fff;
 }
 
 .badge-success {
@@ -207,10 +168,6 @@ hr {
 .modal-heading {
     width: 100%;
     text-align: center;
-}
-
-.active-filter {
-    background-color: skyblue;
 }
 
 .rank-heading {
@@ -230,10 +187,7 @@ hr {
     padding-right: 5px;
 }
 
-ul[class*="other-"] {
-    padding: 0;
-}
-
+ul[class*="other-"],
 ul[class*="Other-"] {
     padding: 0;
 }
@@ -280,4 +234,9 @@ mat-chip-set {
 .paginatorClass {
     margin-bottom: 15px;
     font-size: 14px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
 }

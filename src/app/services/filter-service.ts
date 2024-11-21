@@ -132,7 +132,10 @@ export class FilterService {
         }
 
     }
+
+
     selectedFilterArray = (key: string, filterValue: string) => {
+        console.log(key, filterValue)
         let jsonObj: {};
 
         switch (key.toLowerCase()) {
@@ -169,27 +172,21 @@ export class FilterService {
                 this.addSimpleFilter(filterValue, 'experiment-type', jsonObj);
                 break;
             case 'symbionts_biosamples_status':
-                filterValue = filterValue.replace(/^symbiontsBioSamplesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'symbionts_raw_data_status':
-                filterValue = filterValue.replace(/^symbiontsRawDataStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'symbionts_assemblies_status':
-                filterValue = filterValue.replace(/^symbiontsAssembliesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_biosamples_status':
-                filterValue = filterValue.replace(/^metagenomesBioSamplesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_raw_data_status':
-                filterValue = filterValue.replace(/^metagenomesRawDataStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             case 'metagenomes_assemblies_status':
-                filterValue = filterValue.replace(/^metagenomesAssembliesStatus-/, '');
                 this.addSimpleFilter(filterValue, key.toLowerCase(), jsonObj);
                 break;
             default:
@@ -313,7 +310,6 @@ export class FilterService {
         }
     }
 
-    // tslint:disable-next-line:typedef
     getFilters(data) {
         this.parseFilterAggregation(data);
         if (this.phylSelectedRank !== '') {
@@ -327,6 +323,7 @@ export class FilterService {
     }
 
     parseFilterAggregation = (data: any) => {
+        console.log(data)
         this.filterArray = [] ;
         this.symbiontsFilters = [];
         this.metagenomesFilters = [];
@@ -365,14 +362,14 @@ export class FilterService {
         });
 
         let assembliesFiltersCount = 0;
-        this.AssembliesFilters = this.filtersMap.aggregations.assemblies.buckets.filter(i => {
-            if (i !== '' && i.key.toLowerCase() === 'done') {
-                const obj = i;
-                obj.key = 'Assemblies - ' + obj.key;
-                assembliesFiltersCount = obj.doc_count;
-                return obj;
-            }
-        });
+        // this.AssembliesFilters = this.filtersMap.aggregations.assemblies_status.buckets.filter(i => {
+        //     if (i !== '' && i.key.toLowerCase() === 'done') {
+        //         const obj = i;
+        //         obj.key = 'Assemblies - ' + obj.key;
+        //         assembliesFiltersCount = obj.doc_count;
+        //         return obj;
+        //     }
+        // });
         this.filterArray.push({
             title: 'Assemblies - Submitted',
             key: 'Assemblies - Done',
@@ -395,7 +392,7 @@ export class FilterService {
             count: annotationCompleteFiltersCount
         });
         let annotationFiltersCount = 0;
-        this.AnnotationFilters = this.filtersMap.aggregations.annotation.buckets.filter(i => {
+        this.AnnotationFilters = this.filtersMap.aggregations.annotation_complete.buckets.filter(i => {
             if (i !== '' && i.key.toLowerCase() === 'done') {
                 const obj = i;
                 obj.key = 'Annotation - ' + obj.key;
@@ -460,7 +457,7 @@ export class FilterService {
                 'metagenomesAssembliesStatus');
         }
 
-        this.bioSampleTotalCount = data.hits.total.value;
+        this.bioSampleTotalCount = data.count;
         if (data.aggregations.childRank !== undefined) {
             this.selectedTaxonomy.push(data.aggregations.childRank.scientificName.buckets[0]);
         }

@@ -8,6 +8,7 @@ import { DashboardService } from '../../dashboard/services/dashboard.service';
 
 
 @Component({
+  standalone: true,
   selector: 'app-specimens',
   templateUrl: './specimens.component.html',
   styleUrls: ['./specimens.component.css']
@@ -16,7 +17,7 @@ export class SpecimensComponent implements OnInit {
 
   bioSampleId;
   bioSampleObj;
-  
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   dataSourceRecords;
@@ -66,8 +67,9 @@ export class SpecimensComponent implements OnInit {
     this.dashboardService.getSpecimenByAccession(this.bioSampleId)
       .subscribe(
         data => {
+          console.log(data)
           const unpackedData = [];
-          for (const item of data.hits.hits) {
+          for (const item of data.results) {
             unpackedData.push(this.unpackData(item));
           }
           this.bioSampleObj = unpackedData[0];

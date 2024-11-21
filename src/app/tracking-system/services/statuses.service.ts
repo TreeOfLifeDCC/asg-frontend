@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {Observable} from "rxjs";
 
 @Injectable({
@@ -7,54 +7,128 @@ import {Observable} from "rxjs";
 })
 export class StatusesService {
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  // private API_BASE_URL = 'http://localhost:8080';
+  private API_BASE_URL = 'https://asg-python-backend-733243988471.europe-west2.run.app';
 
   constructor(private http: HttpClient) { }
 
-  public getAllStatuses(offset, limit, sortColumn?, sortOrder?): Observable<any> {
-    let requestParams = `?offset=${offset}&limit=${limit}`
-    if (sortColumn != undefined) {
-      requestParams = requestParams + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+  public getTrackingData(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? ,
+                         searchText?, filterValue?): Observable<any> {
+    let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
+
+    if (searchText) {
+      url += `&search=${searchText}`;
     }
-    return this.http.get(`${this.API_BASE_URL}/statuses${requestParams}`);
+    if (sortColumn && sortOrder) {
+      url += `&sort=${sortColumn}:${sortOrder}`;
+    }
+    if (filterValue.length !== 0) {
+      let filterStr = '&filter=';
+      let filterItem;
+      for (let i = 0; i < filterValue.length; i++) {
+        if (projectNames.indexOf(filterValue[i]) !== -1) {
+          filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
+        } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
+            filterItem = filterValue[i].replace('-', ':');
+          } else {
+            filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
+            if (filterItem === 'assemblies') {
+              filterItem = 'assemblies_status:Done';
+            }else if (filterItem === 'genome_notes') {
+              filterItem = 'genome_notes:Submitted';
+            } else {
+              filterItem = `${filterItem}:Done`;
+            }
+          }
+        }else if (filterValue[i].includes('_') && filterValue[i].startsWith('experimentType')) {
+          filterItem = filterValue[i].replace('_', ':');
+
+        }
+        else {
+          filterItem = `${currentClass}:${filterValue[i]}`;
+        }
+        filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
+      }
+      url += filterStr;
+    }
+
+    if (phylogenyFilters.length !== 0) {
+      let filterStr = '&phylogeny_filters=';
+      for (const filter of phylogenyFilters) {
+        filterStr = filterStr === '&phylogeny_filters=' ? `${filterStr}${filter}` : `${filterStr}-${filter}`;
+      }
+      url += filterStr;
+    }
+    url += `&current_class=${currentClass}`;
+    console.log(url);
+    return this.http.get<any>(url);
   }
 
+
+  // TODO Check with Raheela whether this is used. It doesn't seem to be used.
   public getBiosampleByOrganism(organism: string): Observable<any> {
+    console.log(`${this.API_BASE_URL}/statuses/detail/${organism}`)
     return this.http.get(`${this.API_BASE_URL}/statuses/detail/${organism}`);
   }
 
-  public getStatusesFilters(): Observable<any> {
-    return this.http.get(`${this.API_BASE_URL}/statuses/filters`);
-  }
+  downloadData(downloadOption: string, pageIndex: number, pageSize: number, searchValue: string, sortActive: string,
+               sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
+               indexName: string) {
+    const url = `${this.API_BASE_URL}/data-download`;
+    const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
 
-  public getSearchResults(search: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/search?filter=${search}&from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
-    }
-    return this.http.get(`${requestURL}`);
-  }
+    // phylogeny
+    const phylogenyStr = phylogenyFilters.length ? phylogenyFilters.join('-') : '';
 
-  public getFilterResults(filter: any, sortColumn?, sortOrder?, from?, size?, taxonomyFilter?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/filter/results?from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
-    }
-    if(taxonomyFilter != undefined) {
-      let taxa = encodeURIComponent(JSON.stringify(taxonomyFilter[0]));
-      requestURL = requestURL + `&taxonomyFilter=${taxa}`
-    }
-    return this.http.post(`${requestURL}`, filter);
-  }
+    // Filter string
+    let filterStr = '';
 
-  public findBioSampleByOrganismName(name: any, sortColumn?, sortOrder?, from?, size?): Observable<any> {
-    let requestURL = `${this.API_BASE_URL}/statuses/organism?name=${name}&from=${from}&size=${size}`;
-    if (sortColumn != undefined) {
-      requestURL = requestURL + `&sortColumn=${sortColumn}&sortOrder=${sortOrder}`
+    if (filterValue.length !== 0) {
+      const filterItems = [];
+
+      for (const item of filterValue) {
+        let filterItem = '';
+
+        if (projectNames.includes(item)) {
+          filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
+        } else if (item.includes('-') && !item.startsWith('experimentType')) {
+          if (item.startsWith('symbionts') || item.startsWith('metagenomes')) {
+            filterItem = item.replace('-', ':');
+          } else {
+            filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');
+            filterItem = (filterItem === 'assemblies') ? 'assemblies_status:Done' :
+                (filterItem === 'genome_notes') ? 'genome_notes:Submitted' :
+                    `${filterItem}:Done`;
+          }
+        } else if (item.includes('_') && item.startsWith('experimentType')) {
+          filterItem = item.replace('_', ':');
+        } else {
+          filterItem = `${currentClass}:${item}`;
+        }
+
+        filterItems.push(filterItem);
+      }
+      filterStr = filterItems.join(',');
     }
-    return this.http.get(`${requestURL}`);
+
+    const payload = {
+      pageIndex,
+      pageSize,
+      searchValue,
+      sortValue: `${sortActive}:${sortDirection}`,
+      filterValue: filterStr || '',
+      currentClass,
+      phylogenyFilters: phylogenyStr,
+      indexName,
+      downloadOption
+    };
+
+    console.log(payload);
+
+    return this.http.post(url, payload, { responseType: 'blob' });
   }
 
 }
