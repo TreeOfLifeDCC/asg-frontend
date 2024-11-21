@@ -9,7 +9,7 @@ export class StatusesService {
 
   // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  private API_BASE_URL = 'https://asg-python-backend-733243988471.europe-west2.run.app';
+  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
 
   constructor(private http: HttpClient) { }
 

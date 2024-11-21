@@ -12,7 +12,7 @@ export class DashboardService {
 
   // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  private API_BASE_URL = 'https://asg-python-backend-733243988471.europe-west2.run.app';
+  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
@@ -93,7 +93,7 @@ export class DashboardService {
                sortDirection: string, filterValue: string[], currentClass: string, phylogenyFilters: string[],
                indexName: string) {
 
-    const url = `https://asg-python-backend-733243988471.europe-west2.run.app/data-download`;
+    const url = `https://portal.aquaticsymbiosisgenomics.org/api/data-download`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
 
     // phylogeny
