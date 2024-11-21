@@ -6,7 +6,6 @@
     <div class="container" style="padding-top: 20px;">
         <div class="row">
             <div class="col-md-2">
-
                 <div class="card bg-lite mb-3 filter-top">
                     <h3 class="card-header filter-heading">
                                 Data Status
@@ -104,9 +103,6 @@
                                 }
                             </ul>
                         </div>
-
-
-
                 <div class="card bg-lite mb-3 filter-top">
                     <h3 class="card-header filter-heading">
                                 Metagenomes
@@ -129,7 +125,7 @@
                         </div>
 
                 <!-- phylogeny new version -->
-                        <div class="card bg-lite mb-3 filter-top">
+                <div class="card bg-lite mb-3 filter-top">
                             <h3 class="card-header filter-heading">
                                 <span>Phylogeny/{{ currentClass }}</span>
                                 @if (phylogenyFilters.length !== 0) {
@@ -163,9 +159,6 @@
                                 }
                             </ul>
                         </div>
-
-
-
                 <div class="card bg-lite mb-3 filter-top">
                     <h3 class="card-header filter-heading">
                         Experiment Type
@@ -218,7 +211,6 @@
                     </div>
                 </mat-expansion-panel>
                 <br />
-
                 <div>
                     @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
                         <h1 >Filters: </h1>
@@ -254,8 +246,6 @@
                         </button>
                     }
                 </div>
-
-
                 <mat-form-field class="searchField">
                     <mat-label>Search</mat-label>
                     <input matInput [(ngModel)]='searchValue' (ngModelChange)="this.searchUpdate.next($event)"
