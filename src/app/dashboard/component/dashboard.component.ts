@@ -19,8 +19,9 @@ import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MatIcon} from '@angular/material/icon';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogActions, MatDialogContent} from '@angular/material/dialog';
 import {MatProgressBar} from '@angular/material/progress-bar';
+import {MatButton} from "@angular/material/button";
 
 
 @Component({
@@ -50,7 +51,10 @@ import {MatProgressBar} from '@angular/material/progress-bar';
     MatRadioGroup,
     MatRadioButton,
     MatSortModule,
-    MatProgressBar
+    MatProgressBar,
+    MatDialogContent,
+    MatDialogActions,
+    MatButton
   ],
   styleUrls: ['./dashboard.component.css']
 })
