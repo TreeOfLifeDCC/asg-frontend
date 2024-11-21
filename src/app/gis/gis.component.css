@@ -158,3 +158,9 @@ button {
 .filter-heading {
     margin: 0px !important;
 }
+
+.card-header{
+    margin: -0.9rem 13.25rem; /* Use margin instead of padding for negative values */
+    padding: 0.5rem;
+    background-color: lightblue;
+}

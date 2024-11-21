@@ -1,5 +1,6 @@
 .filter-top {
     margin-top: 1rem !important;
+    width: 183px;
 }
 
 .jumbotron {
@@ -27,7 +28,11 @@ button {
     margin: 2px;
 }
 
-.card-header,
+.card-header{
+    margin: -0.9rem 13.25rem; /* Use margin instead of padding for negative values */
+    padding: 0.5rem;
+    background-color: lightblue;
+}
 .btn-success,
 .badge-success {
     background-color: lightblue;

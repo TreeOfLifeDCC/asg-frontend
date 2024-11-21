@@ -1,6 +1,3 @@
-.filter-top {
-    margin-top: 1rem !important;
-}
 
 .jumbotron {
     background: url("../../../assets/dtol banner thin.jpg") center center no-repeat;
@@ -22,7 +19,7 @@ button {
     margin-left: 5px;
 }
 
-.card-header,
+
 .btn-success,
 .badge-success {
     background-color: lightblue;
@@ -239,4 +236,14 @@ mat-chip-set {
 .table-responsive {
     width: 100%;
     overflow-x: auto;
+}
+.filter-top {
+    margin-top: 1rem !important;
+    width: 183px;
+}
+
+.card-header{
+    margin: -0.9rem 13.25rem; /* Use margin instead of padding for negative values */
+    padding: 0.5rem;
+    background-color: lightblue;
 }
