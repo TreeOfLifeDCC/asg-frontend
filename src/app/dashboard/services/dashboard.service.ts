@@ -148,4 +148,10 @@ export class DashboardService {
     return this.http.post(url, payload, { responseType: 'blob' });
   }
 
+  public getMGnifyDownloadLinks(mgnifyID: string){
+    const url = `https://www.ebi.ac.uk/metagenomics/api/v1/studies/${mgnifyID}/downloads`;
+    console.log(url)
+    return this.http.get<any>(url);
+  }
+
 }

@@ -40,3 +40,18 @@
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
 }
+
+.panel-title {
+    color: darkblue;
+    font-size: 16px;
+}
+
+.mgnify-id{
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.mgnify-container{
+    margin-bottom: 20px;
+}

@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, OnInit, ViewChild, signal} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Sample } from '../../model/dashboard.model';
 import { MatSort } from '@angular/material/sort';
@@ -15,7 +15,9 @@ import { MatInputModule } from '@angular/material/input';
 import { DashboardService } from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
+import {SafeResourceUrl} from '@angular/platform-browser';
+import {MatIcon} from '@angular/material/icon';
+import {filter, of} from "rxjs";
 
 
 @Component({
@@ -36,10 +38,10 @@ import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
     CommonModule,
     MatChip,
     MatChipSet,
-    MapClusterComponent
+    MapClusterComponent,
+    MatIcon
   ],
   styleUrls: ['./organism-details.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -162,8 +164,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   private dataTabInitialized = false;
   aggregations;
   url: SafeResourceUrl;
-  readonly panelOpenState = signal(false);
-  // mgnifyIDs: any[] = [];
+  mgnifyIDs: any[] = [];
+  mgnifyDownloadLinks: any[] = [];
+
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService) {
@@ -264,7 +267,14 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
               }
 
               // get MGnify IDs in metagenomes records
-              // this.mgnifyIDs = data['metagenomes_records'].filter( obj => obj.hasOwnProperty('mgnify_study_ids'));
+              this.mgnifyIDs = data['metagenomes_records']
+                  .filter( obj => obj.hasOwnProperty('mgnify_study_ids'))
+                  .map(obj => obj['mgnify_study_ids']);
+
+              for (const studyId of this.mgnifyIDs) {
+                this.fetchMGnifyDownloadLinks(studyId);
+              }
+
 
               setTimeout(() => {
                 this.organismName = data.organism;
@@ -461,7 +471,37 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getMgnifyIds(metagenomesRecords) {
-    // this.mgnifyIDs = metagenomesRecords.filter( obj => obj.hasOwnProperty('mgnify_study_ids'));
+  fetchMGnifyDownloadLinks(mgnifyID: string) {
+    this.dashboardService.getMGnifyDownloadLinks(mgnifyID).subscribe({
+      next: data => {
+        console.log(data);
+        const dataObj = {};
+        // dataObj['mgnifyID'] = mgnifyID;
+
+        data['data'].forEach((obj, index) => {
+          const groupType = obj['attributes']['group-type'];
+          if (groupType in dataObj) {
+            dataObj[groupType].push(obj);
+          } else {
+            dataObj[groupType] = [obj];
+          }
+
+        });
+
+        console.log(dataObj)
+
+
+        this.mgnifyDownloadLinks.push({mgnifyid: mgnifyID,
+                                       dataobj: dataObj});
+        console.log(this.mgnifyDownloadLinks)
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
   }
+
+
+  protected readonly filter = filter;
+  protected readonly of = of;
 }
