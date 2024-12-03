@@ -230,11 +230,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getBiosampleByOrganism() {
-    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal')
+    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal_test')
         .subscribe(
             data => {
               this.aggregations = data.aggregations;
+              console.log(data);
               data = data['results'][0]['_source'];
+              console.log(data);
               const unpackedData = [];
               const unpackedSymbiontsData = [];
               const unpackedMetagenomesData = [];
@@ -250,6 +252,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   tabGroup.selectedIndex = selected;
                 }, 100);
               }
+              if (data.goat_info) {
+                this.dataSourceGoatInfo = data.goat_info.attributes;
+              }
               for (const item of data.records) {
                 unpackedData.push(this.unpackData(item));
               }
@@ -263,9 +268,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   unpackedMetagenomesData.push(this.unpackData(item));
                 }
               }
-              if (unpackedData.length > 0) {
-                this.getFilters(data.organism);
-              }
+              // if (unpackedData.length > 0) {
+              //   this.getFilters(data.organism);
+              // }
               setTimeout(() => {
                 this.organismName = data.organism;
                 this.dataSourceRecords = new MatTableDataSource<any>(unpackedData);
@@ -479,5 +484,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       }) as (PeriodicElement, string) => boolean;
       this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
     }
+  }
+
+  checkCurrentStatusColor(status: string) {
+    if (status === 'Annotation Complete') {
+      return {'background-color': 'palegreen'};
+    }
+    return {'background-color': 'gold'};
   }
 }

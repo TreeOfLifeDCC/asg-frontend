@@ -17,7 +17,7 @@
                     <dt class="col-md-3">Tracking Status:</dt>
                     <dd class="col-md-9">
                         <mat-chip-set>
-                            <mat-chip [ngStyle]="{'background-color': 'gold'}">{{ bioSampleObj.currentStatus }}</mat-chip>
+                            <mat-chip [ngStyle]="checkCurrentStatusColor(bioSampleObj.currentStatus)">{{ bioSampleObj.currentStatus }}</mat-chip>
                         </mat-chip-set>
                     </dd>
                 }

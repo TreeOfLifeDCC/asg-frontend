@@ -17,7 +17,8 @@ export class DashboardService {
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
+  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?,
+                         sortOrder? , searchText?, filterValue?): Observable<any> {
 
     let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
@@ -85,6 +86,7 @@ export class DashboardService {
 
   public getRootOrganismById(organism: string, indexName: string): Observable<any> {
     const url = `${this.API_BASE_URL}/${indexName}/${organism}`;
+    console.log(url);
     return this.http.get(url);
   }
 

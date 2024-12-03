@@ -128,7 +128,7 @@ export class DetailsComponent implements OnInit {
           }
           setTimeout(() => {
             this.organismName = data.organism;
-            this.dataSourceRecords = new MatTableDataSource<BioSample>(this.bioSampleObj?.specimens ?? []);
+            this.dataSourceRecords = new MatTableDataSource<BioSample>(this.bioSampleObj?.relationships ?? []);
             this.specBioSampleTotalCount = unpackedData?.length;
             this.dataSourceRecords.paginator = this.paginator;
             this.dataSourceRecords.sort = this.sort;

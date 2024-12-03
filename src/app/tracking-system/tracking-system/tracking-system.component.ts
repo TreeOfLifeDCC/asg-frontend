@@ -185,11 +185,11 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   getTrackingData(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.statusesService.getTrackingData('tracking_status', this.currentClass, this.phylogenyFilters, offset, limit,
+    this.statusesService.getTrackingData('tracking_status_index_test', this.currentClass, this.phylogenyFilters, offset, limit,
         sortColumn, sortOrder, this.searchValue, this.activeFilters)
       .subscribe(
         data => {
-          console.log(data)
+          console.log(data);
           this.aggregations = data.aggregations;
 
           // symbionts
@@ -309,7 +309,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   getNextStatuses(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.statusesService.getTrackingData('tracking_status', this.currentClass, this.phylogenyFilters, offset,
+    this.statusesService.getTrackingData('tracking_status_index_test', this.currentClass, this.phylogenyFilters, offset,
         limit, sortColumn, sortOrder, this.searchValue, this.activeFilters)
       .subscribe(
         data => {
@@ -509,7 +509,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   downloadFile(downloadOption: string, dialog: boolean) {
     this.statusesService.downloadData(downloadOption, this.paginator.pageIndex,
         this.paginator.pageSize, this.searchValue || '', this.sort.active, this.sort.direction, this.activeFilters,
-        this.currentClass, this.phylogenyFilters, 'tracking_status').subscribe({
+        this.currentClass, this.phylogenyFilters, 'tracking_status_index_test').subscribe({
       next: (response: Blob) => {
         const blobUrl = window.URL.createObjectURL(response);
         const a = document.createElement('a');

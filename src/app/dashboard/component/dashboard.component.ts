@@ -9,11 +9,10 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {filter, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
-import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
+import {NgClass, NgStyle} from '@angular/common';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {MatChip, MatChipSet} from '@angular/material/chips';
@@ -33,7 +32,6 @@ import {MatButton} from "@angular/material/button";
     MatTableModule,
     MatInputModule,
     NgxSpinnerModule,
-    PhylogenyFilterComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     FormsModule,
@@ -44,9 +42,7 @@ import {MatButton} from "@angular/material/button";
     MatCheckbox,
     MatChip,
     MatChipSet,
-    UpperCasePipe,
     MatIcon,
-    JsonPipe,
     ReactiveFormsModule,
     MatRadioGroup,
     MatRadioButton,
@@ -333,7 +329,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters
     ).subscribe(
             data => {
@@ -455,7 +451,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters)
         .subscribe(
             data => {
@@ -579,7 +575,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   checkTolidExists(data) {
-    return data !== undefined && data.tolid !== undefined && data.tolid != null && data.tolid.length > 0;
+    return data !== undefined && data.show_tolqc !== undefined;
   }
 
   checkMgnifyIdsLength(data) {
@@ -638,7 +634,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   downloadFile(downloadOption: string, dialog: boolean) {
     this.dashboardService.downloadData(downloadOption, this.paginator.pageIndex,
         this.paginator.pageSize, this.searchValue || '', this.sort.active, this.sort.direction, this.activeFilters,
-        this.currentClass, this.phylogenyFilters, 'data_portal').subscribe({
+        this.currentClass, this.phylogenyFilters, 'data_portal_test').subscribe({
       next: (response: Blob) => {
         const blobUrl = window.URL.createObjectURL(response);
         const a = document.createElement('a');
@@ -693,6 +689,17 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   public displayError = (controlName: string, errorName: string) => {
     return this.downloadForm?.controls[controlName].hasError(errorName);
+  }
+
+  checkCurrentStatusColor(status: string) {
+    if (status === 'Annotation Complete') {
+      return {'background-color': 'palegreen'};
+    }
+    return {'background-color': 'gold'};
+  }
+
+  checkGenomeNote(data: any) {
+    return data.genome_notes.length > 0;
   }
 }
 

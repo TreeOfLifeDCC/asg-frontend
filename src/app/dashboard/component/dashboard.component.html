@@ -251,7 +251,8 @@
                     <input matInput [(ngModel)]='searchValue' (ngModelChange)="this.searchUpdate.next($event)"
                            placeholder="Ex. lutra" #input>
                 </mat-form-field>
-                <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)">
+                <table mat-table #table [dataSource]="dataSource" matSort (matSortChange)="customSort($event)"
+                       matSortActive="currentStatus" matSortDirection="asc">
                     <ng-container matColumnDef="organism">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
                         <mat-cell *matCellDef="let element">
@@ -269,7 +270,7 @@
                         <mat-header-cell *matHeaderCellDef mat-sort-header> Current status </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <mat-chip-set>
-                                <mat-chip [ngStyle]="{'background-color': 'gold'}">{{element.currentStatus}}</mat-chip>
+                                <mat-chip [ngStyle]="checkCurrentStatusColor(element.currentStatus)">{{element.currentStatus}}</mat-chip>
                             </mat-chip-set>
 
                         </mat-cell>
@@ -281,7 +282,7 @@
                         <mat-cell *matCellDef="let element" class="text-left" style=" padding-right: 0px; ">
                             <span>
                                     <mat-chip [ngStyle]="{'background-color': 'deepskyblue'}">
-                                        <a class="mat-standard-chip goat_info" target="_blank" href="{{element?.goatInfo}}"
+                                        <a class="mat-standard-chip goat_info" target="_blank" href="{{element?.goat_info.url}}"
                                            style="cursor: pointer">
                                             GoaT info
                                         </a>
@@ -290,6 +291,12 @@
                                     <mat-chip [ngStyle]="{'background-color': 'palegreen'}" class="tol_qc">
                                         <a class="mat-standard-chip" target="_blank"
                                            href="{{generateTolidLink(element)}}">ToL QC</a>
+                                    </mat-chip>
+                                }
+                                @if (checkGenomeNote(element)) {
+                                    <mat-chip style="{'background-color': 'grey'}" class="genome_note">
+                                        <a class="mat-standard-chip" target="_blank"
+                                           href="{{element.genome_notes[0].url}}">Genome Note</a>
                                     </mat-chip>
                                 }
                                 @if (checkMgnifyIdsLength(element) > 0) {
