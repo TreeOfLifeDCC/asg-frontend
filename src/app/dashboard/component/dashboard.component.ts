@@ -150,6 +150,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   symbiontsFilters: any[] = [];
   metagenomesFilters: any[] = [];
   experimentTypeFilters: any[] = [];
+  mgnifyFilters: any[] = [];
   itemLimit = 5;
   isCollapsed = true;
   searchValue: string;
@@ -329,7 +330,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters
     ).subscribe(
             data => {
@@ -369,6 +370,14 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
                 this.metagenomesFilters = this.merge(this.metagenomesFilters,
                     this.aggregations.metagenomes_assemblies_status.buckets,
                     'metagenomes_assemblies_status');
+              }
+
+              // mgnify
+              this.mgnifyFilters = [];
+              if (this.aggregations.mgnify_status.buckets.length > 0) {
+                this.mgnifyFilters = this.merge(this.mgnifyFilters,
+                    this.aggregations.mgnify_status.buckets,
+                    'mgnify_status');
               }
 
               // experiment type
@@ -424,7 +433,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       item.label = filterLabel;
       first.push(item);
     }
-
     return first;
   }
 
@@ -451,7 +459,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters)
         .subscribe(
             data => {
@@ -551,6 +559,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.symbiontsFilters = [];
+    this.mgnifyFilters = [];
     this.metagenomesFilters = [];
     this.experimentTypeFilters = [];
   }
@@ -634,7 +643,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   downloadFile(downloadOption: string, dialog: boolean) {
     this.dashboardService.downloadData(downloadOption, this.paginator.pageIndex,
         this.paginator.pageSize, this.searchValue || '', this.sort.active, this.sort.direction, this.activeFilters,
-        this.currentClass, this.phylogenyFilters, 'data_portal').subscribe({
+        this.currentClass, this.phylogenyFilters, 'data_portal_test').subscribe({
       next: (response: Blob) => {
         const blobUrl = window.URL.createObjectURL(response);
         const a = document.createElement('a');
@@ -680,6 +689,14 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.downloadDialogTitle = `Download data`;
     this.dialogRef = this.dialog.open(this.mgnifyTemplate,
         { data: mgnifyUrls, height: '260px', width: '400px' });
+  }
+
+  displayMGnifyFilterName(filterValue: string) {
+    if (filterValue === 'true') {
+      return 'MGnify Association';
+    } else {
+      return filterValue;
+    }
   }
 
   public displayError = (controlName: string, errorName: string) => {
