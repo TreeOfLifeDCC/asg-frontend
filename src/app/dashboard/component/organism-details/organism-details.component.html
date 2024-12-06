@@ -657,7 +657,7 @@
                         @if (dataSourceMetagenomesRecords?.data?.length) {
                             <div style="margin-bottom: 10px;">
                                  <mat-accordion>
-                                    <mat-expansion-panel>
+                                    <mat-expansion-panel [expanded]=true>
                                         <mat-expansion-panel-header>
                                             <mat-panel-title class="panel-title"> Analysis Summary </mat-panel-title>
                                             <mat-panel-description> Please click to view the Analysis Summary links </mat-panel-description>
@@ -690,7 +690,6 @@
 
                                         }
                                     </mat-expansion-panel>
-
                                 </mat-accordion>
                             </div>
 

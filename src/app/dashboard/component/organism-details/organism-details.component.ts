@@ -232,7 +232,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             data => {
               this.aggregations = data.aggregations;
               data = data['results'][0]['_source'];
-              // console.log(data['metagenomes_records'])
               const unpackedData = [];
               const unpackedSymbiontsData = [];
               const unpackedMetagenomesData = [];
@@ -500,7 +499,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   fetchMGnifyDownloadLinks(mgnifyID: string) {
     this.dashboardService.getMGnifyDownloadLinks(mgnifyID).subscribe({
       next: data => {
-        console.log(data);
         const dataObj = {};
         // dataObj['mgnifyID'] = mgnifyID;
 
@@ -511,15 +509,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
           } else {
             dataObj[groupType] = [obj];
           }
-
         });
-
-        console.log(dataObj)
-
 
         this.mgnifyDownloadLinks.push({mgnifyid: mgnifyID,
                                        dataobj: dataObj});
-        console.log(this.mgnifyDownloadLinks)
       },
       error: error => {
         console.log(error);
