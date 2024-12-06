@@ -150,6 +150,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   symbiontsFilters: any[] = [];
   metagenomesFilters: any[] = [];
   experimentTypeFilters: any[] = [];
+  mgnifyFilters: any[] = [];
   itemLimit = 5;
   isCollapsed = true;
   searchValue: string;
@@ -371,6 +372,14 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
                     'metagenomes_assemblies_status');
               }
 
+              // mgnify
+              this.mgnifyFilters = [];
+              if (this.aggregations.mgnify_status.buckets.length > 0) {
+                this.mgnifyFilters = this.merge(this.mgnifyFilters,
+                    this.aggregations.mgnify_status.buckets,
+                    'mgnify_status');
+              }
+
               // experiment type
               this.experimentTypeFilters = [];
               if (this.aggregations?.experiment.library_construction_protocol.buckets.length > 0) {
@@ -424,7 +433,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       item.label = filterLabel;
       first.push(item);
     }
-
     return first;
   }
 
@@ -551,6 +559,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.symbiontsFilters = [];
+    this.mgnifyFilters = [];
     this.metagenomesFilters = [];
     this.experimentTypeFilters = [];
   }
@@ -602,15 +611,23 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
   }
 
-  displayActiveFilterName(filterName: string) {
-    if (filterName && filterName.startsWith('symbionts_')) {
-      return 'Symbionts-' + filterName.split('-')[1];
+
+  displayActiveFilterName(filterName: string): string {
+    if (!filterName) {
+      return filterName;
     }
-    if (filterName && filterName.startsWith('experimentType_')) {
-      return  filterName.split('_')[1];
+    switch (true) {
+      case filterName.startsWith('symbionts_'):
+        return 'Symbionts-' + filterName.split('-')[1];
+      case filterName.startsWith('experimentType_'):
+        return filterName.split('_')[1];
+      case filterName === 'mgnify_status-true':
+        return 'MGnify Analysis - Done';
+      default:
+        return filterName;
     }
-    return filterName;
   }
+
 
   removePhylogenyFilters() {
     // update url with the value of the phylogeny current class
@@ -682,9 +699,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         { data: mgnifyUrls, height: '260px', width: '400px' });
   }
 
-  applyFilter(event: Event) {
-    this.searchValue = (event.target as HTMLInputElement).value;
-    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+  displayMGnifyFilterName(filterValue: string) {
+    if (filterValue === 'true') {
+      return 'MGnify Analysis - Done';
+    } else {
+      return filterValue;
+    }
   }
 
   public displayError = (controlName: string, errorName: string) => {

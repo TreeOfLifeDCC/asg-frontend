@@ -37,7 +37,8 @@ export class DashboardService {
         if (projectNames.indexOf(filterValue[i]) !== -1) {
           filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
         } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
-          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes') ||
+              filterValue[i].startsWith('mgnify_status')) {
             filterItem = filterValue[i].replace('-', ':');
           } else {
             filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
@@ -86,7 +87,6 @@ export class DashboardService {
 
   public getRootOrganismById(organism: string, indexName: string): Observable<any> {
     const url = `${this.API_BASE_URL}/${indexName}/${organism}`;
-    console.log(url);
     return this.http.get(url);
   }
 
@@ -145,6 +145,12 @@ export class DashboardService {
     };
 
     return this.http.post(url, payload, { responseType: 'blob' });
+  }
+
+  public getMGnifyDownloadLinks(mgnifyID: string){
+    const url = `https://www.ebi.ac.uk/metagenomics/api/v1/studies/${mgnifyID}/downloads`;
+    console.log(url)
+    return this.http.get<any>(url);
   }
 
 }
