@@ -611,15 +611,23 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
   }
 
-  displayActiveFilterName(filterName: string) {
-    if (filterName && filterName.startsWith('symbionts_')) {
-      return 'Symbionts-' + filterName.split('-')[1];
+
+  displayActiveFilterName(filterName: string): string {
+    if (!filterName) {
+      return filterName;
     }
-    if (filterName && filterName.startsWith('experimentType_')) {
-      return  filterName.split('_')[1];
+    switch (true) {
+      case filterName.startsWith('symbionts_'):
+        return 'Symbionts-' + filterName.split('-')[1];
+      case filterName.startsWith('experimentType_'):
+        return filterName.split('_')[1];
+      case filterName === 'mgnify_status-true':
+        return 'MGnify Analysis - Done';
+      default:
+        return filterName;
     }
-    return filterName;
   }
+
 
   removePhylogenyFilters() {
     // update url with the value of the phylogeny current class
@@ -693,7 +701,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   displayMGnifyFilterName(filterValue: string) {
     if (filterValue === 'true') {
-      return 'MGnify Association';
+      return 'MGnify Analysis - Done';
     } else {
       return filterValue;
     }
