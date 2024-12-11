@@ -147,9 +147,9 @@ export class DashboardService {
     return this.http.post(url, payload, { responseType: 'blob' });
   }
 
-  public getMGnifyDownloadLinks(mgnifyID: string){
-    const url = `https://www.ebi.ac.uk/metagenomics/api/v1/studies/${mgnifyID}/downloads`;
-    return this.http.get<any>(url);
+  public getMGnifyDownloadLinks(mgnifyID: string) {
+    const url = `/metagenomics_api/metagenomics/api/v1/studies/${mgnifyID}/downloads?format=json`;
+    return this.http.get<any>(url, { responseType: 'json' });
   }
 
 }

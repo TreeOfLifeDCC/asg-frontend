@@ -653,46 +653,48 @@
                 <mat-tab label="Metagenomes">
                     <div class="col-md-12">
                         <hr>
+                        <h1 class="col-md-12 page-header"> MGnify Analyses </h1>
+                        <div class="mgnify-section">
+                            <mat-accordion>
+                                <mat-expansion-panel [expanded]=true>
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title class="panel-title"> Analysis Summary </mat-panel-title>
+                                        <mat-panel-description></mat-panel-description>
+                                    </mat-expansion-panel-header>
+                                    <p>Click on the links to download various results matrix files summarizing the
+                                        study.
+                                        Each file provides an aggregated view of the analysis results from the
+                                        study's individual runs. To view and download the analysis results for
+                                        specific runs, please visit their respective pages.</p>
+                                    @for (mgnifyObj of mgnifyDownloadLinks; track $index) {
+                                        <div class="mgnify-container">
+                                            <div class="mgnify-id">
+                                                MGnify Study ID: {{mgnifyObj['mgnifyid']}}
+                                            </div>
+                                            <div>
+                                                @for (item of mgnifyObj['dataobj'] | keyvalue; track $index) {
+                                                    <div>
+                                                        <p><b>{{item.key}}</b></p>
+                                                        @for (val of item.value; track $index) {
+                                                            <p>
+                                                                <a href="{{val['links']['self']}}">
+                                                                    {{val['attributes']['description']['label']}}
+                                                                </a>
+                                                            </p>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    }
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
+
+                        <hr>
                         <h1 class="col-md-12 page-header">Related Metagenomes </h1>
                         @if (dataSourceMetagenomesRecords?.data?.length) {
-                            <div style="margin-bottom: 10px;">
-                                 <mat-accordion>
-                                    <mat-expansion-panel [expanded]=true>
-                                        <mat-expansion-panel-header>
-                                            <mat-panel-title class="panel-title"> Analysis Summary </mat-panel-title>
-                                            <mat-panel-description> Please click to view the Analysis Summary links </mat-panel-description>
-                                        </mat-expansion-panel-header>
-                                        <p>Click on the links to download various results matrix files summarizing the
-                                            study.
-                                            Each file provides an aggregated view of the analysis results from the
-                                            study's individual runs. To view and download the analysis results for
-                                            specific runs, please visit their respective pages.</p>
-                                        @for (mgnifyObj of mgnifyDownloadLinks; track $index) {
-                                            <div class="mgnify-container">
-                                                <div class="mgnify-id">
-                                                    MGnify Study ID: {{mgnifyObj['mgnifyid']}}
-                                                </div>
-                                                <div>
-                                                    @for (item of mgnifyObj['dataobj'] | keyvalue; track $index) {
-                                                        <div>
-                                                            <p><b>{{item.key}}</b></p>
-                                                            @for (val of item.value; track $index) {
-                                                                <p>
-                                                                    <a href="{{val['links']['self']}}">
-                                                                        {{val['attributes']['description']['label']}}
-                                                                    </a>
-                                                                </p>
-                                                            }
-                                                        </div>
-                                                    }
-                                                </div>
-                                            </div>
-
-                                        }
-                                    </mat-expansion-panel>
-                                </mat-accordion>
-                            </div>
-
                             <div class="table-container">
                                 <mat-form-field>
                                     <mat-label>Search</mat-label>
