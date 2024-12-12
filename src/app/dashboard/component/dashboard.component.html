@@ -80,6 +80,21 @@
                                     </span>
                                     </li>
                                 }
+
+                                <!-- MGnify filters -->
+                                @for (filter of mgnifyFilters; track $index) {
+                                    <li role="listitem"
+                                        class="list-group-item d-flex justify-content-between
+                                           align-items-center"
+                                        [style]="checkStyle(filter.label + '-' + filter.key)"
+                                        (click)="onFilterClick(filter.label + '-' + filter.key)"
+                                        style="cursor: pointer">
+                                        <span >{{ displayMGnifyFilterName(filter.key) }}</span>
+                                        <span class="badge badge-pill badge-info badge-space">
+                                            {{ filter.doc_count }}
+                                        </span>
+                                    </li>
+                                }
                             </ul>
                         </div>
 
@@ -282,7 +297,7 @@
                         <mat-cell *matCellDef="let element" class="text-left" style=" padding-right: 0px; ">
                             <span>
                                     <mat-chip [ngStyle]="{'background-color': 'deepskyblue'}">
-                                        <a class="mat-standard-chip goat_info" target="_blank" href="{{element?.goat_info.url}}"
+                                        <a class="mat-standard-chip goat_info" target="_blank" href="{{element?.goat_info?.url}}"
                                            style="cursor: pointer">
                                             GoaT info
                                         </a>
