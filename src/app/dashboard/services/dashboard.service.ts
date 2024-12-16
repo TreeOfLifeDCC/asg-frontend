@@ -148,7 +148,7 @@ export class DashboardService {
   }
 
   public getMGnifyDownloadLinks(mgnifyID: string){
-    const url = `http://localhost:8000/api/metagenomics/${mgnifyID}/downloads`;
+    const url = `${this.API_BASE_URL}/api/metagenomics/${mgnifyID}/downloads`;
     return this.http.get<any>(url);
   }
 
