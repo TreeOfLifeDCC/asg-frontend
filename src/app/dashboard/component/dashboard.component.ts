@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {MatSort, MatSortModule} from '@angular/material/sort';
+import {MatSort, MatSortHeader, MatSortModule} from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import 'jquery';
 import 'bootstrap';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatHeaderCellDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {filter, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
@@ -21,7 +21,7 @@ import {MatIcon} from '@angular/material/icon';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {MatDialog, MatDialogActions, MatDialogContent} from '@angular/material/dialog';
 import {MatProgressBar} from '@angular/material/progress-bar';
-import {MatButton} from "@angular/material/button";
+import {MatButton} from '@angular/material/button';
 
 
 @Component({
@@ -33,7 +33,6 @@ import {MatButton} from "@angular/material/button";
     MatTableModule,
     MatInputModule,
     NgxSpinnerModule,
-    PhylogenyFilterComponent,
     MatExpansionPanel,
     MatExpansionPanelHeader,
     FormsModule,
@@ -41,20 +40,20 @@ import {MatButton} from "@angular/material/button";
     NgStyle,
     NgClass,
     MatSort,
+    MatHeaderCellDef,
     MatCheckbox,
     MatChip,
     MatChipSet,
-    UpperCasePipe,
     MatIcon,
-    JsonPipe,
     ReactiveFormsModule,
     MatRadioGroup,
     MatRadioButton,
-    MatSortModule,
     MatProgressBar,
     MatDialogContent,
     MatDialogActions,
-    MatButton
+    MatButton,
+    MatSortHeader,
+    MatSortModule
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -225,6 +224,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    // this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
   }
 
   getDisplayedColumns() {
@@ -333,7 +333,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters
     ).subscribe(
             data => {
@@ -575,6 +575,15 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
     else {
       return 'badge badge-pill badge-warning';
+    }
+  }
+
+  getCurrentStatusColour(status: string) {
+    if (['Annotation Complete', 'Done'].includes(status.trim())) {
+      console.log('ddfgfdg');
+      return 'background-color:palegreen';
+    } else {
+      return 'background-color:#ffc107';
     }
   }
 

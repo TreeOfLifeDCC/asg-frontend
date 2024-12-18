@@ -1,22 +1,23 @@
 .table-container {
-    overflow-x: auto;
+    overflow: hidden !important;
 }
 
 .table-container mat-form-field,
 .table-container table {
     width: 100%;
     min-width: 1200px;
+    overflow: hidden !important;
 }
 
-.mat-table {
-    width: 100%;
-}
+
 
 .mat-header-cell, .mat-cell {
     padding: 4px 8px;
     white-space: nowrap;
     word-break: normal;
 }
+
+
 
 .mat-cell .mat-chip {
     padding: 0 4px;
@@ -39,4 +40,40 @@
 
 #dynamic {
     background-image: linear-gradient(white, lightblue, lightskyblue);
+}
+.filter-heading {
+    font-size: unset;
+    font-weight: 400;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.active {
+    background-color: #4BBEFD;
+}
+
+.btn-success,
+.badge-success {
+    background-color: lightblue;
+}
+
+.btn-primary {
+    background-color: midnightblue;
+}
+
+button {
+    margin: 2px;
+}
+
+.list-group-item {
+    padding: 0.55rem;
+}
+
+.card-header{
+    margin: 0;
+    background-color: lightblue;
 }

@@ -394,7 +394,8 @@
                                         <mat-row *matRowDef="let row; columns: displayedColumnsFiles;"></mat-row>
                                     </table>
                                 </div>
-                                <mat-paginator #experimentsTable [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons [length]="dataSourceFilesCount"></mat-paginator>
+                                <mat-paginator #experimentsTable [pageSizeOptions]="[10, 20, 30]"
+                                               showFirstLastButtons [length]="dataSourceFilesCount"></mat-paginator>
                             </div>
                         }
                     </div>
@@ -403,55 +404,170 @@
 
             @if (bioSampleObj?.records?.length) {
                 <mat-tab label="Metadata">
-                    <div class="col-md-12" >
                         <hr>
                         <h1 class="col-md-12 page-header">Related Organisms</h1>
-                        <div class="table-container">
-                            <mat-form-field>
-                                <mat-label>Search</mat-label>
-                                <input matInput [(ngModel)]='searchText' (keyup)="getSearchResults()" placeholder="Ex. ILLUMINA" #input>
-                            </mat-form-field>
-                            @if (dataSourceRecords?.data?.length) {
-                                <table mat-table [dataSource]="dataSourceRecords" matSort>
-                                    <ng-container matColumnDef="accession">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header> BioSample ID </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a [routerLink]="['/data/organism/details/', element.accession]">{{element.accession}}</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="organism">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">{{element.organism}}</mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="commonName">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header>Common Name </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">{{element?.commonName}}</mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="sex">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header> Sex </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">{{element.sex}}</mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="organismPart">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header> Organism part </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">{{element.organismPart}}</mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="trackingSystem">
-                                        <mat-header-cell *matHeaderCellDef mat-sort-header> Tracking status </mat-header-cell>
-                                        <mat-cell *matCellDef="let element">
-                                            <mat-chip-set>
-                                                <mat-chip [ngStyle]="{'background-color': 'gold'}">{{element.trackingSystem}}</mat-chip>
-                                            </mat-chip-set>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <mat-header-row *matHeaderRowDef="specDisplayedColumns"></mat-header-row>
-                                    <mat-row *matRowDef="let row; columns: specDisplayedColumns;"></mat-row>
-                                </table>
-                            }
-                        </div>
-                        <mat-paginator style="width: 100%;" [pageSizeOptions]="[5,10, 20, 30]" showFirstLastButtons [length]="specBioSampleTotalCount"></mat-paginator>
+                    <div class="row">
+                        <div class="col-sm-2">
+                            @if(metadataSexFilters && metadataSexFilters.length > 0){
+                                    <div  class="card bg-lite mb-3 filter-top">
+                                        <h3 class="card-header filter-heading">
+                                            <span >Sex</span>
+                                        </h3>
+                                        <ul role="list"  class="list-group" >
+                                            @for(filter of metadataSexFilters; track $index){
 
+                                                    <li role="listitem" class="list-group-item d-flex justify-content-between
+                                    align-items-center"
+                                                            [ngClass]="checkFilterIsActive(filter.key)"
+
+                                                            (click)="applyFilter(filter.key,dataSourceRecords)"
+                                                            style="cursor: pointer;"
+                                                        >
+                                                            {{filter.key}}
+                                                            <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                        </li>
+                                            }
+
+                                        </ul>
+                                    </div>
+
+                            }
+                            @if(metadataSexFilters && metadataSexFilters.length > 0){
+
+                                    <div  class="card bg-lite mb-3 filter-top">
+                                        <h3 class="card-header filter-heading">
+                                            <span>Organism Part </span>
+<!--                                            @if (metadataSexFilters.length > 3) {-->
+                                            <mat-icon
+                                                    (click)="toggleCollapse('organisms')"
+                                                   >
+                                                {{ isOrganismsCollapsed ? 'add' : 'remove' }}
+
+                                            </mat-icon>
+<!--                                            }-->
+
+                                        </h3>
+
+                                        <ul role="list"  class="list-group" >
+                                            @for(filter of metadataOrganismPartFilters; track $index){
+
+                                                    <li role="listitem" class="list-group-item d-flex justify-content-between
+                                                        align-items-center"
+                                                            (click)="applyFilter(filter.key,dataSourceRecords)"
+                                                            [ngClass]="checkFilterIsActive(filter.key)" style="cursor: pointer;"
+                                                        >
+                                                            {{filter.key}}
+                                                            <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                        </li>
+
+                                            }
+
+                                        </ul>
+                                    </div>
+
+                            }
+                            @if(metadataTrackingSystemFilters.length){
+
+                                    <div class="card bg-lite mb-3 filter-top">
+                                        <h3 class="card-header filter-heading">
+                                            <span >Tracking Status</span>
+                                        </h3>
+                                        <ul role="list"  class="list-group" >
+                                            @for(filter of metadataTrackingSystemFilters; track $index){
+                                                <li role="listitem" class="list-group-item d-flex justify-content-between
+                                                    align-items-center"
+                                                    [ngClass]="checkFilterIsActive(filter.key)"
+                                                    (click)="applyFilter(filter.key, dataSourceRecords)" style="cursor: pointer;"
+                                                    >
+                                                        {{filter.key}}
+                                                        <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                </li>
+
+
+                                            }
+
+
+                                        </ul>
+                                    </div>
+
+                            }
+                            </div>
+
+
+                        <div class="col-sm-10">
+                            <div class="row">
+                                @if(activeFilters.length !== 0){
+                                    <h1 >Filters:
+                                        @for (filter of activeFilters; track $index){
+                                            <button type="button" class="btn btn-success">
+                                                {{filter}}
+                                                <span class="badge badge-light"  (click)="removeFilter(filter)">X</span>
+                                            </button>
+                                        }
+
+                                        <button type="button" class="btn btn-primary" (click)="removeAllFilters()">
+                                            Remove all filters
+                                        </button>
+                                    </h1>
+                                }
+
+
+                                <div class="table-container">
+                                    <mat-form-field>
+                                        <mat-label>Search</mat-label>
+                                        <input matInput [(ngModel)]='searchText' (keyup)="getSearchResults()" placeholder="Ex. ILLUMINA" #input>
+                                    </mat-form-field>
+
+                                    @if (dataSourceRecords?.data?.length) {
+                                        <table mat-table [dataSource]="dataSourceRecords" matSort >
+                                            <ng-container matColumnDef="accession">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> BioSample ID </mat-header-cell>
+                                                <mat-cell *matCellDef="let element" class="txt-center">
+                                                    <a [routerLink]="['/data/organism/details/', element.accession]">{{element.accession}}</a>
+                                                </mat-cell>
+                                            </ng-container>
+                                            <ng-container matColumnDef="organism">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Organism </mat-header-cell>
+                                                <mat-cell *matCellDef="let element" class="txt-center">{{element.organism}}</mat-cell>
+                                            </ng-container>
+                                            <ng-container matColumnDef="commonName">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header>Common Name </mat-header-cell>
+                                                <mat-cell *matCellDef="let element" class="txt-center">{{element?.commonName}}</mat-cell>
+                                            </ng-container>
+                                            <ng-container matColumnDef="sex">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Sex </mat-header-cell>
+                                                <mat-cell *matCellDef="let element" class="txt-center">{{element.sex}}</mat-cell>
+                                            </ng-container>
+                                            <ng-container matColumnDef="organismPart">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Organism part </mat-header-cell>
+                                                <mat-cell *matCellDef="let element" class="txt-center">{{element.organismPart}}</mat-cell>
+                                            </ng-container>
+                                            <ng-container matColumnDef="trackingSystem">
+                                                <mat-header-cell *matHeaderCellDef mat-sort-header> Tracking status </mat-header-cell>
+                                                <mat-cell *matCellDef="let element">
+                                                    <mat-chip-set>
+                                                        <mat-chip [ngStyle]="{'background-color': 'gold'}">
+                                                            {{element.trackingSystem}}</mat-chip>
+                                                    </mat-chip-set>
+                                                </mat-cell>
+                                            </ng-container>
+                                            <mat-header-row *matHeaderRowDef="specDisplayedColumns"></mat-header-row>
+                                            <mat-row *matRowDef="let row; columns: specDisplayedColumns;"></mat-row>
+                                        </table>
+                                    }
+
+                                <mat-paginator style="min-width: 1200px;" #metadataPaginator
+                                               [pageSizeOptions]="[5, 10, 20, 30]"
+                                               showFirstLastButtons [length]="dataSourceFilesCount">
+
+                                </mat-paginator>
+                                </div>
+                        </div>
+                        </div>
                     </div>
                 </mat-tab>
+
+
             }
 
             @if (bioSampleObj?.genome_notes && bioSampleObj?.genome_notes.length) {
@@ -568,6 +684,104 @@
                     <div class="col-md-12">
                         <hr>
                         <h1 class="col-md-12 page-header">Related Symbionts</h1>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                @if(symbiontsSexFilters && symbiontsSexFilters.length > 0 ){
+
+                                        <div  class="card bg-lite mb-3 filter-top">
+                                            <h3 class="card-header filter-heading">
+                                                <span >Sex</span>
+                                            </h3>
+                                            @if (symbiontsSexFilters.length > 3) {
+                                                <mat-icon
+                                                        (click)="toggleCollapse('organisms')"
+                                                        style="cursor: pointer; margin-left: auto; margin-right: 50px;">
+                                                    {{ isOrganismsCollapsed ? 'add' : 'remove' }}
+
+                                                </mat-icon>
+                                            }
+                                            <ul class="list-group" >
+                                                @for(filter of symbiontsSexFilters; track $index){
+
+                                                            <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
+                                                                [ngClass]="checkFilterIsActive(filter.key)"
+                                                                (click)="applyFilter(filter.key, dataSourceSymbiontsRecords)" style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                            >
+                                                                {{filter.key}}
+                                                                <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                            </li>
+                                                }
+
+                                            </ul>
+                                        </div>
+
+                                }
+                                @if(symbiontsOrganismPartFilters && symbiontsOrganismPartFilters.length > 0 ){
+
+                                        <div  class="card bg-lite mb-3 filter-top">
+                                            <h3 class="card-header filter-heading">
+                                                <span>Organism Part</span>
+
+                                            </h3>
+                                            <ul class="list-group" >
+                                                @for(filter of symbiontsOrganismPartFilters; track $index){
+
+                                                            <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
+                                                                [ngClass]="checkFilterIsActive(filter.key)"
+                                                                (click)="applyFilter(filter.key, dataSourceSymbiontsRecords)" style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                            >
+                                                                {{filter.key}}
+                                                                <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                            </li>
+
+                                                }
+
+                                            </ul>
+                                        </div>
+                                }
+                                @if(symbiontsTrackingSystemFilters && symbiontsTrackingSystemFilters.length){
+
+                                        <div class="card bg-lite mb-3 filter-top">
+                                            <h3 class="card-header filter-heading">
+                                                <span >Tracking Status</span>
+                                            </h3>
+                                            <ul id="symbionts-tracking-status-inactive" class="list-group" [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
+                                                @for(filter of symbiontsTrackingSystemFilters; track $index){
+                                                        <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
+                                                            [ngClass]="checkFilterIsActive(filter.key)"
+                                                            (click)="applyFilter(filter.key, dataSourceSymbiontsRecords)"
+                                                            style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                        >
+                                                            {{filter.key}}
+                                                            <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                        </li>
+
+                                                }
+
+
+                                            </ul>
+                                        </div>
+
+                                }
+                            </div>
+
+
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    @if(activeFilters.length !== 0){
+                                        <h1 >Filters:
+                                            @for (filter of activeFilters; track $index){
+                                                <button type="button" class="btn btn-success">
+                                                    {{filter}}
+                                                    <span class="badge badge-light" (click)="removeFilter(filter)">X</span>
+                                                </button>
+                                            }
+
+                                            <button type="button" class="btn btn-primary" (click)="removeAllFilters()">
+                                                Remove all filters
+                                            </button>
+                                        </h1>
+                                    }
                         @if (dataSourceSymbiontsRecords?.data?.length) {
                             <div class="table-container">
                                 <mat-form-field>
@@ -610,12 +824,18 @@
                                 </table>
                             </div>
                         }
-                        <mat-paginator #relatedSymbionts style="width: 100%;" [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons [length]="specSymbiontsTotalCount"></mat-paginator>
+                        <mat-paginator #relatedSymbionts style="width: 100%;" [pageSizeOptions]="[5, 10, 20, 30]"
+                                       showFirstLastButtons [length]="specSymbiontsTotalCount"></mat-paginator>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     @if (dataSourceSymbiontsAssemblies?.data?.length) {
                         <div class="col-md-12" >
                             <hr>
                             <h1 class="col-md-12 page-header">Related assemblies</h1>
+
                             <div class="table-container">
                                 <mat-form-field>
                                     <mat-label>Search</mat-label>
@@ -644,8 +864,11 @@
                                     <mat-row *matRowDef="let row; columns: displayedColumnsAssemblies;"></mat-row>
                                 </table>
                             </div>
-                            <mat-paginator #assembliesSymbiontsTable [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons [length]="dataSourceSymbiontsAssembliesCount" style="width: 100%;"></mat-paginator>
+                            <mat-paginator #assembliesSymbiontsTable [pageSizeOptions]="[10, 20, 30]"
+                                           showFirstLastButtons [length]="dataSourceSymbiontsAssembliesCount"
+                                           style="width: 100%;"></mat-paginator>
                         </div>
+
                     }
                 </mat-tab>
             }
@@ -656,7 +879,116 @@
 
                         <hr>
                         <h1 class="col-md-12 page-header">Related Metagenomes </h1>
+
                         @if (dataSourceMetagenomesRecords?.data?.length) {
+                            <div class="row">
+                                <div class="col-sm-2">
+
+
+                                    @if(metagenomesSexFilters && metagenomesSexFilters.length > 0 ){
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-6">
+                                                <div  class="card bg-lite mb-3 filter-top">
+                                                    <h3 class="card-header filter-heading">
+                                                        <span #lbltextSex>Sex</span>
+
+                                                    </h3>
+                                                    <ul id="metagenome-sex-inactive" class="list-group" [ngClass]="{'long-list': itemLimitSexFilter > filterSize}">
+                                                        @for(filter of metagenomesSexFilters; track $index){
+
+
+                                                                <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
+                                                                    [ngClass]="checkFilterIsActive(filter.key)"
+                                                                    (click)="applyFilter(filter.key, dataSourceMetagenomesRecords)"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                                >
+                                                                    {{filter.key}}
+                                                                    <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                                </li>
+
+
+
+                                                        }
+
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    @if(metagenomesOrganismPartFilters && metagenomesOrganismPartFilters.length > 0 ){
+                                        <div class="row">
+                                            <div class="col-md-12 col-sm-6">
+                                        <div  class="card bg-lite mb-3 filter-top">
+                                            <h3 class="card-header filter-heading">
+                                                <span #lbltextOrgPart>Organism Part</span>
+
+                                            </h3>
+                                            <ul id="metagenome-org-part-inactive" class="list-group" [ngClass]="{'long-list': itemLimitOrgFilter > filterSize}">
+                                                @for(filter of metagenomesOrganismPartFilters; track $index){
+                                                    <ng-container >
+
+                                                            <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
+                                                                [ngClass]="checkFilterIsActive(filter.key)"
+                                                                (click)="applyFilter(filter.key, dataSourceMetagenomesRecords)"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                            >
+                                                                {{filter.key}}
+                                                                <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                            </li>
+
+
+                                                    </ng-container>
+                                                }
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                        </div>
+                                    }
+                                    @if(metagenomesTrackingSystemFilters && metagenomesTrackingSystemFilters.length){
+                                        <div class="row">
+                                             <div class="col-md-12 col-md-6" >
+                                            <div class="card bg-lite mb-3 filter-top">
+                                                <h3 class="card-header filter-heading">
+                                                    <span >Tracking Status</span>
+
+                                                </h3>
+                                                <ul id="metagenome-tracking-status-inactive" class="list-group" [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
+                                                    @for(filter of metagenomesTrackingSystemFilters; track $index){
+                                                            <li id="{{$index}}" class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
+                                                                [ngClass]="checkFilterIsActive(filter.key)"
+                                                                (click)="applyFilter(filter.key, dataSourceMetagenomesRecords)"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                            >
+                                                                {{filter.key}}
+                                                                <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                            </li>
+
+
+                                                    }
+
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        @if(activeFilters.length !== 0){
+                                            <h1 >Filters:
+                                                @for (filter of activeFilters; track $index){
+                                                    <button type="button" class="btn btn-success">
+                                                        {{filter}}
+                                                        <span class="badge badge-light" (click)="removeFilter(filter)">X</span>
+                                                    </button>
+                                                }
+
+                                                <button type="button" class="btn btn-primary" (click)="removeAllFilters()">
+                                                    Remove all filters
+                                                </button>
+                                            </h1>
+                                        }
                             <div class="table-container">
                                 <mat-form-field>
                                     <mat-label>Search</mat-label>
@@ -696,10 +1028,17 @@
                                     <mat-header-row *matHeaderRowDef="specDisplayedColumns"></mat-header-row>
                                     <mat-row *matRowDef="let row; columns: specDisplayedColumns;"></mat-row>
                                 </table>
+
+                            </div>
+                                        <mat-paginator #relatedMetagenomesTable
+                                                       [pageSizeOptions]="[5,10, 20, 30]" showFirstLastButtons
+                                                       [length]="specMetagenomesTotalCount"></mat-paginator>
+
+                                    </div>
+                                </div>
                             </div>
                         }
-                        <mat-paginator #relatedMetagenomes style="width: 100%;" [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons [length]="specMetagenomesTotalCount"></mat-paginator>
-                    </div>
+                     </div>
                     @if (dataSourceMetagenomesAssemblies?.data?.length) {
                         <div class="col-md-12" >
                             <hr>

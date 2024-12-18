@@ -1,21 +1,24 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Sample } from '../../model/dashboard.model';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatListModule } from '@angular/material/list';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { FormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { DashboardService } from '../../services/dashboard.service';
+import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {Sample} from '../../model/dashboard.model';
+import {MatSort} from '@angular/material/sort';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
+import {CommonModule} from '@angular/common';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatListModule} from '@angular/material/list';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {FormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material/input';
+import {DashboardService} from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
+import {SafeResourceUrl} from '@angular/platform-browser';
+import {MatCard, MatCardActions, MatCardTitle} from '@angular/material/card';
+import {Subject} from 'rxjs';
+import {MatIcon} from '@angular/material/icon';
 
 
 @Component({
@@ -36,17 +39,20 @@ import {DomSanitizer, SafeResourceUrl} from "@angular/platform-browser";
     CommonModule,
     MatChip,
     MatChipSet,
-    MapClusterComponent
+    MapClusterComponent,
+    MatSort,
+    MatIcon
   ],
   styleUrls: ['./organism-details.component.css']
 })
 export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('metadataPaginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  filterChanged = new EventEmitter<any>();
   bioSampleId: string;
   bioSampleObj: any;
-  dataSourceRecords;
+  dataSourceRecords = new MatTableDataSource<any>([]);
   specBioSampleTotalCount = 0;
   specSymbiontsTotalCount = 0;
   specMetagenomesTotalCount = 0;
@@ -56,7 +62,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   dataSourceMetagenomesAssembliesCount: number;
   dataSourceMetagenomesAssemblies: MatTableDataSource<any, MatPaginator>;
   specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart', 'trackingSystem'];
-
+  private filterSubject = new Subject<string>();
   INSDC_ID = null;
   isSexFilterCollapsed = true;
   isTrackCollapsed = true;
@@ -68,14 +74,33 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   searchText = '';
   activeFilters = [];
   filtersMap: { sex: any[]; trackingSystem: any[]; organismPart: any[]; };
-  filters = {
+  metadataFilters = {
     sex: {},
     trackingSystem: {},
     organismPart: {}
   };
-  sexFilters = [];
-  trackingSystemFilters = [];
-  organismPartFilters = [];
+   symbiontsFilters = {
+    sex: {},
+    trackingSystem: {},
+    organismPart: {}
+  };
+  metagenomeFilters = {
+    sex: {},
+    trackingSystem: {},
+    organismPart: {}
+  };
+  metadataSexFilters = [];
+  metadataTrackingSystemFilters = [];
+  metadataOrganismPartFilters = [];
+
+  symbiontsSexFilters = [];
+  symbiontsTrackingSystemFilters = [];
+  symbiontsOrganismPartFilters = [];
+
+  metagenomesSexFilters = [];
+  metagenomesTrackingSystemFilters = [];
+  metagenomesOrganismPartFilters = [];
+
   organismName: any;
   relatedRecords: any[];
   filterJson = {
@@ -162,13 +187,16 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
 
   @ViewChild('relatedSymbionts') symPaginator: MatPaginator;
   @ViewChild('assembliesSymbiontsTable') asSymPaginator: MatPaginator;
-  @ViewChild('relatedMetagenomes') metPaginator: MatPaginator;
+  @ViewChild('relatedMetagenomesTable') metPaginator: MatPaginator;
   @ViewChild('assembliesMetagenomesTable') asMetPaginator: MatPaginator;
   dataSourceGoatInfo;
   displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
   private dataTabInitialized = false;
   aggregations;
   url: SafeResourceUrl;
+  isOrganismsCollapsed = true ;
+  isSymbiontsCollapsed: boolean;
+  isMetagenomesCollapsed: boolean;
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService) {
@@ -212,11 +240,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.filterChanged.subscribe(() => (this.paginator.pageIndex = 0));
   }
 
   ngAfterViewChecked() {
     const tabs = this.tabgroup._tabs.toArray();
-    const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === "Data");
+    const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === 'Data');
 
     if (
         !this.dataTabInitialized &&
@@ -230,7 +259,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getBiosampleByOrganism() {
-    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal')
+    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal_test')
         .subscribe(
             data => {
               this.aggregations = data.aggregations;
@@ -250,6 +279,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   tabGroup.selectedIndex = selected;
                 }, 100);
               }
+              if (data.goat_info) {
+                this.dataSourceGoatInfo = data.goat_info.attributes;
+              }
               for (const item of data.records) {
                 unpackedData.push(this.unpackData(item));
               }
@@ -264,7 +296,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 }
               }
               if (unpackedData.length > 0) {
-                this.getFilters(data.organism);
+                this.getFilters();
               }
               setTimeout(() => {
                 this.organismName = data.organism;
@@ -274,7 +306,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 this.specBioSampleTotalCount = unpackedData?.length;
                 this.specSymbiontsTotalCount = unpackedSymbiontsData?.length;
                 this.specMetagenomesTotalCount = unpackedMetagenomesData?.length;
-                this.dataSourceRecords.paginator = this.paginator;
+
 
                 if (data.experiment != null) {
                   this.dataSourceFiles = new MatTableDataSource<Sample>(data.experiment);
@@ -289,6 +321,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 if (data.assemblies != null) {
                   this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
                   this.dataSourceAssembliesCount = data.assemblies?.length;
+                  // tslint:disable-next-line:prefer-for-of
                   for (let i = 0; i < data.assemblies.length; i++) {
                     this.assembliesurls.push(
                         this.ENA_PORTAL_API_BASE_URL_FASTA + data.assemblies[i].accession + '?download=true&gzip=true'
@@ -301,6 +334,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 if (data.annotation != null) {
                   this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
                   this.dataSourceAnnotationCount = data.annotation?.length;
+                  // tslint:disable-next-line:prefer-for-of
                   for (let i = 0; i < data.annotation.length; i++) {
                     this.annotationsurls.push(
                         this.ENA_PORTAL_API_BASE_URL_FASTA + data.annotation[i].accession + '?download=true&gzip=true'
@@ -325,7 +359,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   this.dataSourceMetagenomesAssemblies = new MatTableDataSource<Sample>();
                   this.dataSourceMetagenomesAssembliesCount = 0;
                 }
-
+                this.dataSourceRecords.paginator = this.paginator;
                 this.dataSourceFiles.paginator = this.exPaginator;
                 this.dataSourceAssemblies.paginator = this.asPaginator;
                 this.dataSourceAnnotation.paginator = this.anPaginator;
@@ -339,7 +373,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 this.dataSourceFiles.sort = this.sort;
                 this.dataSourceAssemblies.sort = this.sort;
                 this.dataSourceAnnotation.sort = this.sort;
-              }, 50);
+              }, 100);
             },
             err => console.log(err)
         );
@@ -400,63 +434,143 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getFiltersForSelectedFilter(data: any) {
-    const filters = {
+    const metadataFilters = {
       sex: {},
       trackingSystem: {},
       organismPart: {}
     };
-    this.sexFilters = [];
-    this.trackingSystemFilters = [];
-    this.organismPartFilters = [];
+    const symbiontsFilters = {
+      sex: {},
+      trackingSystem: {},
+      organismPart: {}
+    };
+    const metagenomeFilters = {
+      sex: {},
+      trackingSystem: {},
+      organismPart: {}
+    };
+    this.metadataSexFilters = [];
+    this.metadataTrackingSystemFilters = [];
+    this.metadataOrganismPartFilters = [];
 
-    this.filters = filters;
+    this.symbiontsSexFilters = [];
+    this.symbiontsTrackingSystemFilters = [];
+    this.symbiontsOrganismPartFilters = [];
+
+    this.metagenomesSexFilters = [];
+    this.metagenomesTrackingSystemFilters = [];
+    this.metagenomesOrganismPartFilters = [];
+
+    this.metadataFilters = metadataFilters;
+    this.metagenomeFilters = metagenomeFilters;
+    this.metagenomeFilters = metagenomeFilters;
     for (const item of data) {
       if (item.sex != null) {
-        if (item.sex in filters.sex) {
-          filters.sex[item.sex] += 1;
+        if (item.sex in metadataFilters.sex) {
+          metadataFilters.sex[item.sex] += 1;
         } else {
-          filters.sex[item.sex] = 1;
+          metadataFilters.sex[item.sex] = 1;
         }
       }
       if (item.trackingSystem != null) {
-        if (item.trackingSystem in filters.trackingSystem) {
-          filters.trackingSystem[item.trackingSystem] += 1;
+        if (item.trackingSystem in metadataFilters.trackingSystem) {
+          metadataFilters.trackingSystem[item.trackingSystem] += 1;
         } else {
-          filters.trackingSystem[item.trackingSystem] = 1;
+          metadataFilters.trackingSystem[item.trackingSystem] = 1;
         }
       }
 
       if (item.organismPart != null) {
-        if (item.organismPart in filters.organismPart) {
-          filters.organismPart[item.organismPart] += 1;
+        if (item.organismPart in metadataFilters.organismPart) {
+          metadataFilters.organismPart[item.organismPart] += 1;
         } else {
-          filters.organismPart[item.organismPart] = 1;
+          metadataFilters.organismPart[item.organismPart] = 1;
         }
       }
-    }
-    this.filters = filters;
-    const sexFilterObj = Object.entries(this.filters.sex);
-    const trackFilterObj = Object.entries(this.filters.trackingSystem);
-    const orgFilterObj = Object.entries(this.filters.organismPart);
-    const j = 0;
-    for (let i = 0; i < sexFilterObj.length; i++) {
-      const jsonObj = { key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
-      this.sexFilters.push(jsonObj);
-    }
-    for (let i = 0; i < trackFilterObj.length; i++) {
-      const jsonObj = { key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
-      this.trackingSystemFilters.push(jsonObj);
-    }
-    for (let i = 0; i < orgFilterObj.length; i++) {
-      const jsonObj = { key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
-      this.organismPartFilters.push(jsonObj);
+
+      this.metadataFilters = metadataFilters;
+      const sexFilterObj = Object.entries(this.metadataFilters.sex);
+      const trackFilterObj = Object.entries(this.metadataFilters.trackingSystem);
+      const orgFilterObj = Object.entries(this.metadataFilters.organismPart);
+      const j = 0;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < sexFilterObj.length; i++) {
+        const jsonObj = {key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1]};
+        this.metadataSexFilters.push(jsonObj);
+      }
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < trackFilterObj.length; i++) {
+        const jsonObj = {key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1]};
+        this.metadataTrackingSystemFilters.push(jsonObj);
+      }
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < orgFilterObj.length; i++) {
+        const jsonObj = {key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1]};
+        this.metadataOrganismPartFilters.push(jsonObj);
+      }
+
+      this.symbiontsFilters = symbiontsFilters;
+      const symbiontsSexFilterObj = Object.entries(this.symbiontsFilters.sex);
+      const symbiontsTrackFilterObj = Object.entries(this.symbiontsFilters.trackingSystem);
+      const symbiontsOrgFilterObj = Object.entries(this.symbiontsFilters.organismPart);
+      const k = 0;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < symbiontsSexFilterObj.length; i++) {
+        const jsonObj = {key: symbiontsSexFilterObj[i][k], doc_count: symbiontsSexFilterObj[i][k + 1]};
+        this.symbiontsSexFilters.push(jsonObj);
+        console.log(jsonObj);
+      }
+
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < symbiontsTrackFilterObj.length; i++) {
+        const jsonObj = {key: symbiontsTrackFilterObj[i][k], doc_count: symbiontsTrackFilterObj[i][k + 1]};
+        this.symbiontsTrackingSystemFilters.push(jsonObj);
+      }
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < symbiontsOrgFilterObj.length; i++) {
+        const jsonObj = {key: symbiontsOrgFilterObj[i][k], doc_count: symbiontsOrgFilterObj[i][k + 1]};
+        this.symbiontsOrganismPartFilters.push(jsonObj);
+      }
+
+      this.metagenomeFilters = metagenomeFilters;
+      const metagenomeSexFilterObj = Object.entries(this.metagenomeFilters.sex);
+      const metagenomeTrackFilterObj = Object.entries(this.metagenomeFilters.trackingSystem);
+      const metagenomeOrgFilterObj = Object.entries(this.metagenomeFilters.organismPart);
+      const l = 0;
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < metagenomeSexFilterObj.length; i++) {
+        const jsonObj = {key: metagenomeSexFilterObj[i][l], doc_count: metagenomeSexFilterObj[i][l + 1]};
+        this.metagenomesSexFilters.push(jsonObj);
+      }
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < metagenomeTrackFilterObj.length; i++) {
+        const jsonObj = {key: metagenomeTrackFilterObj[i][l], doc_count: metagenomeTrackFilterObj[i][l + 1]};
+        this.metadataTrackingSystemFilters.push(jsonObj);
+      }
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < metagenomeOrgFilterObj.length; i++) {
+        const jsonObj = {key: metagenomeOrgFilterObj[i][l], doc_count: metagenomeOrgFilterObj[i][l + 1]};
+        this.metagenomesOrganismPartFilters.push(jsonObj);
+      }
+
     }
   }
 
-  getFilters(organism) {
-    this.sexFilters = this.aggregations.filters.sex_filter.buckets;
-    this.trackingSystemFilters = this.aggregations.filters.tracking_status_filter.buckets;
-    this.organismPartFilters = this.aggregations.filters.
+  getFilters() {
+
+    this.metadataSexFilters = this.aggregations.metadata_filters.sex_filter.buckets;
+    this.metadataTrackingSystemFilters = this.aggregations.metadata_filters.tracking_status_filter.buckets;
+    this.metadataOrganismPartFilters = this.aggregations.metadata_filters.
+        organism_part_filter.buckets;
+
+    this.symbiontsSexFilters = this.aggregations.symbionts_filters.sex_filter.buckets;
+    this.symbiontsTrackingSystemFilters = this.aggregations.symbionts_filters.tracking_status_filter.buckets;
+    this.symbiontsOrganismPartFilters = this.aggregations.symbionts_filters.
+        organism_part_filter.buckets;
+
+    this.metagenomesSexFilters = this.aggregations.metagenomes_filters.sex_filter.buckets;
+    this.metagenomesTrackingSystemFilters = this.aggregations.metagenomes_filters.tracking_status_filter.buckets;
+    this.metagenomesOrganismPartFilters = this.aggregations.metagenomes_filters.
         organism_part_filter.buckets;
   }
 
@@ -464,6 +578,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     $('.sex-inactive').removeClass('non-disp active');
     $('.tracking-status-inactive').removeClass('non-disp active');
     $('.org-part-inactive').removeClass('non-disp active');
+    // tslint:disable-next-line:triple-equals
     if (this.searchText.length == 0) {
       this.getBiosampleByOrganism();
     } else {
@@ -476,8 +591,132 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
         const d = !filter || data.accession.toLowerCase().includes(filter.toLowerCase());
         const e = !filter || data.commonName.toLowerCase().includes(filter.toLowerCase());
         return a || b || c || d || e;
+        // tslint:disable-next-line:variable-name
       }) as (PeriodicElement, string) => boolean;
       this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
     }
   }
+
+  checkFilterIsActive(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      return 'active';
+    } else {
+      return '';
+    }
+
+  }
+
+
+  removeFilter(filter: string) {
+    if (filter !== undefined) {
+      const filterIndex = this.activeFilters.indexOf(filter);
+      if (this.activeFilters.length !== 0) {
+        this.spliceFilterArray(filter);
+        this.activeFilters.splice(filterIndex, 1);
+        // this.dataSourceRecords.filter = this.filterJson;
+        this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
+      } else {
+        this.filterJson.sex = '';
+        this.filterJson.organismPart = '';
+        // this.dataSourceRecords.filter = this.filterJson;
+        this.getBiosampleByOrganism();
+      }
+    }
+  }
+  spliceFilterArray(filter: string) {
+    if (this.filterJson.sex === filter) {
+      this.filterJson.sex = '';
+    }
+    else if (this.filterJson.organismPart === filter) {
+      this.filterJson.organismPart = '';
+    }
+  }
+
+  // onFilterClick(event, label: string, filter: string) {
+  //   this.searchText = '';
+  //   // const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
+  //   // this.createFilterJson(label.toLowerCase().replace(' ', ''), filter);
+  //   // const filterIndex = this.activeFilters.indexOf(filter);
+  //   //
+  //   // if (filterIndex !== -1) {
+  //   //   $('.' + inactiveClassName).removeClass('non-disp');
+  //   //   this.removeFilter(filter);
+  //   // } else {
+  //   //   this.activeFilters.push(filter);
+  //   //   this.dataSourceRecords.filter = this.filterJson;
+  //   //   this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
+  //   //   $('.' + inactiveClassName).addClass('non-disp');
+  //   //   $(event.target).removeClass('non-disp');
+  //   //   $(event.target).addClass('disp');
+  //   //   $(event.target).addClass('active');
+  //   // }
+  //   this.filterChanged.emit();
+  // }
+  createFilterJson(key, value) {
+    if (key === 'sex') {
+      this.filterJson.sex = value;
+    }
+    else if (key === 'organismpart') {
+      this.filterJson.organismPart = value;
+    }
+    this.dataSourceRecords.filterPredicate = ((data, filter) => {
+      const a = !filter.sex || data.sex === filter.sex;
+      const b = !filter.organismPart || data.organismPart === filter.organismPart;
+      return a && b;
+      // tslint:disable-next-line:variable-name
+    }) as (PeriodicElement, string) => boolean;
+  }
+
+
+  toggleCollapse(table: string): void {
+    switch (table) {
+      case 'organisms':
+        this.isOrganismsCollapsed = !this.isOrganismsCollapsed;
+        break;
+      case 'symbionts':
+        this.isSymbiontsCollapsed = !this.isSymbiontsCollapsed;
+        break;
+      case 'metagenomes':
+        this.isMetagenomesCollapsed = !this.isMetagenomesCollapsed;
+        break;
+    }
+  }
+
+
+  removeAllFilters() {
+    $('.sex-inactive').removeClass('non-disp');
+    $('.org-part-inactive').removeClass('non-disp');
+    this.activeFilters = [];
+    this.filterJson.sex = '';
+    this.filterJson.organismPart = '';
+    // this.dataSourceRecords.filter = this.filterJson;
+    this.filterChanged.emit();
+    this.getBiosampleByOrganism();
+  }
+
+  applyFilter(filterValue: string, dataSource: MatTableDataSource<any>): void {
+    const index = this.activeFilters.indexOf(filterValue);
+    index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
+    dataSource.filter = filterValue.toLowerCase();
+  }
+
+  onFilterClick(filterValue: string) {
+    //   const index = this.activeFilters.indexOf(filterValue);
+    //   index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
+    //
+    //   this.filterChanged.pipe(debounceTime(300)).subscribe(filterValue => {
+    //     this.dataSourceRecords = this.dataSourceRecords.filter((item: { name: string; }) =>
+    //         console.log(item ));
+    // });
+      // this.filterChanged.emit();
+    }
+
+  checkStyle(filterValue: string) {
+    if (this.activeFilters.includes(filterValue)) {
+      return 'background-color: #4BBEFD;';
+    } else {
+      return '';
+    }
+  }
+
 }
