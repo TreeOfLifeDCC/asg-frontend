@@ -18,6 +18,7 @@ import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
 import {SafeResourceUrl} from '@angular/platform-browser';
 import {MatCard, MatCardActions, MatCardTitle} from '@angular/material/card';
 import {Subject} from 'rxjs';
+
 import {MatIcon} from '@angular/material/icon';
 
 
@@ -40,7 +41,9 @@ import {MatIcon} from '@angular/material/icon';
     MatChip,
     MatChipSet,
     MapClusterComponent,
+
     MatSort,
+
     MatIcon
   ],
   styleUrls: ['./organism-details.component.css']
@@ -58,21 +61,18 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   specMetagenomesTotalCount = 0;
   dataSourceSymbiontsAssembliesCount = 0;
   dataSourceSymbiontsAssemblies;
-
   dataSourceMetagenomesAssembliesCount: number;
   dataSourceMetagenomesAssemblies: MatTableDataSource<any, MatPaginator>;
   specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart', 'trackingSystem'];
   private filterSubject = new Subject<string>();
   INSDC_ID = null;
-  isSexFilterCollapsed = true;
-  isTrackCollapsed = true;
-  isOrganismPartCollapsed = true;
   itemLimitSexFilter: number;
   itemLimitOrgFilter: number;
   itemLimitTrackFilter: number;
   filterSize: number;
   searchText = '';
   activeFilters = [];
+
   filtersMap: { sex: any[]; trackingSystem: any[]; organismPart: any[]; };
   metadataFilters = {
     sex: {},
@@ -184,7 +184,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('experimentsTable') exPaginator: MatPaginator;
   @ViewChild('assembliesTable') asPaginator: MatPaginator;
   @ViewChild('annotationTable') anPaginator: MatPaginator;
-
   @ViewChild('relatedSymbionts') symPaginator: MatPaginator;
   @ViewChild('assembliesSymbiontsTable') asSymPaginator: MatPaginator;
   @ViewChild('relatedMetagenomesTable') metPaginator: MatPaginator;
@@ -197,6 +196,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   isOrganismsCollapsed = true ;
   isSymbiontsCollapsed: boolean;
   isMetagenomesCollapsed: boolean;
+  mgnifyIDs: any[] = [];
+  mgnifyDownloadLinks: any[] = [];
 
   constructor(private route: ActivatedRoute,
               private dashboardService: DashboardService) {
@@ -295,9 +296,21 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   unpackedMetagenomesData.push(this.unpackData(item));
                 }
               }
+
               if (unpackedData.length > 0) {
                 this.getFilters();
               }
+
+              // get MGnify IDs in metagenomes records
+              this.mgnifyIDs = data['metagenomes_records']
+                  .filter( obj => obj.hasOwnProperty('mgnify_study_ids'))
+                  .map(obj => obj['mgnify_study_ids']);
+
+              for (const studyId of this.mgnifyIDs) {
+                this.fetchMGnifyDownloadLinks(studyId);
+              }
+
+
               setTimeout(() => {
                 this.organismName = data.organism;
                 this.dataSourceRecords = new MatTableDataSource<any>(unpackedData);
@@ -597,6 +610,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     }
   }
 
+
   checkFilterIsActive(filterValue: string) {
     if (this.activeFilters.includes(filterValue)) {
       return 'active';
@@ -717,6 +731,38 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     } else {
       return '';
     }
+  }
+
+
+  checkCurrentStatusColor(status: string) {
+    if (status === 'Annotation Complete') {
+      return {'background-color': 'palegreen'};
+    }
+    return {'background-color': 'gold'};
+  }
+
+  fetchMGnifyDownloadLinks(mgnifyID: string) {
+    this.dashboardService.getMGnifyDownloadLinks(mgnifyID).subscribe({
+      next: data => {
+        const dataObj = {};
+        // dataObj['mgnifyID'] = mgnifyID;
+
+        data['data'].forEach((obj, index) => {
+          const groupType = obj['attributes']['group-type'];
+          if (groupType in dataObj) {
+            dataObj[groupType].push(obj);
+          } else {
+            dataObj[groupType] = [obj];
+          }
+        });
+
+        this.mgnifyDownloadLinks.push({mgnifyid: mgnifyID,
+                                       dataobj: dataObj});
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
   }
 
 }

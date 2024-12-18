@@ -9,11 +9,10 @@ import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatHeaderCellDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {filter, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
-import {PhylogenyFilterComponent} from '../../shared/phylogeny-filter/phylogeny-filter.component';
 import {MatExpansionPanel, MatExpansionPanelHeader} from '@angular/material/expansion';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
-import {JsonPipe, NgClass, NgStyle, UpperCasePipe} from '@angular/common';
+import {NgClass, NgStyle} from '@angular/common';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 import {MatChip, MatChipSet} from '@angular/material/chips';
@@ -153,6 +152,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   symbiontsFilters: any[] = [];
   metagenomesFilters: any[] = [];
   experimentTypeFilters: any[] = [];
+  mgnifyFilters: any[] = [];
   itemLimit = 5;
   isCollapsed = true;
   searchValue: string;
@@ -375,6 +375,14 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
                     'metagenomes_assemblies_status');
               }
 
+              // mgnify
+              this.mgnifyFilters = [];
+              if (this.aggregations.mgnify_status.buckets.length > 0) {
+                this.mgnifyFilters = this.merge(this.mgnifyFilters,
+                    this.aggregations.mgnify_status.buckets,
+                    'mgnify_status');
+              }
+
               // experiment type
               this.experimentTypeFilters = [];
               if (this.aggregations?.experiment.library_construction_protocol.buckets.length > 0) {
@@ -428,7 +436,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       item.label = filterLabel;
       first.push(item);
     }
-
     return first;
   }
 
@@ -455,7 +462,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   getNextBiosamples(currentSize, offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
     this.dashboardService.getAllBiosample(
-        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters)
         .subscribe(
             data => {
@@ -555,6 +562,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.symbiontsFilters = [];
+    this.mgnifyFilters = [];
     this.metagenomesFilters = [];
     this.experimentTypeFilters = [];
   }
@@ -588,7 +596,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   }
 
   checkTolidExists(data) {
-    return data !== undefined && data.tolid !== undefined && data.tolid != null && data.tolid.length > 0;
+    return data !== undefined && data.show_tolqc !== undefined;
   }
 
   checkMgnifyIdsLength(data) {
@@ -615,15 +623,23 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     }
   }
 
-  displayActiveFilterName(filterName: string) {
-    if (filterName && filterName.startsWith('symbionts_')) {
-      return 'Symbionts-' + filterName.split('-')[1];
+
+  displayActiveFilterName(filterName: string): string {
+    if (!filterName) {
+      return filterName;
     }
-    if (filterName && filterName.startsWith('experimentType_')) {
-      return  filterName.split('_')[1];
+    switch (true) {
+      case filterName.startsWith('symbionts_'):
+        return 'Symbionts-' + filterName.split('-')[1];
+      case filterName.startsWith('experimentType_'):
+        return filterName.split('_')[1];
+      case filterName === 'mgnify_status-true':
+        return 'MGnify Analysis - Done';
+      default:
+        return filterName;
     }
-    return filterName;
   }
+
 
   removePhylogenyFilters() {
     // update url with the value of the phylogeny current class
@@ -647,7 +663,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   downloadFile(downloadOption: string, dialog: boolean) {
     this.dashboardService.downloadData(downloadOption, this.paginator.pageIndex,
         this.paginator.pageSize, this.searchValue || '', this.sort.active, this.sort.direction, this.activeFilters,
-        this.currentClass, this.phylogenyFilters, 'data_portal').subscribe({
+        this.currentClass, this.phylogenyFilters, 'data_portal_test').subscribe({
       next: (response: Blob) => {
         const blobUrl = window.URL.createObjectURL(response);
         const a = document.createElement('a');
@@ -695,13 +711,27 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
         { data: mgnifyUrls, height: '260px', width: '400px' });
   }
 
-  applyFilter(event: Event) {
-    this.searchValue = (event.target as HTMLInputElement).value;
-    this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
+  displayMGnifyFilterName(filterValue: string) {
+    if (filterValue === 'true') {
+      return 'MGnify Analysis - Done';
+    } else {
+      return filterValue;
+    }
   }
 
   public displayError = (controlName: string, errorName: string) => {
     return this.downloadForm?.controls[controlName].hasError(errorName);
+  }
+
+  checkCurrentStatusColor(status: string) {
+    if (status === 'Annotation Complete') {
+      return {'background-color': 'palegreen'};
+    }
+    return {'background-color': 'gold'};
+  }
+
+  checkGenomeNote(data: any) {
+    return data.genome_notes.length > 0;
   }
 }
 

@@ -17,8 +17,9 @@ export class DashboardService {
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
-  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit,
-                         sortColumn?, sortOrder? , searchText?, filterValue?): Observable<any> {
+  public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?,
+                         sortOrder? , searchText?, filterValue?): Observable<any> {
+
 
     let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
@@ -37,7 +38,8 @@ export class DashboardService {
         if (projectNames.indexOf(filterValue[i]) !== -1) {
           filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
         } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
-          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes')) {
+          if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes') ||
+              filterValue[i].startsWith('mgnify_status')) {
             filterItem = filterValue[i].replace('-', ':');
           } else {
             filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
@@ -144,6 +146,11 @@ export class DashboardService {
     };
 
     return this.http.post(url, payload, { responseType: 'blob' });
+  }
+
+  public getMGnifyDownloadLinks(mgnifyID: string){
+    const url = `${this.API_BASE_URL}/api/metagenomics/${mgnifyID}/downloads`;
+    return this.http.get<any>(url);
   }
 
 }

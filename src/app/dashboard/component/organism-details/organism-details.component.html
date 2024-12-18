@@ -17,7 +17,7 @@
                     <dt class="col-md-3">Tracking Status:</dt>
                     <dd class="col-md-9">
                         <mat-chip-set>
-                            <mat-chip [ngStyle]="{'background-color': 'gold'}">{{ bioSampleObj.currentStatus }}</mat-chip>
+                            <mat-chip [ngStyle]="checkCurrentStatusColor(bioSampleObj.currentStatus)">{{ bioSampleObj.currentStatus }}</mat-chip>
                         </mat-chip-set>
                     </dd>
                 }
@@ -122,7 +122,7 @@
                             </div>
                         }
                         @if (dataSourceFiles?.data?.length) {
-                            <div class="col-md-12" >
+                            <div class="col-md-12">
                                 <hr>
                                 <h1 class="col-md-12 page-header">Related files</h1>
                                 <mat-expansion-panel (opened)="expanded()" class="mb-3">
@@ -492,8 +492,6 @@
 
                             }
                             </div>
-
-
                         <div class="col-sm-10">
                             <div class="row">
                                 @if(activeFilters.length !== 0){
@@ -566,8 +564,6 @@
                         </div>
                     </div>
                 </mat-tab>
-
-
             }
 
             @if (bioSampleObj?.genome_notes && bioSampleObj?.genome_notes.length) {
@@ -832,7 +828,7 @@
                         </div>
                     </div>
                     @if (dataSourceSymbiontsAssemblies?.data?.length) {
-                        <div class="col-md-12" >
+                        <div class="col-md-12">
                             <hr>
                             <h1 class="col-md-12 page-header">Related assemblies</h1>
 
@@ -875,7 +871,46 @@
 
             @if (bioSampleObj?.metagenomes_records?.length) {
                 <mat-tab label="Metagenomes">
-                    <div class="col-md-12" >
+                    <div class="col-md-12">
+                        <hr>
+                        <h1 class="col-md-12 page-header"> MGnify Analyses </h1>
+                        <div class="mgnify-section">
+                            <mat-accordion>
+                                <mat-expansion-panel [expanded]=true>
+                                    <mat-expansion-panel-header>
+                                        <mat-panel-title class="panel-title"> Analysis Summary </mat-panel-title>
+                                        <mat-panel-description></mat-panel-description>
+                                    </mat-expansion-panel-header>
+                                    <p>Click on the links to download various results matrix files summarizing the
+                                        study.
+                                        Each file provides an aggregated view of the analysis results from the
+                                        study's individual runs. To view and download the analysis results for
+                                        specific runs, please visit their respective pages.</p>
+                                    @for (mgnifyObj of mgnifyDownloadLinks; track $index) {
+                                        <div class="mgnify-container">
+                                            <div class="mgnify-id">
+                                                MGnify Study ID: {{mgnifyObj['mgnifyid']}}
+                                            </div>
+                                            <div>
+                                                @for (item of mgnifyObj['dataobj'] | keyvalue; track $index) {
+                                                    <div>
+                                                        <p><b>{{item.key}}</b></p>
+                                                        @for (val of item.value; track $index) {
+                                                            <p>
+                                                                <a href="{{val['links']['self']}}">
+                                                                    {{val['attributes']['description']['label']}}
+                                                                </a>
+                                                            </p>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    }
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
 
                         <hr>
                         <h1 class="col-md-12 page-header">Related Metagenomes </h1>
@@ -1040,7 +1075,7 @@
                         }
                      </div>
                     @if (dataSourceMetagenomesAssemblies?.data?.length) {
-                        <div class="col-md-12" >
+                        <div class="col-md-12">
                             <hr>
                             <h1 class="col-md-12 page-header">Related assemblies</h1>
                             <div class="table-container">
