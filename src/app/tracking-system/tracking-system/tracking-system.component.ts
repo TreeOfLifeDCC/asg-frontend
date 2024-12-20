@@ -543,10 +543,5 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     }
   }
 
-  trackByFn(index: number, filter: any): string | number {
-    return filter.key; // Replace `key` with the unique property in your items
-  }
-
-
   protected readonly filter = filter;
 }
