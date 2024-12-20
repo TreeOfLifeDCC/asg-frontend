@@ -91,7 +91,7 @@
                                 <span #lbltextENA>Symbionts</span>
                             </h3>
                             <ul class="list-group">
-                                @for (filter of symbiontsFilters; track filter) {
+                                @for (filter of symbiontsFilters; track $index) {
                                     <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
                                         [ngClass]="checkFilterIsActive(filter.label + '-' + filter.key)"
                                         (click)="onFilterClick(filter.label + '-' + filter.key)"
@@ -110,7 +110,7 @@
                                 <span>Metagenomes</span>
                             </h3>
                             <ul class="list-group">
-                                @for (filter of metagenomesFilters; track filter) {
+                                @for (filter of metagenomesFilters; track $index) {
 
                                     <li class="biosample list-group-item d-flex justify-content-between align-items-center biosamples-inactive"
                                         [ngClass]="checkFilterIsActive(filter.label + '-' + filter.key)"
@@ -182,7 +182,7 @@
                     </button>
                 }
                 @if(activeFilters.length > 0 || phylogenyFilters.length > 0){
-                    <button class="btn btn-primary" type="button" (click)="removeFilter()"> Remove all filters </button>
+                    <button class="btn btn-primary" type="button" (click)="refreshPage()"> Remove all filters </button>
                 }
                 <br>
 
