@@ -1,6 +1,8 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+
+import {ActivatedRoute, NavigationEnd, Router, RouterLink} from '@angular/router';
 import {MatSort, MatSortHeader, MatSortModule} from '@angular/material/sort';
+
 import { Title } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import 'jquery';
@@ -188,6 +190,15 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   protected readonly filter = filter;
 
   ngOnInit(): void {
+    // reload page if user clicks on menu link
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (event.urlAfterRedirects === '/data') {
+          this.refreshPage();
+        }
+      }
+    });
+
     this.downloadForm = new FormGroup({
       downloadOption: new FormControl('', [Validators.required]),
     });
@@ -550,7 +561,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     return dataToReturn;
   }
 
-  removeFilter() {
+  refreshPage() {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.currentClass = 'kingdom';

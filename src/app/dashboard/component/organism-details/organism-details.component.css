@@ -1,14 +1,12 @@
-.table-container {
-    overflow: hidden !important;
-}
+/*.table-container {*/
+/*    overflow: hidden !important;*/
+/*}*/
 
 .table-container mat-form-field,
 .table-container table {
     width: 100%;
-    min-width: 1200px;
-    overflow: hidden !important;
+    /*overflow: hidden !important;*/
 }
-
 
 
 .mat-header-cell, .mat-cell {
@@ -74,10 +72,6 @@ button {
     padding: 0.55rem;
 }
 
-.card-header {
-    margin: 0;
-    background-color: lightblue;
-}
 
 .panel-title {
     color: darkblue;
@@ -100,4 +94,22 @@ button {
     margin-bottom: 10px;
     margin-bottom: 10px;
 
+}
+
+.mat-icon {
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.list-group-item {
+    padding: 0.75rem 1rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    background-color: lightblue;
+    padding: 1rem;
 }

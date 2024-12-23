@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router, RouterLink} from '@angular/router';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Title } from '@angular/platform-browser';
 import { StatusesService } from '../services/statuses.service';
@@ -143,6 +143,15 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // reload page if user clicks on menu link
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (event.urlAfterRedirects === '/tracking') {
+          this.refreshPage();
+        }
+      }
+    });
+
     this.spinner.show();
     this.showOrganismTable = false;
     this.activeFilters = [];
@@ -498,7 +507,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
     this.getTrackingData(0, 15, this.sort.active, this.sort.direction);
   }
 
-  removeFilter() {
+  refreshPage() {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.currentClass = 'kingdom';

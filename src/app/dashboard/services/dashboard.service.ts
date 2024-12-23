@@ -10,9 +10,9 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class DashboardService {
 
-  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
   // private API_BASE_URL = 'http://45.88.81.97/backend';
-  private API_BASE_URL = 'http://localhost:8000';
+
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }

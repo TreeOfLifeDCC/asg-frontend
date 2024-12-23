@@ -1,4 +1,12 @@
-import {AfterViewInit, Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {Sample} from '../../model/dashboard.model';
 import {MatSort} from '@angular/material/sort';
@@ -16,7 +24,7 @@ import {DashboardService} from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
 import {SafeResourceUrl} from '@angular/platform-browser';
-import {MatCard, MatCardActions, MatCardTitle} from '@angular/material/card';
+import { NgxPaginationModule } from 'ngx-pagination';
 import {Subject} from 'rxjs';
 
 import {MatIcon} from '@angular/material/icon';
@@ -29,7 +37,6 @@ import {MatIcon} from '@angular/material/icon';
   imports: [
     MatTabsModule,
     MatFormFieldModule,
-    MatPaginatorModule,
     MatTableModule,
     MatListModule,
     RouterLink,
@@ -41,17 +48,15 @@ import {MatIcon} from '@angular/material/icon';
     MatChip,
     MatChipSet,
     MapClusterComponent,
-
     MatSort,
-
-    MatIcon
+    MatIcon,
+    MatPaginator
   ],
   styleUrls: ['./organism-details.component.css']
 })
-export class OrganismDetailsComponent implements OnInit, AfterViewInit {
+export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
 
-  @ViewChild('metadataPaginator') paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+
   filterChanged = new EventEmitter<any>();
   bioSampleId: string;
   bioSampleObj: any;
@@ -60,7 +65,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   specSymbiontsTotalCount = 0;
   specMetagenomesTotalCount = 0;
   dataSourceSymbiontsAssembliesCount = 0;
-  dataSourceSymbiontsAssemblies;
+  dataSourceSymbiontsAssemblies: MatTableDataSource<any, MatPaginator>;
   dataSourceMetagenomesAssembliesCount: number;
   dataSourceMetagenomesAssemblies: MatTableDataSource<any, MatPaginator>;
   specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart', 'trackingSystem'];
@@ -111,14 +116,14 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   geoLocation: boolean;
   orgGeoList: any;
   specGeoList: any;
-  dataSourceFiles: MatTableDataSource<Sample, MatPaginator>;
+  dataSourceFiles = new MatTableDataSource([]);
   dataSourceFilesCount: number;
-  dataSourceAssemblies: MatTableDataSource<any, MatPaginator>;
+  dataSourceAssemblies = new MatTableDataSource([]);
   dataSourceAssembliesCount: number;
-  dataSourceAnnotation: MatTableDataSource<any, MatPaginator>;
+  dataSourceAnnotation = new MatTableDataSource([]);
   dataSourceAnnotationCount: number;
-  dataSourceSymbiontsRecords: MatTableDataSource<any, MatPaginator>;
-  dataSourceMetagenomesRecords: MatTableDataSource<any, MatPaginator>;
+  dataSourceSymbiontsRecords = new MatTableDataSource([]);
+  dataSourceMetagenomesRecords = new MatTableDataSource([]);
   assembliesurls = [];
   annotationsurls = [];
   experimentColumnsDefination = [
@@ -181,13 +186,15 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   displayedColumnsAnnotation = ['accession', 'annotation', 'proteins', 'transcripts', 'softmasked_genome',
     'other_data', 'view_in_browser'];
   @ViewChild('tabgroup', { static: false }) tabgroup: MatTabGroup;
-  @ViewChild('experimentsTable') exPaginator: MatPaginator;
-  @ViewChild('assembliesTable') asPaginator: MatPaginator;
-  @ViewChild('annotationTable') anPaginator: MatPaginator;
-  @ViewChild('relatedSymbionts') symPaginator: MatPaginator;
-  @ViewChild('assembliesSymbiontsTable') asSymPaginator: MatPaginator;
-  @ViewChild('relatedMetagenomesTable') metPaginator: MatPaginator;
-  @ViewChild('assembliesMetagenomesTable') asMetPaginator: MatPaginator;
+  @ViewChild('metadataPaginator', { static: false }) metadataPaginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('experimentsTablePaginator', { static: false }) experimentsTablePaginator: MatPaginator;
+  @ViewChild('assembliesTablePaginator') assembliesTablePaginator: MatPaginator;
+  @ViewChild('annotationTablePaginator', { static: false }) annotationTablePaginator: MatPaginator;
+  @ViewChild('relatedSymbiontsPaginator', { static: false }) relatedSymbiontsPaginator: MatPaginator;
+  @ViewChild('assembliesSymbiontsTablePaginator', { static: false }) assembliesSymbiontsTablePaginator: MatPaginator;
+  @ViewChild('relatedMetagenomesTablePaginator', { static: false }) relatedMetagenomesTablePaginator: MatPaginator;
+  @ViewChild('assembliesMetagenomesTablePaginator', { static: false }) assembliesMetagenomesTablePaginator: MatPaginator;
   dataSourceGoatInfo;
   displayedColumnsGoatInfo = ['name', 'value', 'count', 'aggregation_method', 'aggregation_source'];
   private dataTabInitialized = false;
@@ -199,24 +206,22 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   mgnifyIDs: any[] = [];
   mgnifyDownloadLinks: any[] = [];
 
+  isCollapsed: { [key: string]: boolean } = {};
   constructor(private route: ActivatedRoute,
-              private dashboardService: DashboardService) {
+              private dashboardService: DashboardService, private cdr: ChangeDetectorRef ) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
 
   ngOnInit(): void {
-    this.geoLocation = false;
-    this.activeFilters = [];
-    this.filterSize = 3;
-    this.itemLimitSexFilter = this.filterSize;
-    this.itemLimitOrgFilter = this.filterSize;
-    this.itemLimitTrackFilter = this.filterSize;
-    this.relatedRecords = [];
-    this.filterJson.sex = '';
-    this.filterJson.organismPart = '';
-    this.filterJson.trackingSystem = '';
-    this.getDisplayedColumns();
-    this.getBiosampleByOrganism();
+    this.initializeCollapsedState('metadataTab', this.metadataSexFilters, 'sex');
+    this.initializeCollapsedState('symbiontsTab', this.symbiontsSexFilters, 'sex');
+    this.initializeCollapsedState('metagenomeTab', this.metagenomesSexFilters, 'sex');
+    this.initializeCollapsedState('metadataTab', this.metadataOrganismPartFilters, 'organismPart');
+    this.initializeCollapsedState('symbiontsTab', this.symbiontsOrganismPartFilters, 'organismPart');
+    this.initializeCollapsedState('metagenomeTab', this.metagenomesOrganismPartFilters, 'organismPart');
+    this.initializeCollapsedState('metadataTab', this.metadataTrackingSystemFilters, 'trackingSystem');
+    this.initializeCollapsedState('symbiontsTab', this.symbiontsTrackingSystemFilters, 'trackingSystem');
+    this.initializeCollapsedState('metagenomeTab', this.metagenomesTrackingSystemFilters, 'trackingSystem');
   }
 
   getDisplayedColumns() {
@@ -238,26 +243,30 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
     this.experimentColumnsDefination[index] = item;
     this.getDisplayedColumns();
     this.getBiosampleByOrganism();
+
   }
 
   ngAfterViewInit(): void {
-    this.filterChanged.subscribe(() => (this.paginator.pageIndex = 0));
+    this.getDisplayedColumns();
+    this.getBiosampleByOrganism();
+
+    this.cdr.detectChanges();
   }
 
-  ngAfterViewChecked() {
-    const tabs = this.tabgroup._tabs.toArray();
-    const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === 'Data');
-
-    if (
-        !this.dataTabInitialized &&
-        (this.dataSourceAnnotation?.data?.length ||
-            this.dataSourceAssemblies?.data?.length ||
-            this.dataSourceFiles?.data?.length)
-    ) {
-      this.tabgroup.selectedIndex = dataTabIndex;
-      this.dataTabInitialized = true;
-    }
-  }
+  // ngAfterViewChecked() {
+  //   const tabs = this.tabgroup._tabs.toArray();
+  //   const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === 'Data');
+  //
+  //   if (
+  //       !this.dataTabInitialized &&
+  //       (this.dataSourceAnnotation?.data?.length ||
+  //           this.dataSourceAssemblies?.data?.length ||
+  //           this.dataSourceFiles?.data?.length)
+  //   ) {
+  //     this.tabgroup.selectedIndex = dataTabIndex;
+  //     this.dataTabInitialized = true;
+  //   }
+  // }
 
   getBiosampleByOrganism() {
     this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal_test')
@@ -265,9 +274,9 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
             data => {
               this.aggregations = data.aggregations;
               data = data['results'][0]['_source'];
-              const unpackedData = [];
-              const unpackedSymbiontsData = [];
-              const unpackedMetagenomesData = [];
+              // const unpackedData = [];
+              // const unpackedSymbiontsData = [];
+              // const unpackedMetagenomesData = [];
               this.bioSampleObj = data;
               this.orgGeoList = data.orgGeoList;
               this.specGeoList = data.specGeoList;
@@ -280,27 +289,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                   tabGroup.selectedIndex = selected;
                 }, 100);
               }
+              this.getFilters();
               if (data.goat_info) {
                 this.dataSourceGoatInfo = data.goat_info.attributes;
               }
-              for (const item of data.records) {
-                unpackedData.push(this.unpackData(item));
-              }
-              if (data.symbionts_records && data.symbionts_records.length) {
-                for (const item of data.symbionts_records) {
-                  unpackedSymbiontsData.push(this.unpackData(item));
-                }
-              }
-              if (data.metagenomes_records && data.metagenomes_records.length) {
-                for (const item of data.metagenomes_records) {
-                  unpackedMetagenomesData.push(this.unpackData(item));
-                }
-              }
-
-              if (unpackedData.length > 0) {
-                this.getFilters();
-              }
-
               // get MGnify IDs in metagenomes records
               this.mgnifyIDs = data['metagenomes_records']
                   .filter( obj => obj.hasOwnProperty('mgnify_study_ids'))
@@ -310,20 +302,19 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 this.fetchMGnifyDownloadLinks(studyId);
               }
 
-
+              this.organismName = data.organism;
               setTimeout(() => {
-                this.organismName = data.organism;
-                this.dataSourceRecords = new MatTableDataSource<any>(unpackedData);
-                this.dataSourceSymbiontsRecords = new MatTableDataSource<any>(unpackedSymbiontsData);
-                this.dataSourceMetagenomesRecords = new MatTableDataSource<any>(unpackedMetagenomesData);
-                this.specBioSampleTotalCount = unpackedData?.length;
-                this.specSymbiontsTotalCount = unpackedSymbiontsData?.length;
-                this.specMetagenomesTotalCount = unpackedMetagenomesData?.length;
-
+                this.dataSourceRecords = new MatTableDataSource<any>(data.records);
+                this.dataSourceSymbiontsRecords = new MatTableDataSource<any>(data.symbionts_records);
+                this.dataSourceMetagenomesRecords = new MatTableDataSource<any>(data.metagenomes_records);
+                this.specBioSampleTotalCount = data.records?.length;
+                this.specSymbiontsTotalCount = data.symbionts_records?.length;
+                this.specMetagenomesTotalCount = data.metagenomes_records?.length;
 
                 if (data.experiment != null) {
                   this.dataSourceFiles = new MatTableDataSource<Sample>(data.experiment);
                   this.dataSourceFilesCount = data.experiment?.length;
+                  this.dataSourceFiles.paginator = this.experimentsTablePaginator;
                 }
                 if (data.experiment?.length > 0) {
                   this.INSDC_ID = data.experiment[0].study_accession;
@@ -334,6 +325,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 if (data.assemblies != null) {
                   this.dataSourceAssemblies = new MatTableDataSource<any>(data.assemblies);
                   this.dataSourceAssembliesCount = data.assemblies?.length;
+                  this.dataSourceAssemblies.paginator = this.assembliesTablePaginator;
                   // tslint:disable-next-line:prefer-for-of
                   for (let i = 0; i < data.assemblies.length; i++) {
                     this.assembliesurls.push(
@@ -347,6 +339,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 if (data.annotation != null) {
                   this.dataSourceAnnotation = new MatTableDataSource<any>(data.annotation);
                   this.dataSourceAnnotationCount = data.annotation?.length;
+                  this.dataSourceAnnotation.paginator = this.annotationTablePaginator;
                   // tslint:disable-next-line:prefer-for-of
                   for (let i = 0; i < data.annotation.length; i++) {
                     this.annotationsurls.push(
@@ -360,36 +353,39 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
                 if (data.symbionts_assemblies != null) {
                   this.dataSourceSymbiontsAssemblies = new MatTableDataSource<any>(data.symbionts_assemblies);
                   this.dataSourceSymbiontsAssembliesCount = data.symbionts_assemblies?.length;
+                  this.dataSourceSymbiontsAssemblies.paginator = this.assembliesSymbiontsTablePaginator;
                 } else {
                   this.dataSourceSymbiontsAssemblies = new MatTableDataSource<Sample>();
                   this.dataSourceSymbiontsAssembliesCount = 0;
-                }
-
+                } // if (this.annotationTablePaginator) {
+                //   this.dataSourceAnnotation.paginator = this.annotationTablePaginator;
+                // }
+                // if (this.assembliesTablePaginator) {
+                //   this.dataSourceAssemblies.paginator = this.assembliesTablePaginator;
+                // }
+                // if (this.experimentsTablePaginator) {
+                //   this.dataSourceFiles.paginator = this.experimentsTablePaginator;
+                // }
                 if (data.metagenomes_assemblies != null) {
                   this.dataSourceMetagenomesAssemblies = new MatTableDataSource<any>(data.metagenomes_assemblies);
                   this.dataSourceMetagenomesAssembliesCount = data.metagenomes_assemblies?.length;
+                  this.dataSourceMetagenomesAssemblies.paginator = this.assembliesMetagenomesTablePaginator;
                 } else {
                   this.dataSourceMetagenomesAssemblies = new MatTableDataSource<Sample>();
                   this.dataSourceMetagenomesAssembliesCount = 0;
                 }
-                this.dataSourceRecords.paginator = this.paginator;
-                this.dataSourceFiles.paginator = this.exPaginator;
-                this.dataSourceAssemblies.paginator = this.asPaginator;
-                this.dataSourceAnnotation.paginator = this.anPaginator;
-
-                this.dataSourceSymbiontsRecords.paginator = this.symPaginator;
-                this.dataSourceSymbiontsAssemblies.paginator = this.asSymPaginator;
-                this.dataSourceMetagenomesRecords.paginator = this.metPaginator;
-                this.dataSourceMetagenomesAssemblies.paginator = this.asMetPaginator;
+                this.dataSourceRecords.paginator = this.metadataPaginator;
+                this.dataSourceSymbiontsRecords.paginator = this.relatedSymbiontsPaginator;
+                this.dataSourceMetagenomesRecords.paginator = this.relatedMetagenomesTablePaginator;
 
                 this.dataSourceRecords.sort = this.sort;
                 this.dataSourceFiles.sort = this.sort;
                 this.dataSourceAssemblies.sort = this.sort;
                 this.dataSourceAnnotation.sort = this.sort;
-              }, 100);
-            },
-            err => console.log(err)
-        );
+
+
+              }, 300);
+        });
   }
 
   filesSearch(event: Event) {
@@ -682,21 +678,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
   }
 
 
-  toggleCollapse(table: string): void {
-    switch (table) {
-      case 'organisms':
-        this.isOrganismsCollapsed = !this.isOrganismsCollapsed;
-        break;
-      case 'symbionts':
-        this.isSymbiontsCollapsed = !this.isSymbiontsCollapsed;
-        break;
-      case 'metagenomes':
-        this.isMetagenomesCollapsed = !this.isMetagenomesCollapsed;
-        break;
-    }
-  }
-
-
   removeAllFilters() {
     $('.sex-inactive').removeClass('non-disp');
     $('.org-part-inactive').removeClass('non-disp');
@@ -764,5 +745,24 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  // Toggle collapse/expand for a specific filter
+  toggleCollapse(tabKey: string, filterKey: string): void {
+    const key = `${tabKey}_${filterKey}`; // Create a unique key
+    this.isCollapsed[key] = !this.isCollapsed[key];
 
+  }
+
+  initializeCollapsedState(tabKey: string, filters: any[], filterKey: string): void {
+    const key = `${tabKey}_${filterKey}`;
+    this.isCollapsed[key] = true; // Default to collapsed
+  }
+
+
+  getLimitedFilters(filters: any[], filterKey: string, tabKey: string): any[] {
+    const key = `${tabKey}_${filterKey}`;
+    if (this.isCollapsed[key]) {
+      return filters.slice(0, 3);
+    }
+    return filters;
+  }
 }
