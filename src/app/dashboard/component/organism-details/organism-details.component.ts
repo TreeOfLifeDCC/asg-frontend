@@ -623,12 +623,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
       if (this.activeFilters.length !== 0) {
         this.spliceFilterArray(filter);
         this.activeFilters.splice(filterIndex, 1);
-        // this.dataSourceRecords.filter = this.filterJson;
-        this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
+        // this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
+        this.filterChanged.emit();
       } else {
         this.filterJson.sex = '';
         this.filterJson.organismPart = '';
         // this.dataSourceRecords.filter = this.filterJson;
+        this.filterChanged.emit();
         this.getBiosampleByOrganism();
       }
     }
@@ -694,17 +695,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
     dataSource.filter = filterValue.toLowerCase();
   }
-
-  onFilterClick(filterValue: string) {
-    //   const index = this.activeFilters.indexOf(filterValue);
-    //   index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
-    //
-    //   this.filterChanged.pipe(debounceTime(300)).subscribe(filterValue => {
-    //     this.dataSourceRecords = this.dataSourceRecords.filter((item: { name: string; }) =>
-    //         console.log(item ));
-    // });
-      // this.filterChanged.emit();
-    }
 
   checkStyle(filterValue: string) {
     if (this.activeFilters.includes(filterValue)) {

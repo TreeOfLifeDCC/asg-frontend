@@ -681,7 +681,7 @@
                 </mat-tab>
             }
 
-
+            @if (bioSampleObj?.symbionts_records && bioSampleObj?.symbionts_records.length) {
                 <mat-tab label="Symbionts" >
                     <div class="col-md-12">
                         <hr>
@@ -731,7 +731,7 @@
                                             <ul class="list-group" >
 
                                                  <li *ngFor="let filter of getLimitedFilters
-                                                        (metadataOrganismPartFilters, 'organismPart', 'metadataTab'); let i = index"
+                                                        (symbiontsOrganismPartFilters, 'organismPart', 'metadataTab'); let i = index"
                                                                 role="listitem" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
                                                                 (click)="applyFilter(filter.key, dataSourceSymbiontsRecords)"
@@ -760,7 +760,7 @@
                                                 [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
 
                                                         <li *ngFor="let filter of getLimitedFilters
-                                                        (metadataTrackingSystemFilters, 'trackingSystem', 'metadataTab'); let i = index"
+                                                        (symbiontsTrackingSystemFilters, 'trackingSystem', 'metadataTab'); let i = index"
                                                             role="listitem"
                                                             class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                             [ngClass]="checkFilterIsActive(filter.key)"
@@ -886,9 +886,9 @@
 
                     }
                 </mat-tab>
+            }
 
-
-<!--            @if (bioSampleObj?.metagenomes_records?.length) {-->
+            @if (bioSampleObj?.metagenomes_records?.length) {
                 <mat-tab label="Metagenomes">
                     <div class="col-md-12">
                         <hr>
@@ -1021,7 +1021,7 @@
                                                 <ul class="list-group" [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
 
                                                             <li *ngFor="let filter of getLimitedFilters
-                                                                (metadataTrackingSystemFilters, 'trackingSystem', 'metagenomeTab'); let i = index"
+                                                                (metagenomesTrackingSystemFilters, 'trackingSystem', 'metagenomeTab'); let i = index"
                                                                 class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
                                                                 (click)="applyFilter(filter.key, dataSourceMetagenomesRecords)"  style="cursor: pointer; padding: .75rem 0.25rem;"
@@ -1140,7 +1140,7 @@
                         </div>
 <!--                    }-->
                 </mat-tab>
-<!--            }-->
+            }
 
             @if (geoLocation) {
                 <mat-tab label="Geo Location">
