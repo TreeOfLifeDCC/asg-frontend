@@ -222,6 +222,8 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
           } else if (params[key].includes('phylogenyCurrentClass - ')) {
             const phylogenyCurrentClass = params[key].split('phylogenyCurrentClass - ')[1];
             this.currentClass = phylogenyCurrentClass;
+          } else if (params[key].includes('searchValue - ')){
+            this.searchValue = params[key].split('searchValue - ')[1];
           } else {
             this.activeFilters.push(params[key]);
           }
@@ -408,6 +410,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
               // add filters to URL query parameters
               this.queryParams = [...this.activeFilters];
+
+              // add search value to URL query param
+              if (this.searchValue) {
+                this.queryParams.push(`searchValue - ${this.searchValue}`);
+              }
+
               if (this.phylogenyFilters && this.phylogenyFilters.length) {
                 const index = this.queryParams.findIndex(element => element.includes('phylogenyFilters - '));
                 if (index > -1) {
@@ -565,6 +573,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.activeFilters = [];
     this.phylogenyFilters = [];
     this.currentClass = 'kingdom';
+    this.searchValue = '';
     this.getAllBiosamples(0, this.pagesize, this.sort.active, this.sort.direction);
     this.router.navigate([]);
   }
