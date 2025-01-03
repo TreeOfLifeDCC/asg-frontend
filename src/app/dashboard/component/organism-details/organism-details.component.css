@@ -1,13 +1,26 @@
-/*.table-container {*/
-/*    overflow: hidden !important;*/
-/*}*/
+.table-container {
+    overflow-x: auto;
+}
 
 .table-container mat-form-field,
 .table-container table {
     width: 100%;
-    /*overflow: hidden !important;*/
+    min-width: 1200px;
 }
 
+.mat-table {
+    width: 100%;
+}
+
+
+.txt-center {
+    text-align: center;
+
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
 .mat-header-cell, .mat-cell {
     padding: 4px 8px;
@@ -102,7 +115,7 @@ button {
 }
 
 .list-group-item {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem -21.5rem;
 }
 
 .card-header {
@@ -111,5 +124,5 @@ button {
     justify-content: space-between;
     margin: 0;
     background-color: lightblue;
-    padding: 1rem;
+    padding: 0.5rem -21.5rem;
 }

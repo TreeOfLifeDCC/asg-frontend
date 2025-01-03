@@ -623,8 +623,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
       if (this.activeFilters.length !== 0) {
         this.spliceFilterArray(filter);
         this.activeFilters.splice(filterIndex, 1);
-        // this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
         this.filterChanged.emit();
+        this.mgnifyIDs = [];
+        this.mgnifyDownloadLinks = [];
+        this.getBiosampleByOrganism();
       } else {
         this.filterJson.sex = '';
         this.filterJson.organismPart = '';
@@ -640,53 +642,25 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     }
     else if (this.filterJson.organismPart === filter) {
       this.filterJson.organismPart = '';
+    }else if (this.filterJson.trackingSystem === filter) {
+      this.filterJson.trackingSystem = '';
     }
   }
 
-  // onFilterClick(event, label: string, filter: string) {
-  //   this.searchText = '';
-  //   // const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
-  //   // this.createFilterJson(label.toLowerCase().replace(' ', ''), filter);
-  //   // const filterIndex = this.activeFilters.indexOf(filter);
-  //   //
-  //   // if (filterIndex !== -1) {
-  //   //   $('.' + inactiveClassName).removeClass('non-disp');
-  //   //   this.removeFilter(filter);
-  //   // } else {
-  //   //   this.activeFilters.push(filter);
-  //   //   this.dataSourceRecords.filter = this.filterJson;
-  //   //   this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
-  //   //   $('.' + inactiveClassName).addClass('non-disp');
-  //   //   $(event.target).removeClass('non-disp');
-  //   //   $(event.target).addClass('disp');
-  //   //   $(event.target).addClass('active');
-  //   // }
-  //   this.filterChanged.emit();
-  // }
-  createFilterJson(key, value) {
-    if (key === 'sex') {
-      this.filterJson.sex = value;
-    }
-    else if (key === 'organismpart') {
-      this.filterJson.organismPart = value;
-    }
-    this.dataSourceRecords.filterPredicate = ((data, filter) => {
-      const a = !filter.sex || data.sex === filter.sex;
-      const b = !filter.organismPart || data.organismPart === filter.organismPart;
-      return a && b;
-      // tslint:disable-next-line:variable-name
-    }) as (PeriodicElement, string) => boolean;
-  }
 
 
   removeAllFilters() {
     $('.sex-inactive').removeClass('non-disp');
     $('.org-part-inactive').removeClass('non-disp');
+    $('.tracking-status-inactive').removeClass('non-disp');
     this.activeFilters = [];
     this.filterJson.sex = '';
     this.filterJson.organismPart = '';
+    this.filterJson.trackingSystem = '';
     // this.dataSourceRecords.filter = this.filterJson;
     this.filterChanged.emit();
+    this.mgnifyIDs = [];
+    this.mgnifyDownloadLinks = [];
     this.getBiosampleByOrganism();
   }
 
@@ -755,4 +729,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     }
     return filters;
   }
+
+  onTabChanged($event) {
+    this.activeFilters = [];
+
+    }
+
 }
