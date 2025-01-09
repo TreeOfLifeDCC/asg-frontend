@@ -431,7 +431,7 @@
                                                                 align-items-center"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
 
-                                                                (click)="applyFilter(filter.key,dataSourceRecords, 'metadataTab')"
+                                                                (click)="applyFilter('sex', filter.key,dataSourceRecords, 'metadataTab')"
                                                                 style="cursor: pointer;">
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -462,7 +462,7 @@
                                                         (metadataOrganismPartFilters, 'organismPart', 'metadataTab'); let i = index"
                                                                 role="listitem" class="list-group-item d-flex justify-content-between
                                                             align-items-center"
-                                                                (click)="applyFilter(filter.key,dataSourceRecords,'metadataTab')"
+                                                                (click)="applyFilter('organismPart', filter.key,dataSourceRecords,'metadataTab')"
                                                                 [ngClass]="checkFilterIsActive(filter.key)" style="cursor: pointer;"
                                                             >
                                                                 {{filter.key}}
@@ -493,7 +493,7 @@
                                                             role="listitem" class="list-group-item d-flex justify-content-between
                                                         align-items-center"
                                                         [ngClass]="checkFilterIsActive(filter.key)"
-                                                        (click)="applyFilter(filter.key, dataSourceRecords,'metadataTab')" style="cursor: pointer;"
+                                                        (click)="applyFilter('trackingSystem',filter.key, dataSourceRecords,'metadataTab')" style="cursor: pointer;"
                                                         >
                                                             {{filter.key}}
                                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -509,7 +509,7 @@
                                         @for (filter of activeFilters; track $index){
                                             <button type="button" class="btn btn-success">
                                                 {{filter}}
-                                                <span class="badge badge-light"  (click)="removeFilter(filter)">X</span>
+                                                <span class="badge badge-light"  (click)="removeFilter(filter,dataSourceRecords, 'metadataTab')">X</span>
                                             </button>
                                         }
 
@@ -705,7 +705,7 @@
                                               <li *ngFor="let filter of getLimitedFilters( symbiontsSexFilters, 'sex','symbiontsTab'); let i = index"
                                                      class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
-                                                                (click)="applyFilter(filter.key, dataSourceSymbiontsRecords,'symbiontsTab')" style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                                (click)="applyFilter('sex',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')" style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -731,10 +731,10 @@
                                             <ul class="list-group" >
 
                                                  <li *ngFor="let filter of getLimitedFilters
-                                                        (symbiontsOrganismPartFilters, 'organismPart', 'metadataTab'); let i = index"
+                                                        (symbiontsOrganismPartFilters, 'organismPart', 'symbiontsTab'); let i = index"
                                                                 role="listitem" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
-                                                                (click)="applyFilter(filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
+                                                                (click)="applyFilter('organismPart',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
                                                                 style="cursor: pointer; padding: .75rem 0.25rem;">
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -764,7 +764,7 @@
                                                             role="listitem"
                                                             class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                             [ngClass]="checkFilterIsActive(filter.key)"
-                                                            (click)="applyFilter(filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
+                                                            (click)="applyFilter('trackingSystem',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
                                                             style="cursor: pointer; padding: .75rem 0.25rem;"
                                                         >
                                                             {{filter.key}}
@@ -788,7 +788,7 @@
                                             @for (filter of activeFilters; track $index){
                                                 <button type="button" class="btn btn-success">
                                                     {{filter}}
-                                                    <span class="badge badge-light" (click)="removeFilter(filter)">X</span>
+                                                    <span class="badge badge-light" (click)="removeFilter(filter,dataSourceSymbiontsRecords,'symbiontsTab')">X</span>
                                                 </button>
                                             }
 
@@ -956,7 +956,7 @@
                                                                 <li *ngFor="let filter of getLimitedFilters( metagenomesSexFilters,
                                                                 'sex','metagenomeTab'); let i = index" class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
                                                                     [ngClass]="checkFilterIsActive(filter.key)"
-                                                                    (click)="applyFilter(filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                                    (click)="applyFilter('sex',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                                 >
                                                                     {{filter.key}}
                                                                     <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -990,7 +990,7 @@
                                                         (metagenomesOrganismPartFilters, 'organismPart', 'metagenomeTab'); let i = index"
                                                                     class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
-                                                                (click)="applyFilter(filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                                (click)="applyFilter('organismPart',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -1023,7 +1023,7 @@
                                                                 (metagenomesTrackingSystemFilters, 'trackingSystem', 'metagenomeTab'); let i = index"
                                                                 class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
-                                                                (click)="applyFilter(filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
+                                                                (click)="applyFilter('trackingSystem',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
@@ -1043,7 +1043,7 @@
                                                 @for (filter of activeFilters; track $index){
                                                     <button type="button" class="btn btn-success">
                                                         {{filter}}
-                                                        <span class="badge badge-light" (click)="removeFilter(filter)">X</span>
+                                                        <span class="badge badge-light" (click)="removeFilter(filter, dataSourceMetagenomesRecords,'metagenomeTab')">X</span>
                                                     </button>
                                                 }
 
