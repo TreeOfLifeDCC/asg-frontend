@@ -24,7 +24,6 @@ import {DashboardService} from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
 import {SafeResourceUrl} from '@angular/platform-browser';
-import { NgxPaginationModule } from 'ngx-pagination';
 import {Subject} from 'rxjs';
 
 import {MatIcon} from '@angular/material/icon';
@@ -253,30 +252,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     this.cdr.detectChanges();
   }
 
-  // ngAfterViewChecked() {
-  //   const tabs = this.tabgroup._tabs.toArray();
-  //   const dataTabIndex = tabs.findIndex((tab) => tab.textLabel === 'Data');
-  //
-  //   if (
-  //       !this.dataTabInitialized &&
-  //       (this.dataSourceAnnotation?.data?.length ||
-  //           this.dataSourceAssemblies?.data?.length ||
-  //           this.dataSourceFiles?.data?.length)
-  //   ) {
-  //     this.tabgroup.selectedIndex = dataTabIndex;
-  //     this.dataTabInitialized = true;
-  //   }
-  // }
-
   getBiosampleByOrganism() {
     this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal_test')
         .subscribe(
             data => {
               this.aggregations = data.aggregations;
               data = data['results'][0]['_source'];
-              // const unpackedData = [];
-              // const unpackedSymbiontsData = [];
-              // const unpackedMetagenomesData = [];
+
               this.bioSampleObj = data;
               this.orgGeoList = data.orgGeoList;
               this.specGeoList = data.specGeoList;
@@ -357,15 +339,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
                 } else {
                   this.dataSourceSymbiontsAssemblies = new MatTableDataSource<Sample>();
                   this.dataSourceSymbiontsAssembliesCount = 0;
-                } // if (this.annotationTablePaginator) {
-                //   this.dataSourceAnnotation.paginator = this.annotationTablePaginator;
-                // }
-                // if (this.assembliesTablePaginator) {
-                //   this.dataSourceAssemblies.paginator = this.assembliesTablePaginator;
-                // }
-                // if (this.experimentsTablePaginator) {
-                //   this.dataSourceFiles.paginator = this.experimentsTablePaginator;
-                // }
+                }
                 if (data.metagenomes_assemblies != null) {
                   this.dataSourceMetagenomesAssemblies = new MatTableDataSource<any>(data.metagenomes_assemblies);
                   this.dataSourceMetagenomesAssembliesCount = data.metagenomes_assemblies?.length;
