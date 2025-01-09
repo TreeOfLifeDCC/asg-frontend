@@ -539,6 +539,97 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     }
   }
 
+
+  applyFilters(data: any, filters: any, sexFilters: any[], trackingSystemFilters: any[], organismPartFilters: any[]) {
+    // Initialize filter objects
+    filters.sex = {};
+    filters.trackingSystem = {};
+    filters.organismPart = {};
+
+    // Populate the filters with counts
+    for (const item of data) {
+      if (item.sex != null) {
+        filters.sex[item.sex] = (filters.sex[item.sex] || 0) + 1;
+      }
+      if (item.trackingSystem != null) {
+        filters.trackingSystem[item.trackingSystem] = (filters.trackingSystem[item.trackingSystem] || 0) + 1;
+      }
+      if (item.organismPart != null) {
+        filters.organismPart[item.organismPart] = (filters.organismPart[item.organismPart] || 0) + 1;
+      }
+    }
+
+    // Convert filter objects into arrays of key-value pairs
+    const sexFilterObj = Object.entries(filters.sex);
+    const trackFilterObj = Object.entries(filters.trackingSystem);
+    const orgFilterObj = Object.entries(filters.organismPart);
+
+    // Populate the corresponding arrays
+    // tslint:disable-next-line:variable-name
+    for (const [key, doc_count] of sexFilterObj) {
+      sexFilters.push({ key, doc_count });
+    }
+    // tslint:disable-next-line:variable-name
+    for (const [key, doc_count] of trackFilterObj) {
+      trackingSystemFilters.push({ key, doc_count });
+    }
+    // tslint:disable-next-line:variable-name
+    for (const [key, doc_count] of orgFilterObj) {
+      organismPartFilters.push({ key, doc_count });
+    }
+  }
+  getFiltersForSelectedFilterForMetaData(data: any) {
+    this.metadataFilters = {sex: {},
+      trackingSystem: {},
+      organismPart: {}};
+    this.metadataSexFilters = [];
+    this.metadataTrackingSystemFilters = [];
+    this.metadataOrganismPartFilters = [];
+
+    this.applyFilters(
+        data,
+        this.metadataFilters,
+        this.metadataSexFilters,
+        this.metadataTrackingSystemFilters,
+        this.metadataOrganismPartFilters
+    );
+  }
+
+
+  getFiltersForSelectedFilterForSymbionts(data: any) {
+    this.symbiontsFilters = {sex: {},
+      trackingSystem: {},
+      organismPart: {}};
+    this.symbiontsSexFilters = [];
+    this.symbiontsTrackingSystemFilters = [];
+    this.symbiontsOrganismPartFilters = [];
+
+    this.applyFilters(
+        data,
+        this.symbiontsFilters,
+        this.symbiontsSexFilters,
+        this.symbiontsTrackingSystemFilters,
+        this.symbiontsOrganismPartFilters
+    );
+  }
+
+  getFiltersForSelectedFilterForMetaGenome(data: any) {
+    this.metagenomeFilters = {sex: {},
+      trackingSystem: {},
+      organismPart: {}};
+    this.metagenomesSexFilters = [];
+    this.metagenomesTrackingSystemFilters = [];
+    this.metagenomesOrganismPartFilters = [];
+
+    this.applyFilters(
+        data,
+        this.metagenomeFilters,
+        this.metagenomesSexFilters,
+        this.metagenomesTrackingSystemFilters,
+        this.metagenomesOrganismPartFilters
+    );
+  }
+
   getFilters() {
 
     this.metadataSexFilters = this.aggregations.metadata_filters.sex_filter.buckets;
@@ -576,7 +667,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
         return a || b || c || d || e;
         // tslint:disable-next-line:variable-name
       }) as (PeriodicElement, string) => boolean;
-      this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
+      // this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
     }
   }
 
@@ -638,10 +729,22 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     this.getBiosampleByOrganism();
   }
 
-  applyFilter(filterValue: string, dataSource: MatTableDataSource<any>): void {
+  applyFilter(filterValue: string, dataSource: MatTableDataSource<any>, tabName: string): void {
     const index = this.activeFilters.indexOf(filterValue);
     index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
     dataSource.filter = filterValue.toLowerCase();
+    if (tabName === 'metadataTab'){
+      this.getFiltersForSelectedFilterForMetaData(dataSource.filteredData);
+    }else if (tabName === 'metagenomeTab'){
+      this.getFiltersForSelectedFilterForMetaGenome(dataSource.filteredData);
+    }else if (tabName === 'symbiontsTab'){
+      this.getFiltersForSelectedFilterForSymbionts(dataSource.filteredData);
+    }
+
+    // $('.' + inactiveClassName).addClass('non-disp');
+    // $(event.target).removeClass('non-disp');
+    // $(event.target).addClass('disp');
+    // $(event.target).addClass('active');
   }
 
   checkStyle(filterValue: string) {
