@@ -110,7 +110,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
   filterJson = {
     sex: '',
     organismPart: '',
-    trackingSystem: ''
+    trackingSystem: '',
+    search: ''
   };
   geoLocation: boolean;
   orgGeoList: any;
@@ -362,6 +363,15 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
         });
   }
 
+  createfilterPredicateForSearch(dataSource){
+    dataSource.filterPredicate = ((data, filter) => {
+      const accession = !filter || (data.accession && data.accession.toLowerCase().includes(filter.toLowerCase()));
+      const commonName = !filter || (data.commonName && data.commonName.toLowerCase().includes(filter.toLowerCase()));
+      const organism = !filter || (data.organism.text && data.organism.text.toLowerCase().includes(filter.toLowerCase()));
+      return accession || commonName || organism;
+    }) as (PeriodicElement, string) => boolean;
+  }
+
   filesSearch(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceFiles.filter = filterValue.trim().toLowerCase();
@@ -379,7 +389,18 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
 
   relatedSymbiontsSearch(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceSymbiontsRecords.filter = filterValue.trim().toLowerCase();
+    if (filterValue.length === 0) {
+      this.getBiosampleByOrganism();
+      this.filterJson.search = '';
+      this.searchText = '';
+    }
+    else {
+      this.activeFilters = [];
+      this.createfilterPredicateForSearch(this.dataSourceSymbiontsRecords);
+      this.dataSourceSymbiontsRecords.filter = filterValue.trim();
+      this.getFiltersForSelectedFilterForSymbionts(this.dataSourceSymbiontsRecords.filteredData);
+    }
+
   }
 
   symbiontsAssembliesSearch(event: Event) {
@@ -389,7 +410,17 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
 
   metagenomesRecordsSearch(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSourceMetagenomesRecords.filter = filterValue.trim().toLowerCase();
+    if (filterValue.length === 0) {
+      this.filterJson.search = '';
+      this.searchText = '';
+      this.getBiosampleByOrganism();
+    }
+    else {
+      this.activeFilters = [];
+      this.createfilterPredicateForSearch(this.dataSourceMetagenomesRecords);
+      this.dataSourceMetagenomesRecords.filter = filterValue.trim();
+      this.getFiltersForSelectedFilterForMetaGenome(this.dataSourceMetagenomesRecords.filteredData);
+    }
   }
 
   metagenomesAssembliesSearch(event: Event) {
@@ -397,187 +428,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     this.dataSourceMetagenomesAssemblies.filter = filterValue.trim().toLowerCase();
   }
 
-  unpackData(data: any) {
-    const dataToReturn = {};
-    if (data.hasOwnProperty('_source')) {
-      data = data._source;
-    }
-    for (const key of Object.keys(data)) {
-      if (key === 'organism') {
-        dataToReturn[key] = data.organism.text;
-      } else {
-        if (key === 'commonName' && data[key] == null) {
-          dataToReturn[key] = '-';
-        } else {
-          dataToReturn[key] = data[key];
-        }
-      }
-    }
-    return dataToReturn;
-  }
-
-  getFiltersForSelectedFilter(data: any) {
-    const metadataFilters = {
-      sex: {},
-      trackingSystem: {},
-      organismPart: {}
-    };
-    const symbiontsFilters = {
-      sex: {},
-      trackingSystem: {},
-      organismPart: {}
-    };
-    const metagenomeFilters = {
-      sex: {},
-      trackingSystem: {},
-      organismPart: {}
-    };
-    this.metadataSexFilters = [];
-    this.metadataTrackingSystemFilters = [];
-    this.metadataOrganismPartFilters = [];
-
-    this.symbiontsSexFilters = [];
-    this.symbiontsTrackingSystemFilters = [];
-    this.symbiontsOrganismPartFilters = [];
-
-    this.metagenomesSexFilters = [];
-    this.metagenomesTrackingSystemFilters = [];
-    this.metagenomesOrganismPartFilters = [];
-
-    this.metadataFilters = metadataFilters;
-    this.metagenomeFilters = metagenomeFilters;
-    this.metagenomeFilters = metagenomeFilters;
-    for (const item of data) {
-      if (item.sex != null) {
-        if (item.sex in metadataFilters.sex) {
-          metadataFilters.sex[item.sex] += 1;
-        } else {
-          metadataFilters.sex[item.sex] = 1;
-        }
-      }
-      if (item.trackingSystem != null) {
-        if (item.trackingSystem in metadataFilters.trackingSystem) {
-          metadataFilters.trackingSystem[item.trackingSystem] += 1;
-        } else {
-          metadataFilters.trackingSystem[item.trackingSystem] = 1;
-        }
-      }
-
-      if (item.organismPart != null) {
-        if (item.organismPart in metadataFilters.organismPart) {
-          metadataFilters.organismPart[item.organismPart] += 1;
-        } else {
-          metadataFilters.organismPart[item.organismPart] = 1;
-        }
-      }
-
-      this.metadataFilters = metadataFilters;
-      const sexFilterObj = Object.entries(this.metadataFilters.sex);
-      const trackFilterObj = Object.entries(this.metadataFilters.trackingSystem);
-      const orgFilterObj = Object.entries(this.metadataFilters.organismPart);
-      const j = 0;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < sexFilterObj.length; i++) {
-        const jsonObj = {key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1]};
-        this.metadataSexFilters.push(jsonObj);
-      }
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < trackFilterObj.length; i++) {
-        const jsonObj = {key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1]};
-        this.metadataTrackingSystemFilters.push(jsonObj);
-      }
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < orgFilterObj.length; i++) {
-        const jsonObj = {key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1]};
-        this.metadataOrganismPartFilters.push(jsonObj);
-      }
-
-      this.symbiontsFilters = symbiontsFilters;
-      const symbiontsSexFilterObj = Object.entries(this.symbiontsFilters.sex);
-      const symbiontsTrackFilterObj = Object.entries(this.symbiontsFilters.trackingSystem);
-      const symbiontsOrgFilterObj = Object.entries(this.symbiontsFilters.organismPart);
-      const k = 0;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < symbiontsSexFilterObj.length; i++) {
-        const jsonObj = {key: symbiontsSexFilterObj[i][k], doc_count: symbiontsSexFilterObj[i][k + 1]};
-        this.symbiontsSexFilters.push(jsonObj);
-        console.log(jsonObj);
-      }
-
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < symbiontsTrackFilterObj.length; i++) {
-        const jsonObj = {key: symbiontsTrackFilterObj[i][k], doc_count: symbiontsTrackFilterObj[i][k + 1]};
-        this.symbiontsTrackingSystemFilters.push(jsonObj);
-      }
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < symbiontsOrgFilterObj.length; i++) {
-        const jsonObj = {key: symbiontsOrgFilterObj[i][k], doc_count: symbiontsOrgFilterObj[i][k + 1]};
-        this.symbiontsOrganismPartFilters.push(jsonObj);
-      }
-
-      this.metagenomeFilters = metagenomeFilters;
-      const metagenomeSexFilterObj = Object.entries(this.metagenomeFilters.sex);
-      const metagenomeTrackFilterObj = Object.entries(this.metagenomeFilters.trackingSystem);
-      const metagenomeOrgFilterObj = Object.entries(this.metagenomeFilters.organismPart);
-      const l = 0;
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < metagenomeSexFilterObj.length; i++) {
-        const jsonObj = {key: metagenomeSexFilterObj[i][l], doc_count: metagenomeSexFilterObj[i][l + 1]};
-        this.metagenomesSexFilters.push(jsonObj);
-      }
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < metagenomeTrackFilterObj.length; i++) {
-        const jsonObj = {key: metagenomeTrackFilterObj[i][l], doc_count: metagenomeTrackFilterObj[i][l + 1]};
-        this.metadataTrackingSystemFilters.push(jsonObj);
-      }
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < metagenomeOrgFilterObj.length; i++) {
-        const jsonObj = {key: metagenomeOrgFilterObj[i][l], doc_count: metagenomeOrgFilterObj[i][l + 1]};
-        this.metagenomesOrganismPartFilters.push(jsonObj);
-      }
-
-    }
-  }
-
-
-  applyFilters(data: any, filters: any, sexFilters: any[], trackingSystemFilters: any[], organismPartFilters: any[]) {
-    // Initialize filter objects
-    filters.sex = {};
-    filters.trackingSystem = {};
-    filters.organismPart = {};
-
-    // Populate the filters with counts
-    for (const item of data) {
-      if (item.sex != null) {
-        filters.sex[item.sex] = (filters.sex[item.sex] || 0) + 1;
-      }
-      if (item.trackingSystem != null) {
-        filters.trackingSystem[item.trackingSystem] = (filters.trackingSystem[item.trackingSystem] || 0) + 1;
-      }
-      if (item.organismPart != null) {
-        filters.organismPart[item.organismPart] = (filters.organismPart[item.organismPart] || 0) + 1;
-      }
-    }
-
-    // Convert filter objects into arrays of key-value pairs
-    const sexFilterObj = Object.entries(filters.sex);
-    const trackFilterObj = Object.entries(filters.trackingSystem);
-    const orgFilterObj = Object.entries(filters.organismPart);
-
-    // Populate the corresponding arrays
-    // tslint:disable-next-line:variable-name
-    for (const [key, doc_count] of sexFilterObj) {
-      sexFilters.push({ key, doc_count });
-    }
-    // tslint:disable-next-line:variable-name
-    for (const [key, doc_count] of trackFilterObj) {
-      trackingSystemFilters.push({ key, doc_count });
-    }
-    // tslint:disable-next-line:variable-name
-    for (const [key, doc_count] of orgFilterObj) {
-      organismPartFilters.push({ key, doc_count });
-    }
-  }
   getFiltersForSelectedFilterForMetaData(data: any) {
     const metadataFilters = {
       sex: {},
@@ -618,20 +468,19 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     const trackFilterObj = Object.entries(this.metadataFilters.trackingSystem);
     const orgFilterObj = Object.entries(this.metadataFilters.organismPart);
     const j = 0;
-    for (let i = 0; i < sexFilterObj.length; i++) {
-      const jsonObj = { key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
+    for (const item of sexFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metadataSexFilters.push(jsonObj);
     }
-    for (let i = 0; i < trackFilterObj.length; i++) {
-      const jsonObj = { key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
+    for (const item of trackFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metadataTrackingSystemFilters.push(jsonObj);
     }
-    for (let i = 0; i < orgFilterObj.length; i++) {
-      const jsonObj = { key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
+    for (const item of orgFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metadataOrganismPartFilters.push(jsonObj);
     }
   }
-
 
   getFiltersForSelectedFilterForSymbionts(data: any) {
     const symbiontsFilters = {
@@ -673,16 +522,16 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     const trackFilterObj = Object.entries(this.symbiontsFilters.trackingSystem);
     const orgFilterObj = Object.entries(this.symbiontsFilters.organismPart);
     const j = 0;
-    for (let i = 0; i < sexFilterObj.length; i++) {
-      const jsonObj = { key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
+    for (const item of sexFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.symbiontsSexFilters.push(jsonObj);
     }
-    for (let i = 0; i < trackFilterObj.length; i++) {
-      const jsonObj = { key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
+    for (const item of trackFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.symbiontsTrackingSystemFilters.push(jsonObj);
     }
-    for (let i = 0; i < orgFilterObj.length; i++) {
-      const jsonObj = { key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
+    for (const item of orgFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.symbiontsOrganismPartFilters.push(jsonObj);
     }
   }
@@ -727,16 +576,16 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     const trackFilterObj = Object.entries(this.metagenomeFilters.trackingSystem);
     const orgFilterObj = Object.entries(this.metagenomeFilters.organismPart);
     const j = 0;
-    for (let i = 0; i < sexFilterObj.length; i++) {
-      const jsonObj = { key: sexFilterObj[i][j], doc_count: sexFilterObj[i][j + 1] };
+    for (const item of sexFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metagenomesSexFilters.push(jsonObj);
     }
-    for (let i = 0; i < trackFilterObj.length; i++) {
-      const jsonObj = { key: trackFilterObj[i][j], doc_count: trackFilterObj[i][j + 1] };
+    for (const item of trackFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metagenomesTrackingSystemFilters.push(jsonObj);
     }
-    for (let i = 0; i < orgFilterObj.length; i++) {
-      const jsonObj = { key: orgFilterObj[i][j], doc_count: orgFilterObj[i][j + 1] };
+    for (const item of orgFilterObj) {
+      const jsonObj = { key: item[j], doc_count: item[j + 1] };
       this.metagenomesOrganismPartFilters.push(jsonObj);
     }
   }
@@ -759,29 +608,18 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
         organism_part_filter.buckets;
   }
 
-  getSearchResults(from?, size?) {
-    $('.sex-inactive').removeClass('non-disp active');
-    $('.tracking-status-inactive').removeClass('non-disp active');
-    $('.org-part-inactive').removeClass('non-disp active');
-    // tslint:disable-next-line:triple-equals
-    if (this.searchText.length == 0) {
+  getSearchResults(event: Event) {
+  const filterValue = (event.target as HTMLInputElement).value;
+  if (filterValue.length === 0) {
       this.getBiosampleByOrganism();
-    } else {
-      this.activeFilters = [];
-      this.dataSourceRecords.filter = this.searchText.trim();
-      this.dataSourceRecords.filterPredicate = ((data, filter) => {
-        const a = !filter || data.sex.toLowerCase().includes(filter.toLowerCase());
-        const b = !filter || data.organismPart.toLowerCase().includes(filter.toLowerCase());
-        const c = !filter || data.trackingSystem.toLowerCase().includes(filter.toLowerCase());
-        const d = !filter || data.accession.toLowerCase().includes(filter.toLowerCase());
-        const e = !filter || data.commonName.toLowerCase().includes(filter.toLowerCase());
-        return a || b || c || d || e;
-        // tslint:disable-next-line:variable-name
-      }) as (PeriodicElement, string) => boolean;
-      // this.getFiltersForSelectedFilter(this.dataSourceRecords.filteredData);
-    }
   }
-
+  else {
+    this.activeFilters = [];
+    this.createfilterPredicateForSearch(this.dataSourceRecords);
+    this.dataSourceRecords.filter = filterValue.trim();
+    this.getFiltersForSelectedFilterForMetaData(this.dataSourceRecords.filteredData);
+  }
+  }
 
   checkFilterIsActive(filterValue: string) {
     if (this.activeFilters.includes(filterValue)) {
@@ -791,17 +629,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     }
 
   }
-
-
   removeFilter(filter: string, dataSource: MatTableDataSource<any>, tabName: string) {
     if (filter !== undefined) {
       const filterIndex = this.activeFilters.indexOf(filter);
       if (this.activeFilters.length !== 0) {
         this.spliceFilterArray(filter);
         this.activeFilters.splice(filterIndex, 1);
-        this.filterChanged.emit();
-        this.mgnifyIDs = [];
-        this.mgnifyDownloadLinks = [];
         dataSource.filter = JSON.stringify(this.filterJson);
         if (tabName === 'metadataTab'){
           this.getFiltersForSelectedFilterForMetaData(dataSource.filteredData);
@@ -830,9 +663,6 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
       this.filterJson.trackingSystem = '';
     }
   }
-
-
-
   removeAllFilters() {
     $('.sex-inactive').removeClass('non-disp');
     $('.org-part-inactive').removeClass('non-disp');
@@ -841,13 +671,12 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     this.filterJson.sex = '';
     this.filterJson.organismPart = '';
     this.filterJson.trackingSystem = '';
-    // this.dataSourceRecords.filter = this.filterJson;
+    this.searchText = '';
     this.filterChanged.emit();
     this.mgnifyIDs = [];
     this.mgnifyDownloadLinks = [];
     this.getBiosampleByOrganism();
   }
-
   createFilterJson(key, value, dataSource) {
     if (key === 'sex') {
       this.filterJson.sex = value;
@@ -858,98 +687,76 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
     else if (key === 'trackingSystem') {
       this.filterJson.trackingSystem = value;
     }
-
     dataSource.filterPredicate =  ((data, filter) => {
-      const filterObj: {sex: string, organismPart: string, trackingSystem: string} = JSON.parse(filter);
-      const a = !filterObj.sex || data.sex === filterObj.sex;
-      const b = !filterObj.organismPart || data.organismPart === filterObj.organismPart;
-      const c = !filterObj.trackingSystem || data.trackingSystem === filterObj.trackingSystem;
-      return a && b && c;
+      const filterObj: {sex: string, organismPart: string, trackingSystem: string, search: string} = JSON.parse(filter);
+      const sex = !filterObj.sex || data.sex === filterObj.sex;
+      const organismPart = !filterObj.organismPart || data.organismPart === filterObj.organismPart;
+      const trackingSystem = !filterObj.trackingSystem || data.trackingSystem === filterObj.trackingSystem;
+      return sex && organismPart && trackingSystem ;
     }) as (PeriodicElement, string) => boolean;
   }
-
   applyFilter(label: string,  filterValue: string, dataSource: MatTableDataSource<any>, tabName: string): void {
     const index = this.activeFilters.indexOf(filterValue);
     this.createFilterJson(label, filterValue, dataSource);
     index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
+    this.searchText = '';
     dataSource.filter = JSON.stringify(this.filterJson);
     if (tabName === 'metadataTab'){
       this.getFiltersForSelectedFilterForMetaData(dataSource.filteredData);
     }else if (tabName === 'metagenomeTab') {
       this.getFiltersForSelectedFilterForMetaGenome(dataSource.filteredData);
-    }else if(tabName === 'symbiontsTab'){
+    }else if (tabName === 'symbiontsTab'){
       this.getFiltersForSelectedFilterForSymbionts(dataSource.filteredData);
     }
-
-    // $('.' + inactiveClassName).addClass('non-disp');
-    // $(event.target).removeClass('non-disp');
-    // $(event.target).addClass('disp');
-    // $(event.target).addClass('active');
   }
-
-checkStyle(filterValue: string) {
-    if (this.activeFilters.includes(filterValue)) {
-      return 'background-color: #4BBEFD;';
-    } else {
-      return '';
-    }
-  }
-
-
-checkCurrentStatusColor(status: string) {
-    if (status === 'Annotation Complete') {
-      return {'background-color': 'palegreen'};
-    }
-    return {'background-color': 'gold'};
-  }
-
-fetchMGnifyDownloadLinks(mgnifyID: string) {
-    this.dashboardService.getMGnifyDownloadLinks(mgnifyID).subscribe({
-      next: data => {
-        const dataObj = {};
-        // dataObj['mgnifyID'] = mgnifyID;
-
-        data['data'].forEach((obj, index) => {
-          const groupType = obj['attributes']['group-type'];
-          if (groupType in dataObj) {
-            dataObj[groupType].push(obj);
-          } else {
-            dataObj[groupType] = [obj];
-          }
-        });
-
-        this.mgnifyDownloadLinks.push({mgnifyid: mgnifyID,
-                                       dataobj: dataObj});
-      },
-      error: error => {
-        console.log(error);
+  checkCurrentStatusColor(status: string) {
+      if (status === 'Annotation Complete') {
+        return {'background-color': 'palegreen'};
       }
-    });
-  }
-  // Toggle collapse/expand for a specific filter
-toggleCollapse(tabKey: string, filterKey: string): void {
-    const key = `${tabKey}_${filterKey}`; // Create a unique key
-    this.isCollapsed[key] = !this.isCollapsed[key];
-
-  }
-
-initializeCollapsedState(tabKey: string, filters: any[], filterKey: string): void {
-    const key = `${tabKey}_${filterKey}`;
-    this.isCollapsed[key] = true; // Default to collapsed
-  }
-
-
-getLimitedFilters(filters: any[], filterKey: string, tabKey: string): any[] {
-    const key = `${tabKey}_${filterKey}`;
-    if (this.isCollapsed[key]) {
-      return filters.slice(0, 3);
+      return {'background-color': 'gold'};
     }
-    return filters;
-  }
+  fetchMGnifyDownloadLinks(mgnifyID: string) {
+      this.dashboardService.getMGnifyDownloadLinks(mgnifyID).subscribe({
+        next: data => {
+          const dataObj = {};
+          // dataObj['mgnifyID'] = mgnifyID;
 
-onTabChanged($event) {
+          data['data'].forEach((obj, index) => {
+            const groupType = obj['attributes']['group-type'];
+            if (groupType in dataObj) {
+              dataObj[groupType].push(obj);
+            } else {
+              dataObj[groupType] = [obj];
+            }
+          });
+
+          this.mgnifyDownloadLinks.push({mgnifyid: mgnifyID,
+                                         dataobj: dataObj});
+        },
+        error: error => {
+          console.log(error);
+        }
+      });
+    }
+  toggleCollapse(tabKey: string, filterKey: string): void {
+      const key = `${tabKey}_${filterKey}`; // Create a unique key
+      this.isCollapsed[key] = !this.isCollapsed[key];
+
+    }
+  initializeCollapsedState(tabKey: string, filters: any[], filterKey: string): void {
+      const key = `${tabKey}_${filterKey}`;
+      this.isCollapsed[key] = true; // Default to collapsed
+    }
+  getLimitedFilters(filters: any[], filterKey: string, tabKey: string): any[] {
+      const key = `${tabKey}_${filterKey}`;
+      if (this.isCollapsed[key]) {
+        return filters.slice(0, 3);
+      }
+      return filters;
+    }
+  onTabChanged($event) {
     this.activeFilters = [];
-
+    this.searchText = '';
     }
 
 }

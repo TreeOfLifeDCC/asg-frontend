@@ -608,7 +608,6 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
 
   getCurrentStatusColour(status: string) {
     if (['Annotation Complete', 'Done'].includes(status.trim())) {
-      console.log('ddfgfdg');
       return 'background-color:palegreen';
     } else {
       return 'background-color:#ffc107';

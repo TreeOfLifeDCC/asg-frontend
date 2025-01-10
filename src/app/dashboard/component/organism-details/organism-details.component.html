@@ -29,60 +29,62 @@
                 <mat-tab label="Data" >
                         <div class="col-md-12">
                             <hr>
-                            <h1 class="col-md-12 page-header">Annotation</h1>
-                            <div class="table-container">
-                                <mat-form-field>
-                                    <mat-label>Search</mat-label>
-                                    <input matInput (keyup)="annotationSearch($event)" #input>
-                                </mat-form-field>
-                                <table mat-table [dataSource]="dataSourceAnnotation" matSort >
-                                    <ng-container matColumnDef="accession">
-                                        <mat-header-cell *matHeaderCellDef> Accession </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">{{element.accession}}</mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="annotation">
-                                        <mat-header-cell *matHeaderCellDef> Annotation </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <span><a class="no-underline" target="_blank" href="{{element.annotation.gtf}}">GTF</a>,</span>
-                                            <span><a class="no-underline" target="_blank" href="{{element.annotation.gff3}}">GFF3</a></span>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="proteins">
-                                        <mat-header-cell *matHeaderCellDef> Proteins </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a class="no-underline" target="_blank" href="{{element.proteins.fasta}}">FASTA</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="transcripts">
-                                        <mat-header-cell *matHeaderCellDef> Transcripts </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a class="no-underline" target="_blank" href="{{element.transcripts.fasta}}">FASTA</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="softmasked_genome">
-                                        <mat-header-cell *matHeaderCellDef> Softmasked genome </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a class="no-underline" target="_blank" href="{{element.softmasked_genome.fasta}}">FASTA</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="other_data">
-                                        <mat-header-cell *matHeaderCellDef> Other data </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a class="no-underline" target="_blank" href="{{element.other_data.ftp_dumps}}">FTP dumps</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <ng-container matColumnDef="view_in_browser">
-                                        <mat-header-cell *matHeaderCellDef> View in browser </mat-header-cell>
-                                        <mat-cell *matCellDef="let element" class="txt-center">
-                                            <a class="no-underline" target="_blank" href="{{element.view_in_browser}}">ensembl.org</a>
-                                        </mat-cell>
-                                    </ng-container>
-                                    <mat-header-row *matHeaderRowDef="displayedColumnsAnnotation"></mat-header-row>
-                                    <mat-row *matRowDef="let row; columns: displayedColumnsAnnotation;"></mat-row>
-                                </table>
-                            </div>
-                            <mat-paginator #annotationTablePaginator [pageSizeOptions]="[ 10, 20, 30]" showFirstLastButtons
-                                           [length]="dataSourceAnnotationCount" ></mat-paginator>
+                            @if (dataSourceAnnotation?.data?.length) {
+                                <h1 class="col-md-12 page-header">Annotation</h1>
+                                <div class="table-container">
+                                    <mat-form-field>
+                                        <mat-label>Search</mat-label>
+                                        <input matInput (keyup)="annotationSearch($event)" #input>
+                                    </mat-form-field>
+                                    <table mat-table [dataSource]="dataSourceAnnotation" matSort >
+                                        <ng-container matColumnDef="accession">
+                                            <mat-header-cell *matHeaderCellDef> Accession </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">{{element.accession}}</mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="annotation">
+                                            <mat-header-cell *matHeaderCellDef> Annotation </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <span><a class="no-underline" target="_blank" href="{{element.annotation.gtf}}">GTF</a>,</span>
+                                                <span><a class="no-underline" target="_blank" href="{{element.annotation.gff3}}">GFF3</a></span>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="proteins">
+                                            <mat-header-cell *matHeaderCellDef> Proteins </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <a class="no-underline" target="_blank" href="{{element.proteins.fasta}}">FASTA</a>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="transcripts">
+                                            <mat-header-cell *matHeaderCellDef> Transcripts </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <a class="no-underline" target="_blank" href="{{element.transcripts.fasta}}">FASTA</a>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="softmasked_genome">
+                                            <mat-header-cell *matHeaderCellDef> Softmasked genome </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <a class="no-underline" target="_blank" href="{{element.softmasked_genome.fasta}}">FASTA</a>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="other_data">
+                                            <mat-header-cell *matHeaderCellDef> Other data </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <a class="no-underline" target="_blank" href="{{element.other_data.ftp_dumps}}">FTP dumps</a>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="view_in_browser">
+                                            <mat-header-cell *matHeaderCellDef> View in browser </mat-header-cell>
+                                            <mat-cell *matCellDef="let element" class="txt-center">
+                                                <a class="no-underline" target="_blank" href="{{element.view_in_browser}}">ensembl.org</a>
+                                            </mat-cell>
+                                        </ng-container>
+                                        <mat-header-row *matHeaderRowDef="displayedColumnsAnnotation"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: displayedColumnsAnnotation;"></mat-row>
+                                    </table>
+                                </div>
+                                <mat-paginator #annotationTablePaginator [pageSizeOptions]="[ 10, 20, 30]" showFirstLastButtons
+                                               [length]="dataSourceAnnotationCount" ></mat-paginator>
+                            }
                         </div>
                         <div class="col-md-12">
                             <hr>
@@ -418,16 +420,17 @@
                                         <div  class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span >Sex</span>
-                                                  <mat-icon
-                                                      *ngIf="metadataSexFilters.length > 3"
-                                                      (click)="toggleCollapse('metadataTab', 'sex')"
-                                                      style="cursor: pointer; margin-left: auto;">
-                                                      {{ isCollapsed['metadataTab_sex'] ? 'add' : 'remove' }}
-                                                    </mat-icon>
+                                                @if(metadataSexFilters.length > 3){
+                                                      <mat-icon
+                                                          (click)="toggleCollapse('metadataTab', 'sex')"
+                                                          style="cursor: pointer; margin-left: auto;">
+                                                          {{ isCollapsed['metadataTab_sex'] ? 'add' : 'remove' }}
+                                                        </mat-icon>
+                                                 }
                                             </h3>
                                             <ul role="list"  class="list-group" >
-                                                <li  *ngFor="let filter of getLimitedFilters( metadataSexFilters, 'sex','metadataTab'); let i = index"
-                                                        role="listitem" class="list-group-item d-flex justify-content-between
+                                                @for(filter of getLimitedFilters( metadataSexFilters, 'sex','metadataTab');track $index){
+                                                         <li role="listitem" class="list-group-item d-flex justify-content-between
                                                                 align-items-center"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
 
@@ -436,6 +439,7 @@
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                             </li>
+                                                }
                                             </ul>
                                         </div>
 
@@ -445,29 +449,29 @@
                                         <div  class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span>Organism Part </span>
-                                                <mat-icon
-                                                      *ngIf="metadataOrganismPartFilters.length > 3"
-                                                      (click)="toggleCollapse('metadataTab','organismPart')"
-                                                      style="cursor: pointer; margin-left: auto;">
-                                                      {{ isCollapsed['metadataTab_organismPart'] ? 'add' : 'remove' }}
-                                                    </mat-icon>
-
+                                                @if(metadataOrganismPartFilters.length > 3){
+                                                       <mat-icon
+                                                          (click)="toggleCollapse('metadataTab','organismPart')"
+                                                          style="cursor: pointer; margin-left: auto;">
+                                                          {{ isCollapsed['metadataTab_organismPart'] ? 'add' : 'remove' }}
+                                                        </mat-icon>
+                                                }
 
                                             </h3>
 
                                             <ul role="list"  class="list-group" >
 
-
-                                                        <li  *ngFor="let filter of getLimitedFilters
-                                                        (metadataOrganismPartFilters, 'organismPart', 'metadataTab'); let i = index"
-                                                                role="listitem" class="list-group-item d-flex justify-content-between
-                                                            align-items-center"
+                                                @for(filter of getLimitedFilters
+                                                (metadataOrganismPartFilters, 'organismPart', 'metadataTab');track $index){
+                                                        <li  role="listitem" class="list-group-item d-flex justify-content-between
+                                                             align-items-center"
                                                                 (click)="applyFilter('organismPart', filter.key,dataSourceRecords,'metadataTab')"
                                                                 [ngClass]="checkFilterIsActive(filter.key)" style="cursor: pointer;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                             </li>
+                                                }
 
 
                                             </ul>
@@ -479,18 +483,18 @@
                                         <div class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span >Tracking Status</span>
-                                                <mat-icon
-                                                        *ngIf="metadataTrackingSystemFilters.length > 3"
-                                                        (click)="toggleCollapse('metadataTab','trackingSystem')"
-                                                        style="cursor: pointer; margin-left: auto;">
-                                                    {{ isCollapsed['metadataTab_trackingSystem'] ? 'add' : 'remove' }}
-                                                </mat-icon>
+                                                @if(metadataTrackingSystemFilters.length > 3){
+                                                    <mat-icon
+                                                            (click)="toggleCollapse('metadataTab','trackingSystem')"
+                                                            style="cursor: pointer; margin-left: auto;">
+                                                        {{ isCollapsed['metadataTab_trackingSystem'] ? 'add' : 'remove' }}
+                                                    </mat-icon>
+                                                }
                                             </h3>
                                             <ul role="list"  class="list-group" >
-
-                                                    <li *ngFor="let filter of getLimitedFilters
-                                                        (metadataTrackingSystemFilters, 'trackingSystem', 'metadataTab'); let i = index"
-                                                            role="listitem" class="list-group-item d-flex justify-content-between
+                                                @for(filter of getLimitedFilters
+                                                (metadataTrackingSystemFilters, 'trackingSystem', 'metadataTab');track $index){
+                                                    <li role="listitem" class="list-group-item d-flex justify-content-between
                                                         align-items-center"
                                                         [ngClass]="checkFilterIsActive(filter.key)"
                                                         (click)="applyFilter('trackingSystem',filter.key, dataSourceRecords,'metadataTab')" style="cursor: pointer;"
@@ -498,6 +502,7 @@
                                                             {{filter.key}}
                                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                     </li>
+                                                }
                                             </ul>
                                         </div>
 
@@ -521,7 +526,7 @@
                                 <div class="table-container">
                                     <mat-form-field>
                                         <mat-label>Search</mat-label>
-                                        <input matInput [(ngModel)]='searchText' (keyup)="getSearchResults()" placeholder="Ex. ILLUMINA" #input>
+                                        <input matInput [(ngModel)]='searchText' (keyup)="getSearchResults($event)" placeholder="Ex. ILLUMINA" #input>
                                     </mat-form-field>
 
                                         <table mat-table [dataSource]="dataSourceRecords" matSort >
@@ -693,25 +698,25 @@
                                         <div  class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span >Sex</span>
-                                                <mat-icon
-                                                        *ngIf="symbiontsSexFilters.length > 3"
-                                                        (click)="toggleCollapse('symbiontsTab', 'sex')"
-                                                        style="cursor: pointer; margin-left: auto;">
-                                                    {{ isCollapsed['symbiontsTab_sex'] ? 'add' : 'remove' }}
-                                                </mat-icon>
+                                                @if(symbiontsSexFilters.length > 3){
+                                                    <mat-icon
+                                                            (click)="toggleCollapse('symbiontsTab', 'sex')"
+                                                            style="cursor: pointer; margin-left: auto;">
+                                                        {{ isCollapsed['symbiontsTab_sex'] ? 'add' : 'remove' }}
+                                                    </mat-icon>
+                                                }
                                             </h3>
 
                                             <ul class="list-group" >
-                                              <li *ngFor="let filter of getLimitedFilters( symbiontsSexFilters, 'sex','symbiontsTab'); let i = index"
-                                                     class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
+                                                @for (filter of getLimitedFilters( symbiontsSexFilters, 'sex','symbiontsTab'); track $index){
+                                                            <li class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
                                                                 (click)="applyFilter('sex',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')" style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                             </li>
-
-
+                                                }
                                             </ul>
                                         </div>
 
@@ -721,24 +726,25 @@
                                         <div  class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span>Organism Part</span>
-                                                <mat-icon
-                                                        *ngIf="symbiontsOrganismPartFilters.length > 3"
-                                                        (click)="toggleCollapse('symbiontsTab','organismPart')"
-                                                        style="cursor: pointer; margin-left: auto;">
-                                                    {{ isCollapsed['symbiontsTab_organismPart'] ? 'add' : 'remove' }}
-                                                </mat-icon>
+                                                @if(symbiontsOrganismPartFilters.length > 3){
+                                                    <mat-icon
+                                                            (click)="toggleCollapse('symbiontsTab','organismPart')"
+                                                            style="cursor: pointer; margin-left: auto;">
+                                                        {{ isCollapsed['symbiontsTab_organismPart'] ? 'add' : 'remove' }}
+                                                    </mat-icon>
+                                                }
                                             </h3>
                                             <ul class="list-group" >
-
-                                                 <li *ngFor="let filter of getLimitedFilters
-                                                        (symbiontsOrganismPartFilters, 'organismPart', 'symbiontsTab'); let i = index"
-                                                                role="listitem" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
-                                                                [ngClass]="checkFilterIsActive(filter.key)"
-                                                                (click)="applyFilter('organismPart',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
-                                                                style="cursor: pointer; padding: .75rem 0.25rem;">
-                                                                {{filter.key}}
-                                                                <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
-                                                 </li>
+                                                @for (filter of getLimitedFilters
+                                                (symbiontsOrganismPartFilters, 'organismPart', 'symbiontsTab'); track $index){
+                                                     <li role="listitem" class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
+                                                                    [ngClass]="checkFilterIsActive(filter.key)"
+                                                                    (click)="applyFilter('organismPart',filter.key, dataSourceSymbiontsRecords,'symbiontsTab')"
+                                                                    style="cursor: pointer; padding: .75rem 0.25rem;">
+                                                                    {{filter.key}}
+                                                                    <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
+                                                     </li>
+                                                }
 
 
                                             </ul>
@@ -749,18 +755,19 @@
                                         <div class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span >Tracking Status</span>
-                                                <mat-icon
-                                                        *ngIf="symbiontsTrackingSystemFilters.length > 3"
-                                                        (click)="toggleCollapse('symbiontsTab','trackingSystem')"
-                                                        style="cursor: pointer; margin-left: auto;">
-                                                    {{ isCollapsed['symbiontsTab_trackingSystem'] ? 'add' : 'remove' }}
-                                                </mat-icon>
+                                                @if(symbiontsTrackingSystemFilters.length > 3){
+                                                    <mat-icon
+                                                            (click)="toggleCollapse('symbiontsTab','trackingSystem')"
+                                                            style="cursor: pointer; margin-left: auto;">
+                                                        {{ isCollapsed['symbiontsTab_trackingSystem'] ? 'add' : 'remove' }}
+                                                    </mat-icon>
+                                                }
                                             </h3>
                                             <ul id="symbionts-tracking-status-inactive" class="list-group"
                                                 [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
-
-                                                        <li *ngFor="let filter of getLimitedFilters
-                                                        (symbiontsTrackingSystemFilters, 'trackingSystem', 'metadataTab'); let i = index"
+                                                @for (filter of getLimitedFilters
+                                                (symbiontsTrackingSystemFilters, 'trackingSystem', 'symbiontsTab');  track $index){
+                                                        <li
                                                             role="listitem"
                                                             class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                             [ngClass]="checkFilterIsActive(filter.key)"
@@ -770,6 +777,7 @@
                                                             {{filter.key}}
                                                             <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                         </li>
+                                                }
 
 
 
@@ -801,7 +809,7 @@
                             <div class="table-container">
                                 <mat-form-field>
                                     <mat-label>Search</mat-label>
-                                    <input matInput (keyup)="relatedSymbiontsSearch($event)" #input>
+                                    <input matInput [(ngModel)]='searchText' (keyup)="relatedSymbiontsSearch($event)" #input>
                                 </mat-form-field>
                             <table mat-table [dataSource]="dataSourceSymbiontsRecords" matSort>
                                     <ng-container matColumnDef="accession">
@@ -944,23 +952,25 @@
                                                 <div  class="card bg-lite mb-3 filter-top">
                                                     <h3 class="card-header filter-heading">
                                                         <span >Sex</span>
-                                                        <mat-icon
-                                                                *ngIf="metagenomesSexFilters.length > 3"
-                                                                (click)="toggleCollapse('metagenomeTab', 'sex')"
-                                                                style="cursor: pointer; margin-left: auto;">
-                                                            {{ isCollapsed['metagenomeTab_sex'] ? 'add' : 'remove' }}
-                                                        </mat-icon>
+                                                        @if(metagenomesSexFilters.length > 3){
+                                                            <mat-icon
+                                                                    (click)="toggleCollapse('metagenomeTab', 'sex')"
+                                                                    style="cursor: pointer; margin-left: auto;">
+                                                                {{ isCollapsed['metagenomeTab_sex'] ? 'add' : 'remove' }}
+                                                            </mat-icon>
+                                                        }
                                                     </h3>
                                                     <ul  class="list-group" [ngClass]="{'long-list': itemLimitSexFilter > filterSize}">
-
-                                                                <li *ngFor="let filter of getLimitedFilters( metagenomesSexFilters,
-                                                                'sex','metagenomeTab'); let i = index" class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
+                                                        @for(filter of getLimitedFilters( metagenomesSexFilters,
+                                                            'sex','metagenomeTab');track $index){
+                                                                <li  class="list-group-item d-flex justify-content-between align-items-center sex-inactive"
                                                                     [ngClass]="checkFilterIsActive(filter.key)"
                                                                     (click)="applyFilter('sex',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                                 >
                                                                     {{filter.key}}
                                                                     <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                                 </li>
+                                                        }
 
 
                                                     </ul>
@@ -974,27 +984,27 @@
                                         <div  class="card bg-lite mb-3 filter-top">
                                             <h3 class="card-header filter-heading">
                                                 <span >Organism Part</span>
-                                                <mat-icon
-                                                        *ngIf="metagenomesOrganismPartFilters.length > 3"
-                                                        (click)="toggleCollapse('metagenomeTab','organismPart')"
-                                                        style="cursor: pointer; margin-left: auto;">
-                                                    {{ isCollapsed['metagenomeTab_organismPart'] ? 'add' : 'remove' }}
-                                                </mat-icon>
-
+                                                @if(metagenomesOrganismPartFilters.length > 3){
+                                                    <mat-icon
+                                                            (click)="toggleCollapse('metagenomeTab','organismPart')"
+                                                            style="cursor: pointer; margin-left: auto;">
+                                                        {{ isCollapsed['metagenomeTab_organismPart'] ? 'add' : 'remove' }}
+                                                    </mat-icon>
+                                                }
                                             </h3>
                                             <ul id="metagenome-org-part-inactive" class="list-group" [ngClass]="{'long-list': itemLimitOrgFilter > filterSize}">
 
                                                     <ng-container >
-
-                                                            <li *ngFor="let filter of getLimitedFilters
-                                                        (metagenomesOrganismPartFilters, 'organismPart', 'metagenomeTab'); let i = index"
-                                                                    class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
+                                                        @for(filter of getLimitedFilters
+                                                        (metagenomesOrganismPartFilters, 'organismPart', 'metagenomeTab');track $index){
+                                                            <li  class="list-group-item d-flex justify-content-between align-items-center org-part-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
                                                                 (click)="applyFilter('organismPart',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                             </li>
+                                                        }
 
 
                                                     </ng-container>
@@ -1010,24 +1020,25 @@
                                             <div class="card bg-lite mb-3 filter-top">
                                                 <h3 class="card-header filter-heading">
                                                     <span >Tracking Status</span>
-                                                    <mat-icon
-                                                            *ngIf="metagenomesTrackingSystemFilters.length > 3"
-                                                            (click)="toggleCollapse('metagenomeTab','trackingSystem')"
-                                                            style="cursor: pointer; margin-left: auto;">
-                                                        {{ isCollapsed['metagenomeTab_trackingSystem'] ? 'add' : 'remove' }}
-                                                    </mat-icon>
+                                                    @if(metagenomesTrackingSystemFilters.length > 3){
+                                                        <mat-icon
+                                                                (click)="toggleCollapse('metagenomeTab','trackingSystem')"
+                                                                style="cursor: pointer; margin-left: auto;">
+                                                            {{ isCollapsed['metagenomeTab_trackingSystem'] ? 'add' : 'remove' }}
+                                                        </mat-icon>
+                                                    }
                                                 </h3>
                                                 <ul class="list-group" [ngClass]="{'long-list': itemLimitTrackFilter > filterSize}">
-
-                                                            <li *ngFor="let filter of getLimitedFilters
-                                                                (metagenomesTrackingSystemFilters, 'trackingSystem', 'metagenomeTab'); let i = index"
-                                                                class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
+                                                    @for(filter of getLimitedFilters
+                                                    (metagenomesTrackingSystemFilters, 'trackingSystem', 'metagenomeTab');track $index){
+                                                            <li class="list-group-item d-flex justify-content-between align-items-center tracking-status-inactive"
                                                                 [ngClass]="checkFilterIsActive(filter.key)"
                                                                 (click)="applyFilter('trackingSystem',filter.key, dataSourceMetagenomesRecords,'metagenomeTab')"  style="cursor: pointer; padding: .75rem 0.25rem;"
                                                             >
                                                                 {{filter.key}}
                                                                 <span class="badge badge-pill badge-info">{{filter.doc_count}}</span>
                                                             </li>
+                                                    }
                                                 </ul>
                                             </div>
                                         </div>
@@ -1055,7 +1066,7 @@
                             <div class="table-container" >
                                 <mat-form-field>
                                     <mat-label>Search</mat-label>
-                                    <input matInput (keyup)="metagenomesRecordsSearch($event)" #input>
+                                    <input matInput [(ngModel)]='searchText' (keyup)="metagenomesRecordsSearch($event)" #input>
                                 </mat-form-field>
 
                                 <table mat-table [dataSource]="dataSourceMetagenomesRecords" matSort>
