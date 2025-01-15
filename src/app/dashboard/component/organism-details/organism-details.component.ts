@@ -698,15 +698,21 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
   applyFilter(label: string,  filterValue: string, dataSource: MatTableDataSource<any>, tabName: string): void {
     const index = this.activeFilters.indexOf(filterValue);
     this.createFilterJson(label, filterValue, dataSource);
-    index !== -1 ? this.activeFilters.splice(index, 1) : this.activeFilters.push(filterValue);
     this.searchText = '';
-    dataSource.filter = JSON.stringify(this.filterJson);
-    if (tabName === 'metadataTab'){
-      this.getFiltersForSelectedFilterForMetaData(dataSource.filteredData);
-    }else if (tabName === 'metagenomeTab') {
-      this.getFiltersForSelectedFilterForMetaGenome(dataSource.filteredData);
-    }else if (tabName === 'symbiontsTab'){
-      this.getFiltersForSelectedFilterForSymbionts(dataSource.filteredData);
+    const inactiveClassName = label.toLowerCase().replace(' ', '-') + '-inactive';
+    if (index !== -1) {
+      $('.' + inactiveClassName).removeClass('non-disp');
+      this.removeFilter(filterValue, dataSource, tabName);
+    }else {
+      this.activeFilters.push(filterValue);
+      dataSource.filter = JSON.stringify(this.filterJson);
+      if (tabName === 'metadataTab'){
+        this.getFiltersForSelectedFilterForMetaData(dataSource.filteredData);
+      }else if (tabName === 'metagenomeTab') {
+        this.getFiltersForSelectedFilterForMetaGenome(dataSource.filteredData);
+      }else if (tabName === 'symbiontsTab'){
+        this.getFiltersForSelectedFilterForSymbionts(dataSource.filteredData);
+      }
     }
   }
   checkCurrentStatusColor(status: string) {
