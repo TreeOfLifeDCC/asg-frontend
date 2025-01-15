@@ -2,6 +2,8 @@
 
 html,
 body {
+    overflow: scroll;
+    scrollbar-width: none;
     height: 100%;
 }
 

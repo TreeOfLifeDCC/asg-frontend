@@ -10,15 +10,16 @@ import {MatDialog} from '@angular/material/dialog';
 })
 export class DashboardService {
 
-  // private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
-  // private API_BASE_URL = 'http://45.88.81.97/backend';
   private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  // private API_BASE_URL = 'http://45.88.81.97/backend';
+
   private ENA_PORTAL_API_BASE_URL = 'https://www.ebi.ac.uk/ena/portal/api/files';
 
   constructor(private http: HttpClient, private bytesPipe: BytesPipe,  private dialog: MatDialog) { }
 
   public getAllBiosample(indexName, currentClass, phylogenyFilters, offset, limit, sortColumn?,
                          sortOrder? , searchText?, filterValue?): Observable<any> {
+
 
     let url = `${this.API_BASE_URL}/${indexName}?limit=${limit}&offset=${offset}`;
     const projectNames = ['DToL', '25 genomes', 'ERGA', 'CBP', 'ASG'];
