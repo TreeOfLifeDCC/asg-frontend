@@ -760,9 +760,13 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
       }
       return filters;
     }
-  onTabChanged($event) {
-    this.activeFilters = [];
-    this.searchText = '';
+  tabClick({$event}: { $event: any }) {
+    if ($event.tab.textLabel === 'Metadata' || $event.tab.textLabel === 'Metagenomes' || $event.tab.textLabel === 'Symbionts' ){
+      this.searchText = '';
+      if (this.activeFilters.length > 0 ){
+        this.removeAllFilters();
+      }
     }
+  }
 
 }

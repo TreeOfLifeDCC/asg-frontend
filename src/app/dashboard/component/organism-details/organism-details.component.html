@@ -24,7 +24,7 @@
             }
         </dl>
 
-        <mat-tab-group  #tabgroup (selectedTabChange)="onTabChanged($event);">
+        <mat-tab-group  #tabgroup (selectedTabChange)="tabClick({$event : $event});">
 
                 <mat-tab label="Data" >
                         <div class="col-md-12">
