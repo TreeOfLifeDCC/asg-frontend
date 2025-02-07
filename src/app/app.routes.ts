@@ -13,6 +13,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { PhylogeneticsComponent } from './phylogenetics/phylogenetics.component';
 import { TrackingSystemComponent } from './tracking-system/tracking-system/tracking-system.component';
 import { TrackingDetailsComponent } from './tracking-system/tracking-system/details/details.component';
+import {PublicationsComponent} from "./publications/publications.component";
 
 export const routes: Routes = [
   { path: 'documentation', component: ApiComponent, title: 'Documentation' },
@@ -58,7 +59,9 @@ export const routes: Routes = [
     loadComponent: () => import('./tracking-system/tracking-system/tracking-system.component').then(m => m.TrackingSystemComponent),
     title: 'Tracking'
   },
-
+  {
+    path: 'publications', component: PublicationsComponent
+  },
   {
     path: 'tree',
     loadComponent: () => import('./phylogenetics/phylogenetics.component').then(m => m.PhylogeneticsComponent),
