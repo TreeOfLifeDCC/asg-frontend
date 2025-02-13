@@ -346,7 +346,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
     this.spinner.show();
 
     this.dashboardService.getAllBiosample(
-        'data_portal_test', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
+        'data_portal', this.currentClass, this.phylogenyFilters, offset, limit, sortColumn, sortOrder, this.searchValue,
         this.activeFilters
     ).subscribe(
             data => {

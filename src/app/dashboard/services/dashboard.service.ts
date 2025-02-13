@@ -77,7 +77,7 @@ export class DashboardService {
   }
 
   public getBiosampleByAccession(accession: string): Observable<any> {
-    const url = `${this.API_BASE_URL}/organisms_test/${accession}`;
+    const url = `${this.API_BASE_URL}/specimens/${accession}`;
     return this.http.get(url);
   }
 

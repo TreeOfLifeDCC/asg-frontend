@@ -196,7 +196,7 @@ export class TrackingSystemComponent implements OnInit, AfterViewInit {
 
   getTrackingData(offset, limit, sortColumn?, sortOrder?) {
     this.spinner.show();
-    this.statusesService.getTrackingData('tracking_status_index_test', this.currentClass, this.phylogenyFilters, offset, limit,
+    this.statusesService.getTrackingData('tracking_status', this.currentClass, this.phylogenyFilters, offset, limit,
         sortColumn, sortOrder, this.searchValue, this.activeFilters)
       .subscribe(
         data => {
