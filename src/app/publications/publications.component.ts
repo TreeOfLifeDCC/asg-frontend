@@ -5,14 +5,18 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort, MatSortHeader} from '@angular/material/sort';
 import {Title} from '@angular/platform-browser';
 import {NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
-
-
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { catchError, map, merge, startWith, switchMap } from 'rxjs';
 import {GetDataService} from '../services/get-data.service';
-import {NgClass} from "@angular/common";
+import {NgClass} from '@angular/common';
+import {TruncatePipe} from './truncate.pipe';
+import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {FormsModule} from '@angular/forms';
+import {MatInput} from '@angular/material/input';
+import {MatChip, MatChipSet} from '@angular/material/chips';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'app-publications',
@@ -37,10 +41,18 @@ import {NgClass} from "@angular/common";
     MatExpansionModule,
     MatCheckboxModule,
     NgClass,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    TruncatePipe,
+    MatFormField,
+    FormsModule,
+    MatInput,
+    MatLabel,
+    MatChipSet,
+    MatChip,
+    MatIcon
   ]
 })
-export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PublicationsComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -48,11 +60,12 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   filterChanged = new EventEmitter<any>();
   data: any;
   dataCount = 0;
-
+  searchValue: string;
+  searchChanged = new EventEmitter<any>();
   pagesize = 20;
   urlAppendFilterArray = [];
   activeFilters = new Array<string>();
-  columns = ['title', 'journal_name', 'year', 'organism_name', 'study_id'];
+  columns = ['title', 'journalTitle', 'pubYear', 'organism_name', 'study_id'];
   journalNameFilters = [];
   publicationYearFilters = [];
   articleTypeFilters = [];
@@ -61,6 +74,8 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   aggregations: any;
   resultsLength: any;
   timer: any;
+  queryParams: any = {};
+
   constructor(private titleService: Title,
               private spinner: NgxSpinnerService,
               private getDataService: GetDataService,
@@ -69,30 +84,37 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.titleService.setTitle('Publications');
-    const queryParamMap = this.activatedRoute.snapshot.queryParamMap;
+    const queryParamMap: any = this.activatedRoute.snapshot['queryParamMap'];
     const params = queryParamMap['params'];
+
     if (Object.keys(params).length !== 0) {
-      this.resetFilter();
-      // tslint:disable-next-line:forin
       for (const key in params) {
-        this.urlAppendFilterArray.push({name: key, value: params[key]});
-        this.activeFilters.push(params[key]);
+        if (params.hasOwnProperty(key)) {
+          if (params[key].includes('searchValue - ')) {
+            this.searchValue = params[key].split('searchValue - ')[1];
+          } else {
+            this.activeFilters.push(params[key]);
+          }
+
+        }
       }
     }
-    // this.getAllPublications(0, this.pagesize, this.sort.active, this.sort.direction);
+
   }
 
   ngAfterViewInit() {
-    // If the user changes the metadataSort order, reset back to the first page.
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
+    this.searchChanged.subscribe(() => (this.paginator.pageIndex = 0));
     this.filterChanged.subscribe(() => (this.paginator.pageIndex = 0));
-    merge(this.paginator.page, this.sort.sortChange, this.filterChanged)
+    merge(this.paginator.page, this.sort.sortChange, this.searchChanged, this.filterChanged)
         .pipe(
             startWith({}),
             switchMap(() => {
               this.isLoadingResults = true;
-              return  this.getDataService.getAllPublications(0, this.pagesize, this.activeFilters)
-              .pipe(catchError(() => observableOf(null)));
+              return this.getDataService.getPublicationsData(this.paginator.pageIndex,
+                  this.paginator.pageSize, this.searchValue, this.sort.active, this.sort.direction, this.activeFilters,
+                  'articles'
+              ).pipe(catchError(() => observableOf(null)));
             }),
             map(data => {
               // Flip flag to show that loading has finished.
@@ -102,39 +124,76 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
               if (data === null) {
                 return [];
               }
+
+
+              // Only refresh the result length if there is new metadataData. In case of rate
+              // limit errors, we do not want to reset the metadataPaginator to zero, as that
+              // would prevent users from re-triggering requests.
               this.resultsLength = data.count;
               this.aggregations = data.aggregations;
 
+              this.articleTypeFilters = [];
+              if (this.aggregations.articleType.buckets.length > 0) {
+                this.articleTypeFilters = this.merge(this.articleTypeFilters,
+                    this.aggregations.articleType.buckets,
+                    'article_type');
+              }
 
-              this.dataSource = data.results;
-              this.dataCount = data.count;
-              this.publicationYearFilters = data.aggregations.pubYear?.buckets;
-              console.log(this.publicationYearFilters);
-              this.journalNameFilters = data.aggregations.journalTitle?.buckets;
-              this.articleTypeFilters = data.aggregations.articleType?.buckets;
+              this.journalNameFilters = [];
+              if (this.aggregations.journalTitle.buckets.length > 0) {
+                this.journalNameFilters = this.merge(this.journalNameFilters,
+                    this.aggregations.journalTitle.buckets,
+                    'journal_title');
+              }
 
-              this.router.navigate([], {
-                relativeTo: this.activatedRoute, queryParams: this.activeFilters, queryParamsHandling: 'merge'
-              });
+              this.publicationYearFilters = [];
+              if (this.aggregations.pubYear.buckets.length > 0) {
+                this.publicationYearFilters = this.merge(this.publicationYearFilters,
+                    this.aggregations.pubYear.buckets,
+                    'pub_year');
+              }
+
+              this.queryParams = [...this.activeFilters];
+
+              // add search value to URL query param
+              if (this.searchValue) {
+                this.queryParams.push(`searchValue - ${this.searchValue}`);
+              }
+
+              this.replaceUrlQueryParams();
               return data.results;
             }),
         )
         .subscribe(data => (this.data = data));
   }
 
-  // getAllPublications(offset, limit, sortColumn?, sortOrder?): void {
-  //   this.spinner.show();
-  //   this.getDataService.getAllPublications(offset, limit, this.activeFilters).subscribe(
-  //       data => {
-  //         this.dataSource = data.results;
-  //         this.dataCount = data.count;
-  //         this.publicationYearFilters = data.aggregations.pubYear?.buckets;
-  //         this.journalNameFilters = data.aggregations.journalTitle?.buckets;
-  //         this.articleTypeFilters = data.aggregations.articleType?.buckets;
-  //         this.spinner.hide();
-  //       }
-  //   );
-  // }
+  refreshPage() {
+    clearTimeout(this.timer);
+    this.activeFilters = [];
+    this.searchValue = '';
+    this.filterChanged.emit();
+    this.router.navigate([]);
+  }
+
+  replaceUrlQueryParams() {
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: this.queryParams,
+      replaceUrl: true,
+      skipLocationChange: false
+    });
+  }
+
+
+
+  merge = (first: any[], second: any[], filterLabel: string) => {
+    // tslint:disable-next-line:prefer-for-of
+    for (let i = 0; i < second.length; i++) {
+      second[i].label = filterLabel;
+      first.push(second[i]);
+    }
+    return first;
+  }
 
   getJournalName(data: any): string {
     if (data.journalTitle !== undefined) {
@@ -157,21 +216,12 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
   //   this.getAllPublications(offset, event.pageSize);
   // }
 
-  customSort(event: any): void {
-    console.log(event);
+  applyFilter(event: Event) {
+    this.searchValue = (event.target as HTMLInputElement).value;
+    this.searchChanged.emit();
   }
 
-  hasActiveFilters(): boolean {
-    if (typeof this.activeFilters === 'undefined') {
-      return false;
-    }
-    for (const key of Object.keys(this.activeFilters)) {
-      if (this.activeFilters[key].length !== 0) {
-        return true;
-      }
-    }
-    return false;
-  }
+
   checkFilterIsActive = (filter: string) => {
     // console.log(this.filterService.activeFilters);
     if (this.activeFilters.indexOf(filter) !== -1) {
@@ -208,11 +258,9 @@ export class PublicationsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  ngOnDestroy(): void {
-    this.resetFilter();
-  }
-
 }
+
+
 
 function observableOf(arg0: null): any {
   throw new Error('Function not implemented.');

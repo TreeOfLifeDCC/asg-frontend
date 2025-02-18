@@ -1,32 +1,66 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GetDataService {
+  
+  constructor(private http: HttpClient,
+              private router: Router,
+              private activatedRoute: ActivatedRoute) { }
 
-  private API_BASE_URL = 'https://portal.aquaticsymbiosisgenomics.org/api';
+  getPublicationsData(pageIndex: number, pageSize: number, searchValue: string, sortActive: string, sortDirection: string,
+                      filterValue: string[], index_name: string) {
 
-  constructor(private http: HttpClient) { }
+    const sortActiveESField: { [index: string]: any } = {
+      title: 'title.keyword',
+      study_id: 'study_id.keyword',
+      organism_name: 'organism_name.keyword'
+    };
 
-  // @ts-ignore
-  getAllPublications(offset, limit, filter?) {
-    const filters = [];
-    let url = `${this.API_BASE_URL}articles?offset=${offset}&limit=${limit}`;
-    for (const key of filter) {
-      if (['Genome Note', 'Research Article'].indexOf(key) !== -1) {
-        filters.push(`articleType=${key}`);
-      } else if (['2020', '2021', '2022', '2023', '2024'].indexOf(key) !== -1) {
-        filters.push(`pubYear=${key}`);
-      } else {
-        filters.push(`journalTitle=${key}`);
+    const offset = pageIndex * pageSize;
+    let url = `https://portal.aquaticsymbiosisgenomics.org/api/${index_name}?limit=${pageSize}&offset=${offset}`;
+    if (searchValue) {
+      url += `&search=${searchValue}`;
+    }
+    if (sortActive && sortDirection) {
+      url += `&sort=${sortActive in sortActiveESField ?  sortActiveESField[sortActive]: sortActive}:${sortDirection}`;
+    }
+    if (filterValue.length !== 0) {
+      let filterStr = '&filter=';
+      let filterItem;
+      for (let i = 0; i < filterValue.length; i++) {
+        const filterName = filterValue[i].split('-')[0];
+        const filterVal = filterValue[i].split('-')[1];
+        if (filterName === 'article_type'){
+          filterItem = `articleType:${filterVal}`;
+        } else if (filterName === 'pub_year') {
+          filterItem = `pubYear:${filterVal}`;
+        } else if (filterName === 'journal_title') {
+          filterItem = `journalTitle:${filterVal}`;
+        }
+        filterStr === '&filter=' ? filterStr += `${filterItem}` : filterStr += `,${filterItem}`;
       }
+      url += filterStr;
     }
-    for (const key of filters) {
-      url = `${url}&${key}`;
-    }
+
+    // will not reload the page, but will update query params
+    this.router.navigate([],
+        {
+          relativeTo: this.activatedRoute,
+          queryParams: {
+            filter: filterValue,
+            sortActive: sortActive in sortActiveESField ?  sortActiveESField[sortActive] : sortActive,
+            sortDirection,
+            searchValue,
+            pageIndex,
+            pageSize
+          },
+          queryParamsHandling: 'merge',
+        });
+
     return this.http.get<any>(url);
   }
 }
