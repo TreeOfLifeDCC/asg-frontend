@@ -6,13 +6,13 @@ import {ActivatedRoute, Router} from '@angular/router';
   providedIn: 'root'
 })
 export class GetDataService {
-  
+
   constructor(private http: HttpClient,
               private router: Router,
               private activatedRoute: ActivatedRoute) { }
 
   getPublicationsData(pageIndex: number, pageSize: number, searchValue: string, sortActive: string, sortDirection: string,
-                      filterValue: string[], index_name: string) {
+                      filterValue: string[], indexName: string) {
 
     const sortActiveESField: { [index: string]: any } = {
       title: 'title.keyword',
@@ -21,12 +21,12 @@ export class GetDataService {
     };
 
     const offset = pageIndex * pageSize;
-    let url = `https://portal.aquaticsymbiosisgenomics.org/api/${index_name}?limit=${pageSize}&offset=${offset}`;
+    let url = `https://portal.aquaticsymbiosisgenomics.org/api/${indexName}?limit=${pageSize}&offset=${offset}`;
     if (searchValue) {
       url += `&search=${searchValue}`;
     }
     if (sortActive && sortDirection) {
-      url += `&sort=${sortActive in sortActiveESField ?  sortActiveESField[sortActive]: sortActive}:${sortDirection}`;
+      url += `&sort=${sortActive in sortActiveESField ?  sortActiveESField[sortActive] : sortActive}:${sortDirection}`;
     }
     if (filterValue.length !== 0) {
       let filterStr = '&filter=';
