@@ -11,7 +11,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { catchError, map, merge, startWith, switchMap } from 'rxjs';
 import {GetDataService} from '../services/get-data.service';
 import {NgClass} from '@angular/common';
-import {TruncatePipe} from './truncate.pipe';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatInput} from '@angular/material/input';
@@ -42,7 +41,6 @@ import {MatIcon} from '@angular/material/icon';
     MatCheckboxModule,
     NgClass,
     NgxSpinnerModule,
-    TruncatePipe,
     MatFormField,
     FormsModule,
     MatInput,
