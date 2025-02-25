@@ -23,7 +23,7 @@ import {MatInputModule} from '@angular/material/input';
 import {DashboardService} from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {SafeResourceUrl} from '@angular/platform-browser';
+import {SafeHtml, SafeResourceUrl,DomSanitizer} from '@angular/platform-browser';
 import {Subject} from 'rxjs';
 
 import {MatIcon} from '@angular/material/icon';
@@ -208,7 +208,8 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
 
   isCollapsed: { [key: string]: boolean } = {};
   constructor(private route: ActivatedRoute,
-              private dashboardService: DashboardService, private cdr: ChangeDetectorRef ) {
+              private dashboardService: DashboardService, private cdr: ChangeDetectorRef ,
+              private sanitizer: DomSanitizer) {
     this.route.params.subscribe(param => this.bioSampleId = param.id);
   }
 
@@ -767,6 +768,10 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
         this.removeAllFilters();
       }
     }
+  }
+
+  sanitizeHTML(content: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(content);
   }
 
 }
