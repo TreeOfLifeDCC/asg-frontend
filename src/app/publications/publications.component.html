@@ -120,7 +120,8 @@
                                          >Title</mat-header-cell>
                         <mat-cell *matCellDef="let element" >
                             <a [href]="element['_source']['url']" [title]="element['_source']['title']"
-                               [innerHTML]="element['_source']['title'] | truncate:10">
+                               [innerHTML]="element['_source']['title']" >
+
                             </a>
                         </mat-cell>
                     </ng-container>

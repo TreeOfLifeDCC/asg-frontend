@@ -590,7 +590,7 @@
                                 @for (gen of bioSampleObj?.genome_notes; track gen) {
                                     <div class="card figpanel">
                                         <div class="row">
-                                            <h1 class="page-header">{{gen.title}}</h1>
+                                            <h2 class="page-header" [innerHTML]="sanitizeHTML(gen.title)"></h2>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-2">
@@ -598,6 +598,7 @@
                                             </div>
                                             <div class="col-md-10">
                                                 <!-- <h1>Abstract</h1> -->
+
                                                 <p>{{gen.abstract}}</p>
                                                 <a href="{{gen.url}}" class="btn btn-success" target="_blank">Read the Genome
                                                     Note
