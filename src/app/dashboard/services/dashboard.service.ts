@@ -113,8 +113,9 @@ export class DashboardService {
         if (projectNames.includes(item)) {
           filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
         } else if (item.includes('-') && !item.startsWith('experimentType')) {
-          if (item.startsWith('symbionts') || item.startsWith('metagenomes')) {
-            filterItem = item.replace('-', ':');
+          if (item.startsWith('symbionts') || item.startsWith('metagenomes') ||
+              item.startsWith('mgnify_status')) {
+              filterItem = item.replace('-', ':');
           } else {
             filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');
             filterItem = (filterItem === 'assemblies') ? 'assemblies_status:Done' :
@@ -140,8 +141,8 @@ export class DashboardService {
       sortValue: `${sortActive}:${sortDirection}`,
       filterValue: filterStr || '',
       currentClass,
-      phylogenyFilters: phylogenyStr,
-      indexName,
+      phylogeny_filters: phylogenyStr,
+      index_name: indexName,
       downloadOption
     };
 

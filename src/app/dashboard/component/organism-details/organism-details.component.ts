@@ -255,7 +255,7 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
   }
 
   getBiosampleByOrganism() {
-    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal_test')
+    this.dashboardService.getRootOrganismById(this.bioSampleId, 'data_portal')
         .subscribe(
             data => {
               this.aggregations = data.aggregations;
