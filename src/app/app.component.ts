@@ -27,7 +27,7 @@ export const cookieConfig: NgcCookieConsentConfig = {
     dismiss: 'Accept cookies',
     deny: 'Refuse cookies',
     link: 'Privacy Notice',
-    href: 'https://www.ebi.ac.uk/data-protection/privacy-notice/darwin-tree-of-life-data-portal',
+    href: '/assets/gdpr/erga_asg_gbdp_gdpr.pdf',
     policy: 'Cookie Policy'
   }
 };
