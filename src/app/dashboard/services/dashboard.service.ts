@@ -39,7 +39,7 @@ export class DashboardService {
           filterValue[i] === 'DToL' ? filterItem = 'project_name:dtol' : filterItem = `project_name:${filterValue[i]}`;
         } else if (filterValue[i].includes('-') && !filterValue[i].startsWith('experimentType')) {
           if (filterValue[i].startsWith('symbionts') || filterValue[i].startsWith('metagenomes') ||
-              filterValue[i].startsWith('mgnify_status')) {
+              filterValue[i].startsWith('mgnify_status')  || filterValue[i].startsWith('asg_species_group')) {
             filterItem = filterValue[i].replace('-', ':');
           } else {
             filterItem = filterValue[i].split(' - ')[0].toLowerCase().split(' ').join('_');
@@ -114,7 +114,7 @@ export class DashboardService {
           filterItem = item === 'DToL' ? 'project_name:dtol' : `project_name:${item}`;
         } else if (item.includes('-') && !item.startsWith('experimentType')) {
           if (item.startsWith('symbionts') || item.startsWith('metagenomes') ||
-              item.startsWith('mgnify_status')) {
+              item.startsWith('mgnify_status')  || item.startsWith('asg_species_group')) {
               filterItem = item.replace('-', ':');
           } else {
             filterItem = item.split(' - ')[0].toLowerCase().replace(/\s+/g, '_');

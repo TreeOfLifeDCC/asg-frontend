@@ -155,6 +155,7 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
   metagenomesFilters: any[] = [];
   experimentTypeFilters: any[] = [];
   mgnifyFilters: any[] = [];
+  asgSpeciesGroup: any[] = [];
   itemLimit = 5;
   isCollapsed = true;
   searchValue: string;
@@ -395,7 +396,12 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
                     this.aggregations.mgnify_status.buckets,
                     'mgnify_status');
               }
-
+              this.asgSpeciesGroup = [];
+              if (this.aggregations?.asg_species_group.buckets.length > 0) {
+                this.asgSpeciesGroup = this.merge(this.asgSpeciesGroup,
+                    this.aggregations?.asg_species_group.buckets,
+                    'asg_species_group');
+              }
               // experiment type
               this.experimentTypeFilters = [];
               if (this.aggregations?.experiment.library_construction_protocol.buckets.length > 0) {
@@ -648,6 +654,10 @@ export class DashboardComponent implements OnInit, AfterViewInit , OnDestroy {
       return filterName;
     }
     switch (true) {
+      case filterName.startsWith('asg_species_group'):
+        return 'Species groups-' + filterName.split('-')[1];
+      case filterName.startsWith('metagenomes'):
+        return 'Metagenomes-' + filterName.split('-')[1];
       case filterName.startsWith('symbionts_'):
         return 'Symbionts-' + filterName.split('-')[1];
       case filterName.startsWith('experimentType_'):
