@@ -5,6 +5,7 @@ import { HomeComponent } from './home/home.component';
 import { ApiComponent } from './api/api.component';
 import { GisComponent } from './gis/gis.component';
 import { BulkDownloadsComponent } from './bulk-downloads/bulk-downloads.component';
+import { LookerDashboardsComponent } from './looker-dashboards/looker-dashboards.component';
 import { SpecimensComponent } from './dashboard/specimens/specimens.component';
 import { DetailsComponent } from './dashboard/component/details/details.component';
 import { OrganismDetailsComponent } from './dashboard/component/organism-details/organism-details.component';
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'gis', component: GisComponent, title: 'Gis' },
   { path: 'help', component: HelpComponent, title: 'Help' },
   { path: 'bulk-downloads' , component: BulkDownloadsComponent, title: 'Bulk-downloads' },
+  { path: 'dashboards' , component: LookerDashboardsComponent, title: 'Dashboards' },
 
   {
     path: 'data/specimens/details/:id',
