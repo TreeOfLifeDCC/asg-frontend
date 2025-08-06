@@ -23,7 +23,7 @@ import {MatInputModule} from '@angular/material/input';
 import {DashboardService} from '../../services/dashboard.service';
 import {MatChip, MatChipSet} from '@angular/material/chips';
 import {MapClusterComponent} from '../../map-cluster/map-cluster.component';
-import {SafeHtml, SafeResourceUrl,DomSanitizer} from '@angular/platform-browser';
+import {SafeHtml, SafeResourceUrl, DomSanitizer} from '@angular/platform-browser';
 import {Subject} from 'rxjs';
 
 import {MatIcon} from '@angular/material/icon';
@@ -262,8 +262,24 @@ export class OrganismDetailsComponent implements OnInit, AfterViewInit  {
               data = data['results'][0]['_source'];
 
               this.bioSampleObj = data;
-              this.orgGeoList = data.orgGeoList;
-              this.specGeoList = data.specGeoList;
+              if (this.bioSampleObj.orgGeoList !== undefined && this.bioSampleObj.orgGeoList.length !== 0){
+                // tslint:disable-next-line:only-arrow-functions
+                this.orgGeoList = this.bioSampleObj.orgGeoList.filter(item => (item.lat != null && item.lat
+                    !== 'not collected') || (item.lng != null && item.lat  !== 'not collected'));
+
+              }else {
+                this.orgGeoList = [];
+              }
+
+              if (this.bioSampleObj.specGeoList !== undefined && this.bioSampleObj.specGeoList.length !== 0){
+                // tslint:disable-next-line:only-arrow-functions
+                this.specGeoList = this.bioSampleObj.specGeoList.filter(function(item) {
+                  return (item.lat != null && item.lat  !== 'not collected') || (item.lng != null && item.lat
+                      !== 'not collected');
+                });
+              }else {
+                this.specGeoList = [];
+              }
               if (this.orgGeoList !== undefined && this.orgGeoList.length !== 0) {
                 this.geoLocation = true;
                 const tabGroup = this.tabgroup;
