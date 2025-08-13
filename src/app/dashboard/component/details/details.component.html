@@ -28,9 +28,9 @@
                 <div class="col-sm-12">
                     <div class="row">
                         <table mat-table matTableExporter  [dataSource]="dataSourceRecords" matSort style="width: 100%;">
-                            <ng-container matColumnDef="accession_source">
+                            <ng-container matColumnDef="source">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Source </mat-header-cell>
-                                <mat-cell *matCellDef="let element" class="txt-center">
+                                <mat-cell *matCellDef="let element" >
                                     <a routerLink="/data/organism/details/{{element.source}}" target="_blank">
                                         {{element.source}}
                                     </a>
@@ -39,24 +39,25 @@
 
                             <ng-container matColumnDef="type">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Relationships Type </mat-header-cell>
-                                <mat-cell *matCellDef="let element" class="txt-center">
+                                <mat-cell *matCellDef="let element" >
                                     {{element.type}}
                                 </mat-cell>
                             </ng-container>
 
-                            <ng-container matColumnDef="accession_target">
+                            <ng-container matColumnDef="target">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Target </mat-header-cell>
-                                <mat-cell *matCellDef="let element" class="txt-center">
+                                <mat-cell *matCellDef="let element" >
                                     <a routerLink="/data/organism/details/{{element.target}}" target="_blank">
                                         {{element.target}}
                                     </a>
                                 </mat-cell>
                             </ng-container>
 
-                            <mat-header-row *matHeaderRowDef="specDisplayedColumns"></mat-header-row>
-                            <mat-row *matRowDef="let row; columns: specDisplayedColumns;"></mat-row>
+                            <mat-header-row *matHeaderRowDef="relationshipDisplayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: relationshipDisplayedColumns;"></mat-row>
                         </table>
-                        <mat-paginator style="width: 100%;" [pageSizeOptions]="[20, 30, 50]" showFirstLastButtons [length]="bioSampleTotalCount"></mat-paginator>
+                        <mat-paginator #paginatorRelationships style="width: 100%;" [pageSizeOptions]="[20, 30, 50]" showFirstLastButtons
+                                       [length]="bioSampleObj['relationships']"></mat-paginator>
                     </div>
                 </div>
             </div>
