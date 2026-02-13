@@ -67,8 +67,15 @@ export class DetailsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   dataSourceRecords = new MatTableDataSource<BioSample>([]);
+
+  @ViewChild('paginatorRelationships') paginatorRelationships!: MatPaginator;
+  @ViewChild('sortRelationships') sortRelationships!: MatSort;
+  relationshipRecords: any;
   specBioSampleTotalCount = 0;
-  specDisplayedColumns: string[] = ['accession', 'organism', 'commonName', 'sex', 'organismPart'];
+  specDisplayedColumns = ['accession', 'organism', 'commonName', 'sex', 'organismPart'];
+
+
+  relationshipDisplayedColumns: string[] = ['source', 'type', 'target'];
 
   isSexFilterCollapsed = true;
   isOrganismPartCollapsed = true;
@@ -118,6 +125,11 @@ export class DetailsComponent implements OnInit {
             unpackedData.push(this.unpackData(item));
           }
           this.bioSampleObj = unpackedData[0];
+          this.relationshipRecords = new MatTableDataSource<any>(this.bioSampleObj?.relationships ?? []);
+          setTimeout(() => {
+            this.relationshipRecords.paginator = this.paginatorRelationships;
+            this.relationshipRecords.sort = this.sortRelationships;
+          });
           if (this.bioSampleObj.specimens?.length > 0) {
             this.bioSampleObj.specimens.filter(obj => {
               if (obj.commonName == null) {
@@ -133,6 +145,7 @@ export class DetailsComponent implements OnInit {
             this.dataSourceRecords.paginator = this.paginator;
             this.dataSourceRecords.sort = this.sort;
           }, 50);
+
         },
         err => console.log(err)
     );
