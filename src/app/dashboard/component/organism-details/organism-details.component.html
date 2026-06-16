@@ -630,7 +630,7 @@
                                 @for (gen of bioSampleObj?.genome_notes; track gen) {
                                     <div class="card figpanel">
                                         <div class="row">
-                                            <h2 class="page-header" [innerHTML]="sanitizeHTML(gen.title)"></h2>
+                                            <h2 class="page-header" [innerHTML]="gen.title"></h2>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-2">
